@@ -1,10 +1,10 @@
 import './App.css';
 
 function App() {
-  
+
   return (
     <>
-      <p className="text-xl">Blog page</p>
+      <p className="text-8xl">Blog page</p>
     </>
   )
 }
