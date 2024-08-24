@@ -1,6 +1,8 @@
+import { supabase } from "../../supabaseClient"
 
 const Home = () => {
-  return <div>Home</div>;
+    console.log(supabase);
+    return <div>Home</div>;
 };
 
 export default Home;
