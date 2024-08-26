@@ -7,14 +7,16 @@ import {
 import Layout from "./layout/Layout";
 import Home from "./pages/Home";
 import Create from "./pages/Create";
+import Post from "./pages/Post";
 
 const App = () => {
 
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<Layout />} >
-        <Route path="" element={<Home />} />
-        <Route path="/:id" element={<Create />} />
+        <Route index element={<Home />} />
+        <Route path="/post/:id" element={<Post />} />
+        <Route path="/create" element={<Create />} />
       </Route>
     )
   )

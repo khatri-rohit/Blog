@@ -1,6 +1,7 @@
 // import { NavLink } from "react-router-dom";
 import { BiSearch } from "react-icons/bi";
 import { SlNote } from "react-icons/sl";
+import { NavLink } from "react-router-dom";
 
 
 const Navbar = () => {
@@ -25,10 +26,10 @@ const Navbar = () => {
                 </div>
             </div>
             <div className="flex items-center justify-between">
-                <div className="flex items-center mx-1 hover:text-slate-500 cursor-pointer">
+                <NavLink to={"/create"} className="flex items-center mx-1 hover:text-slate-500 cursor-pointer">
                     <SlNote className="text-xl" />
                     <p className="mx-1 font-normal">Write</p>
-                </div>
+                </NavLink>
                 <div className="mx-1">
                     <img src="/blank-avatar.webp"
                         className="w-10 rounded-full" />
