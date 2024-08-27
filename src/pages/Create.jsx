@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import ReactQuill from "react-quill";
 import 'react-quill/dist/quill.snow.css';
 import { v4 as uuidv4 } from 'uuid';
+import date from 'date-and-time';
 
 
 const modules = {
@@ -36,6 +37,9 @@ const Create = () => {
   const handleCreatePost = async (e) => {
     e.preventDefault();
     try {
+      const now = new Date();
+      const formated_time = date.format(now, 'ddd, MMM DD YYYY');
+
       const { data, error } = await supabase
         .from('blog_posts')
         .insert([{
@@ -43,15 +47,17 @@ const Create = () => {
           blog_title,
           summary,
           blog_content,
-          blog_img
+          blog_img,
+          formated_time
         }]);
-
-      console.log(data);
-      console.log(error);
+      if (data)
+        console.log(data);
+      else
+        console.log("Error\n", error);
       navigate('/');
 
     } catch (error) {
-      console.log(error);
+      console.log("Can't Create Post\n", error);
     }
   }
 
@@ -66,14 +72,15 @@ const Create = () => {
 
     if (!error) {
       console.log(data);
-      setImageURL(`https://kvgueljvvnnrbfjsohnf.supabase.co/storage/v1/object/public/${data.fullPath}`)
+      setImageURL(
+        `https://kvgueljvvnnrbfjsohnf.supabase.co/storage/v1/object/public/${data.fullPath}`
+      )
     }
     else console.log(error);
   }
 
   return (
     <form className="p-4 flex flex-col" onSubmit={handleCreatePost}>
-
       <input
         type="text"
         placeholder="Title"
@@ -93,14 +100,15 @@ const Create = () => {
         onChange={e => uploadImg(e)} />
 
       <ReactQuill
-        className="mt-2 h-96"
+        className="mt-2 h-[36em]"
         value={blog_content}
         onChange={newValue => setContent(newValue)}
         modules={modules}
         formats={formats} />
 
       <button
-        className="text-left my-14 bg-slate-500 text-white p-2 w-fit text-2xl" onSubmit={handleCreatePost}>
+        className="text-left my-14 bg-slate-500 text-white p-2 w-fit text-2xl"
+        onSubmit={handleCreatePost}>
         Publish
       </button>
 

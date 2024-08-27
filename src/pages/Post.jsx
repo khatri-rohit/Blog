@@ -6,8 +6,7 @@ import { supabase } from "../../supabaseClient";
 const Post = () => {
 
     const { id } = useParams();
-    const [post, setPost] = useState([])
-
+    const [post, setPost] = useState([]);
 
     useEffect(() => {
         ; (async () => {
@@ -18,8 +17,7 @@ const Post = () => {
                 .eq('id', id);
 
             if (data) {
-                setPost(data);
-                console.log(data[0].blog_content);
+                setPost(data[0]);
             }
             else
                 console.log(error);
@@ -28,24 +26,39 @@ const Post = () => {
     }, [])
 
     return (
-        <div className="p-5">
-            {post?.map((blog) => {
-                return (
+        <section className="p-5 bg-slate-100">
+            {
+
+            }
+            {post &&
+                (
                     <>
-                        <div className="border-2 p-3">
-                            <img src={blog?.blog_img} className="w-full h-[30em]" />
-                            <p className="text-xl">
-                                {blog?.blog_title}
-                            </p>
-                            <div className="text-xl p-3"
-                                dangerouslySetInnerHTML={{ __html: blog?.blog_content }}
-                            />
+                        <div className="p-3 container mx-auto w-3/4">
+                            <div className="mt-10">
+                                <div className="w-3/4 mx-auto">
+                                    <p className="text-5xl text-center font-extrabold mb-7">
+                                        {post?.blog_title}
+                                    </p>
+                                    <p className="text-xl text-center text-gray-400">
+                                        {post?.summary}
+                                    </p>
+                                </div>
+                                <div className="w-full">
+                                    <img src={post?.blog_img}
+                                        className="h-[40em] my-4 mx-auto" />
+                                </div>
+                                <div className="w-3/4 mx-auto">
+                                    <div className="text-xl p-3"
+                                        dangerouslySetInnerHTML={{ __html: post?.blog_content }}
+                                    />
+                                </div>
+                            </div>
                         </div>
 
                     </>
                 )
-            })}
-        </div>
+            }
+        </section>
     )
 };
 

@@ -1,11 +1,13 @@
+/* eslint-disable no-unsafe-optional-chaining */
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 const Home = () => {
     const [blogPost, setBlogPost] = useState([]);
     const [users, setUsers] = useState([]);
+    const navigate = useNavigate()
 
     useEffect(() => {
 
@@ -18,8 +20,9 @@ const Home = () => {
                         user_id,
                         blog_title,
                         summary,
-                        created_at,
+                        blog_content,
                         blog_img,
+                        formated_time,
                         comments (
                             id,
                             content
@@ -59,35 +62,49 @@ const Home = () => {
 
     }, []);
 
+    const handlePost = (id) => {
+
+        navigate(`/post/${id}`);
+    }
+
     return (
-        <div className="md:p-8">
-            <div className="container mx-auto">
+        <main className="md:p-8">
+            <div className="container mx-auto w-3/4">
                 {
                     blogPost?.map((post, _) => {
                         const user = users?.find((user) => user.id === post.user_id);
+
+                        const summary = (post?.summary).substring(0, 230) + '...';
+
                         return (
-                            <div key={_} className="my-3 flex items-center border-4">
-                                <div className="mx-2">
-                                    <p className="my-0 font-light">
-                                        {user?.name}
+                            <div key={_} className="my-5 flex shadow-md bg-white rounded-lg">
+                                <div className="mx-2 w-3/4 p-2">
+                                    <p className="my-2 font-medium">
+                                        ✨ {user?.name}
                                     </p>
-                                    <NavLink to={`/post/${post.id}`} className="text-2xl font-medium">
+                                    <p onClick={() => handlePost(post?.id)}
+                                        className="text-3xl font-medium cursor-pointer">
                                         {post?.blog_title}
-                                    </NavLink>
-                                    <p className="text-lg ">
-                                        {post?.summary}
                                     </p>
-                                    <p className="font-light">
-                                        {post?.created_at}
+                                    <p className="text-xl mt-2 mb-3 text-gray-500">
+                                        {summary}
+                                    </p>
+
+                                    <p className="font-light text-black text-sm mt-2">
+                                        {post?.formated_time}
                                     </p>
                                 </div>
-                                <img src={post?.blog_img} className="w-10" />
+                                <p className="w-1/4 mx-1 p-1 my-auto cursor-pointer"
+                                    onClick={() => handlePost(post?.id)}>
+                                    <img src={post?.blog_img}
+                                        className="object-contain h-56 w-full" />
+                                </p>
                             </div>
                         )
                     })
                 }
             </div>
-        </div>
+        </main>
     )
 };
 

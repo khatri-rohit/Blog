@@ -1,11 +1,10 @@
-// import { NavLink } from "react-router-dom";
 import { BiSearch } from "react-icons/bi";
 import { SlNote } from "react-icons/sl";
 import { NavLink } from "react-router-dom";
 
 const Navbar = () => {
     return (
-        <div className="flex items-center justify-between p-1">
+        <nav className="flex items-center justify-between px-2 py-4 border-b-2">
             <div className="flex items-center justify-between">
                 <NavLink to={'/'} className="flex items-center mx-3">
                     <img src="/blogicon.png"
@@ -34,7 +33,7 @@ const Navbar = () => {
                         className="w-10 rounded-full" />
                 </div>
             </div>
-        </div>
+        </nav>
     )
 };
 
