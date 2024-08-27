@@ -8,6 +8,7 @@ import Layout from "./layout/Layout";
 import Home from "./pages/Home";
 import Create from "./pages/Create";
 import Post from "./pages/Post";
+import UserBlogs from "./pages/UserBlogs";
 
 const App = () => {
 
@@ -17,6 +18,7 @@ const App = () => {
         <Route index element={<Home />} />
         <Route path="/post/:id" element={<Post />} />
         <Route path="/create" element={<Create />} />
+        <Route path="/posts" element={<UserBlogs />} />
       </Route>
     )
   )

@@ -4,50 +4,57 @@ import { supabase } from "../../supabaseClient";
 import { NavLink } from "react-router-dom";
 
 const Home = () => {
-
-    const CDNURL = "https://kvgueljvvnnrbfjsohnf.supabase.co/storage/v1/object/public/img_posts/";
-
     const [blogPost, setBlogPost] = useState([]);
     const [users, setUsers] = useState([]);
 
     useEffect(() => {
 
         ; (async () => {
-            const { data, error } = await supabase
-                .from('blog_posts')
-                .select(`
-                    id,
-                    user_id,
-                    blog_title,
-                    summary,
-                    created_at,
-                    comments (
+            try {
+                const { data, error } = await supabase
+                    .from('blog_posts')
+                    .select(`
                         id,
-                        content
-                    ),
-                    likes(
-                        id,
-                        likes
-                    )
-                `)
-                .order('created_at', { ascending: true });
+                        user_id,
+                        blog_title,
+                        summary,
+                        created_at,
+                        blog_img,
+                        comments (
+                            id,
+                            content
+                        ),
+                        likes(
+                            id,
+                            likes
+                        )
+                    `)
+                    .order('created_at', { ascending: true });
 
-            console.log("Data fetched successfully:\n", data);
-            console.log(error);
-            setBlogPost(data);
+                console.log("Data fetched successfully:\n", data);
+                console.log(error);
+                setBlogPost(data);
+
+            } catch (error) {
+                console.log("Something Wrong happned while fetching Blog Data\n", error);
+            }
         })();
 
         ; (async () => {
-            const { data } = await supabase
-                .from('users')
-                .select(`
-                    id,
-                    name, 
-                    email                  
-                `);
+            try {
+                const { data } = await supabase
+                    .from('users')
+                    .select(`
+                        id,
+                        name, 
+                        email                  
+                    `);
 
-            console.log(data);
-            setUsers(data);
+                console.log("All Users\n", data);
+                setUsers(data);
+            } catch (error) {
+                console.log("Something Wrong happned While fetching Users\n", error);
+            }
         })();
 
     }, []);
@@ -74,7 +81,7 @@ const Home = () => {
                                         {post?.created_at}
                                     </p>
                                 </div>
-                                <img src={`${CDNURL}${post?.id}/blogicon.png`} className="w-10" />
+                                <img src={post?.blog_img} className="w-10" />
                             </div>
                         )
                     })

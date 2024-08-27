@@ -3,18 +3,17 @@ import { BiSearch } from "react-icons/bi";
 import { SlNote } from "react-icons/sl";
 import { NavLink } from "react-router-dom";
 
-
 const Navbar = () => {
     return (
         <div className="flex items-center justify-between p-1">
             <div className="flex items-center justify-between">
-                <div className="flex items-center mx-3">
+                <NavLink to={'/'} className="flex items-center mx-3">
                     <img src="/blogicon.png"
                         className="w-10" />
-                    <a className="mx-2 font-semibold text-2xl">
+                    <p className="mx-2 font-semibold text-2xl">
                         DevDiscuss
-                    </a>
-                </div>
+                    </p>
+                </NavLink>
                 <div
                     className="input-feild flex mx-1 items-center bg-slate-200  rounded-xl">
                     <div className="mx-1">

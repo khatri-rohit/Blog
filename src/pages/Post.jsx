@@ -32,12 +32,15 @@ const Post = () => {
             {post?.map((blog) => {
                 return (
                     <>
-                        <p className="text-xl">
-                            {blog?.blog_title}
-                        </p>
-                        <div className="text-xl border-2 p-3"
-                            dangerouslySetInnerHTML={{ __html: blog?.blog_content }}
-                        />
+                        <div className="border-2 p-3">
+                            <img src={blog?.blog_img} className="w-full h-[30em]" />
+                            <p className="text-xl">
+                                {blog?.blog_title}
+                            </p>
+                            <div className="text-xl p-3"
+                                dangerouslySetInnerHTML={{ __html: blog?.blog_content }}
+                            />
+                        </div>
 
                     </>
                 )
