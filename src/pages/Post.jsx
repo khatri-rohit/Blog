@@ -44,7 +44,7 @@ const Post = () => {
                                     </p>
                                 </div>
                                 <div className="w-full">
-                                    <img src={post?.blog_img}
+                                <img src={post?.image_url}
                                         className="h-[40em] my-4 mx-auto" />
                                 </div>
                                 <div className="w-3/4 mx-auto">

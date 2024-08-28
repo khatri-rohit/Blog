@@ -2,7 +2,7 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
-import { NavLink, useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 
 const Home = () => {
     const [blogPost, setBlogPost] = useState([]);
@@ -21,8 +21,8 @@ const Home = () => {
                         blog_title,
                         summary,
                         blog_content,
-                        blog_img,
                         formated_time,
+                        image_url,
                         comments (
                             id,
                             content
@@ -32,7 +32,7 @@ const Home = () => {
                             likes
                         )
                     `)
-                    .order('created_at', { ascending: true });
+                    .order('created_at', { ascending: false });
 
                 console.log("Data fetched successfully:\n", data);
                 console.log(error);
@@ -94,10 +94,10 @@ const Home = () => {
                                         {post?.formated_time}
                                     </p>
                                 </div>
-                                <p className="w-1/4 mx-1 p-1 my-auto cursor-pointer"
+                                <p className="w-1/3 mx-1 p-1 my-auto cursor-pointer"
                                     onClick={() => handlePost(post?.id)}>
-                                    <img src={post?.blog_img}
-                                        className="object-contain h-56 w-full" />
+                                    <img src={post?.image_url}
+                                        className="object-contain h-72 w-full" />
                                 </p>
                             </div>
                         )

@@ -29,8 +29,8 @@ const Create = () => {
   const [blog_title, setTitle] = useState('');
   const [summary, setSummary] = useState('');
   const [blog_content, setContent] = useState('');
-  const [blog_img, setImageURL] = useState('');
   const [user_id, setUserId] = useState('b8f2393b-d896-41e2-83b9-4248da0634b6');
+  const [image_url, setImageURL] = useState('');
 
   const navigate = useNavigate();
 
@@ -47,8 +47,8 @@ const Create = () => {
           blog_title,
           summary,
           blog_content,
-          blog_img,
-          formated_time
+          formated_time,
+          image_url
         }]);
       if (data)
         console.log(data);

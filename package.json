@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "^2.2.7",
     "@supabase/supabase-js": "^2.45.2",
     "date-and-time": "^3.5.0",
     "dotenv": "^16.4.5",
