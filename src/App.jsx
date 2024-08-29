@@ -5,10 +5,13 @@ import {
   RouterProvider
 } from "react-router-dom";
 import Layout from "./layout/Layout";
-import Home from "./pages/Home";
 import Create from "./pages/Create";
+import Home from "./pages/Home";
 import Post from "./pages/Post";
 import UserBlogs from "./pages/UserBlogs";
+import { ContextProvider } from './context/User.jsx';
+import './App.css';
+import { useState } from "react";
 
 const App = () => {
 
@@ -23,10 +26,22 @@ const App = () => {
     )
   )
 
+  const [model, setModel] = useState(false);
+  const user = {};
+  const oAuthStateChange = () => {
+    console.log("Auth State Change");
+  };
+  const changeModel = () => {
+    setModel(prev => !prev);
+    console.log("Model State Change ", model);
+  }
+
   return (
-    <div className="p-2">
-      <RouterProvider router={router} />
-    </div>
+    <ContextProvider value={{ model, oAuthStateChange, changeModel, user }}>
+      <div className="p-2">
+        <RouterProvider router={router} />
+      </div>
+    </ContextProvider>
   )
 };
 

@@ -1,13 +1,14 @@
 /* eslint-disable no-unsafe-optional-chaining */
-/* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
-import {  useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import useUsers from "../context/User";
 
 const Home = () => {
     const [blogPost, setBlogPost] = useState([]);
     const [users, setUsers] = useState([]);
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    const { model, user } = useUsers();
 
     useEffect(() => {
 
@@ -63,24 +64,21 @@ const Home = () => {
     }, []);
 
     const handlePost = (id) => {
-
         navigate(`/post/${id}`);
     }
 
     return (
-        <main className="md:p-8">
+        <main className={`md:p-8 ${model ? 'blur' : ''}`}>
             <div className="container mx-auto w-3/4">
                 {
                     blogPost?.map((post, _) => {
-                        const user = users?.find((user) => user.id === post.user_id);
-
+                        const persons = users?.find((person) => person.id === post.user_id);
                         const summary = (post?.summary).substring(0, 230) + '...';
-
                         return (
                             <div key={_} className="my-5 flex shadow-md bg-white rounded-lg">
                                 <div className="mx-2 w-3/4 p-2">
                                     <p className="my-2 font-medium">
-                                        ✨ {user?.name}
+                                        ✨ {persons?.name}
                                     </p>
                                     <p onClick={() => handlePost(post?.id)}
                                         className="text-3xl font-medium cursor-pointer">
@@ -89,13 +87,12 @@ const Home = () => {
                                     <p className="text-xl mt-2 mb-3 text-gray-500">
                                         {summary}
                                     </p>
-
                                     <p className="font-light text-black text-sm mt-2">
                                         {post?.formated_time}
                                     </p>
                                 </div>
                                 <p className="w-1/3 mx-1 p-1 my-auto cursor-pointer"
-                                    onClick={() => handlePost(post?.id)}>
+                                    onClick={() => Object.keys(user).length !== 0 && handlePost(post?.id)}>
                                     <img src={post?.image_url}
                                         className="object-contain h-72 w-full" />
                                 </p>

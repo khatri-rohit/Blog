@@ -1,0 +1,5 @@
+.modal-overlay.blur {
+    filter: blur(5px);
+    background-color: rgba(0, 0, 0, 0);
+    /* adjust the opacity as needed */
+}
