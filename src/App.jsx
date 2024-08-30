@@ -27,15 +27,18 @@ const App = () => {
   )
 
   const [model, setModel] = useState(false);
-  const user = {};
-  const oAuthStateChange = () => {
-    console.log("Auth State Change");
+
+  const [user, setUser] = useState({});
+  const oAuthStateChange = (data) => {
+    setUser(data);
   };
   const changeModel = () => {
-    setModel(prev => !prev);
-    console.log("Model State Change ", model);
+    setModel(prev => {
+      return !prev;
+    });
   }
-
+  console.log(user);
+  
   return (
     <ContextProvider value={{ model, oAuthStateChange, changeModel, user }}>
       <div className="p-2">

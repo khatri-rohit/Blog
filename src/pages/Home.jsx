@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-unsafe-optional-chaining */
 import { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
@@ -8,10 +9,10 @@ const Home = () => {
     const [blogPost, setBlogPost] = useState([]);
     const [users, setUsers] = useState([]);
     const navigate = useNavigate();
-    const { model, user } = useUsers();
+    const { model, user, oAuthStateChange } = useUsers();
 
+    // Fetching All Blogs
     useEffect(() => {
-
         ; (async () => {
             try {
                 const { data, error } = await supabase
@@ -35,7 +36,7 @@ const Home = () => {
                     `)
                     .order('created_at', { ascending: false });
 
-                console.log("Data fetched successfully:\n", data);
+                // console.log("Data fetched successfully:\n", data);
                 console.log(error);
                 setBlogPost(data);
 
@@ -54,21 +55,28 @@ const Home = () => {
                         email                  
                     `);
 
-                console.log("All Users\n", data);
+                // console.log("All Users\n", data);
                 setUsers(data);
             } catch (error) {
                 console.log("Something Wrong happned While fetching Users\n", error);
             }
         })();
 
+
+
     }, []);
 
     const handlePost = (id) => {
         navigate(`/post/${id}`);
     }
+    const signOut = async () => {
+        await supabase.auth.signOut().then(res => oAuthStateChange({}));
+    }
 
     return (
-        <main className={`md:p-8 ${model ? 'blur' : ''}`}>
+        <main className={`md:p-8 ${model ? 'blur-[5px]' : ''}`}>
+            <button className="px-2"
+                onClick={signOut}>Logout</button>
             <div className="container mx-auto w-3/4">
                 {
                     blogPost?.map((post, _) => {
