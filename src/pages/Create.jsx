@@ -30,9 +30,9 @@ const Create = () => {
   const [blog_title, setTitle] = useState('');
   const [summary, setSummary] = useState('');
   const [blog_content, setContent] = useState('');
-  // const [user_id, setUserId] = useState('b8f2393b-d896-41e2-83b9-4248da0634b6');
   const [image_url, setImageURL] = useState('');
 
+  // const [user_id, setUserId] = useState('b8f2393b-d896-41e2-83b9-4248da0634b6');
   const { user } = useUsers();
 
   const navigate = useNavigate();
@@ -43,7 +43,7 @@ const Create = () => {
       const now = new Date();
       const formated_time = date.format(now, 'ddd, MMM DD YYYY');
 
-      const { data, error } = await supabase
+      await supabase
         .from('blog_posts')
         .insert([{
           user_id: user.id,
@@ -53,10 +53,7 @@ const Create = () => {
           formated_time,
           image_url
         }]);
-      if (data)
-        console.log(data);
-      else
-        console.log("Error\n", error);
+
       navigate('/');
 
     } catch (error) {
@@ -65,21 +62,22 @@ const Create = () => {
   }
 
   const uploadImg = async (e) => {
-    const file = e.target.files[0];
-    console.log(file);
+    try {
+      const file = e.target.files[0];
+      const { data } = await supabase
+        .storage
+        .from('img_posts')
+        .upload(uuidv4() + "/" + uuidv4(), file);
 
-    const { data, error } = await supabase
-      .storage
-      .from('img_posts')
-      .upload(uuidv4() + "/" + uuidv4(), file);
-
-    if (!error) {
-      console.log(data);
-      setImageURL(
-        `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/${data.fullPath}`
-      )
+      if (data) {
+        console.log(data);
+        setImageURL(
+          `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/${data.fullPath}`
+        )
+      }
+    } catch (error) {
+      console.log(error);
     }
-    else console.log(error);
   }
 
   return (

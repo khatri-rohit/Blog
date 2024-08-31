@@ -1,10 +1,11 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable no-unsafe-optional-chaining */
 import { useEffect, useState } from "react";
-import { supabase } from "../../supabaseClient";
-import { useNavigate } from "react-router-dom";
-import useUsers from "../context/User";
 import toast, { Toaster } from "react-hot-toast";
+import { MdOutlineMessage } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "../../supabaseClient";
+import useUsers from "../context/User";
+import { FaHeart } from "react-icons/fa6";
 
 const Home = () => {
     const [blogPost, setBlogPost] = useState([]);
@@ -16,7 +17,7 @@ const Home = () => {
     useEffect(() => {
         ; (async () => {
             try {
-                const { data, error } = await supabase
+                const { data } = await supabase
                     .from('blog_posts')
                     .select(`
                         id,
@@ -37,10 +38,8 @@ const Home = () => {
                     `)
                     .order('created_at', { ascending: false });
 
-                // console.log("Data fetched successfully:\n", data);
-                console.log(error);
                 setBlogPost(data);
-
+                console.log("Data fetched successfully:\n", data);
             } catch (error) {
                 console.log("Something Wrong happned while fetching Blog Data\n", error);
             }
@@ -53,11 +52,11 @@ const Home = () => {
                     .select(`
                         id,
                         name, 
-                        email                  
+                        email
                     `);
 
-                // console.log("All Users\n", data);
                 setUsers(data);
+                console.log(data);
             } catch (error) {
                 console.log("Something Wrong happned While fetching Users\n", error);
             }
@@ -71,11 +70,16 @@ const Home = () => {
         navigate(`/post/${id}`);
     }
     const signOut = async () => {
-        await supabase.auth.signOut().then(res => oAuthStateChange({}));
+        try {
+            await supabase.auth.signOut()
+            oAuthStateChange({});
+        } catch (error) {
+            console.log("Error While Logout -> ", error);
+        }
     }
 
     const handleTost = () => {
-        toast((t) => (
+        toast(() => (
             <span>
                 Login to Read
             </span>
@@ -102,7 +106,7 @@ const Home = () => {
                                         <img src={post?.image_url}
                                             className="object-contain h-72 w-full" />
                                     </div>
-                                    <div className="mx-2 w-3/4 p-2">
+                                    <div className="mx-2 w-3/4 p-2 flex flex-col justify-evenly">
                                         <p className="my-2 font-medium">
                                             ✨ {persons?.name}
                                         </p>
@@ -115,9 +119,25 @@ const Home = () => {
                                         <p className="text-xl mt-2 mb-3 text-gray-500">
                                             {summary}
                                         </p>
-                                        <p className="font-light text-black text-sm mt-2">
-                                            {post?.formated_time}
-                                        </p>
+                                        <div className="flex items-center justify-between">
+                                            <p className="font-light text-black text-sm mt-2">
+                                                {post?.formated_time}
+                                            </p>
+                                            <div className="flex items-center">
+                                                <div className="mx-2 flex items-center">
+                                                    <MdOutlineMessage />
+                                                    <p className="mx-1 flex items-center font-thin mb-1">
+                                                        {(post?.comments).length}
+                                                    </p>
+                                                </div>
+                                                <div className="mx-2 flex items-center">
+                                                    <FaHeart />
+                                                    <p className="mx-1 flex items-center font-thin mb-1">
+                                                        {(post?.likes).length}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             )

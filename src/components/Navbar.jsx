@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useEffect, useRef } from "react";
 import { useForm } from 'react-hook-form';
 import { BiLogoGoogle, BiSearch } from "react-icons/bi";
@@ -27,8 +26,9 @@ const Navbar = () => {
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (!modalContainerRef.current.contains(event.target)) {
-                if (!modalRef.current.contains(event.target))
+                if (!modalRef.current.contains(event.target)) {
                     changeModel();
+                }
             }
         };
         document.addEventListener('click', handleClickOutside);
@@ -45,10 +45,10 @@ const Navbar = () => {
                 email: email,
                 password: password
             });
+            console.log(data.user);
             if (data) {
                 oAuthStateChange(data.user);
-                console.log(data.user);
-                authUser(data.user);
+                authUser(data);
                 navigate("/");
                 changeModel();
             }
@@ -64,19 +64,32 @@ const Navbar = () => {
         try {
             const { user } = response;
             console.log(user);
-            var name = response.user?.user_metadata.full_name;
-            var avatarImg = response.user?.user_metadata.avatar_url;
-            console.log(avatarImg);
+            // if (user.identities[0].provider === 'email') {
             const { data } = await supabase
                 .from('users')
                 .insert({
                     id: user.id,
-                    name,
+                    name: "Ritika Nimesh",
                     email: user.email,
                     created_at: user.created_at,
-                    avatar_url: avatarImg
+                    avatar_url: null
                 });
             console.log(data);
+            // } else {
+            //     var name = response.user?.user_metadata.full_name;
+            //     var avatarImg = response.user?.user_metadata.avatar_url;
+            //     console.log(avatarImg);
+            //     const { data } = await supabase
+            //         .from('users')
+            //         .insert({
+            //             id: user.id,
+            //             name,
+            //             email: user.email,
+            //             created_at: user.created_at,
+            //             avatar_url: avatarImg
+            //         });
+            //     console.log(data);
+            // }
         } catch (error) {
             console.log(error);
         }
@@ -95,9 +108,11 @@ const Navbar = () => {
     useEffect(() => {
         (async () => {
             try {
-                const data = (await supabase.auth.getSession()).data
-                oAuthStateChange(data.session.user);
-                console.log(data.session.user);
+                if (Object.keys(user).length === 0) {
+                    const data = (await supabase.auth.getSession()).data
+                    oAuthStateChange(data.session.user);
+                    console.log(data.session.user);
+                }
             } catch (err) {
                 console.log(err);
             }
@@ -150,7 +165,7 @@ const Navbar = () => {
                                             type="email"
                                             name="email"
                                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                                            placeholder="Email" />
+                                            placeholder="Email" autoFocus />
                                         {errors.email &&
                                             (<p className="text-red-500">{`${errors.email?.message}`}</p>)}
                                     </div>
@@ -213,7 +228,7 @@ const Navbar = () => {
                                     <p className="mx-1 font-normal">Write</p>
                                 </NavLink>
                                 <div className="mx-1">
-                                    <img src={user?.user_metadata.avatar_url}
+                                    <img src={user?.user_metadata.avatar_url ? user?.user_metadata.avatar_url : "/blank-avatar.webp"}
                                         className="w-10 rounded-full" />
                                 </div>
                             </div>
