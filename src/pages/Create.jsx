@@ -6,6 +6,7 @@ import ReactQuill from "react-quill";
 import 'react-quill/dist/quill.snow.css';
 import { v4 as uuidv4 } from 'uuid';
 import date from 'date-and-time';
+import useUsers from "../context/User";
 
 
 const modules = {
@@ -29,8 +30,10 @@ const Create = () => {
   const [blog_title, setTitle] = useState('');
   const [summary, setSummary] = useState('');
   const [blog_content, setContent] = useState('');
-  const [user_id, setUserId] = useState('b8f2393b-d896-41e2-83b9-4248da0634b6');
+  // const [user_id, setUserId] = useState('b8f2393b-d896-41e2-83b9-4248da0634b6');
   const [image_url, setImageURL] = useState('');
+
+  const { user } = useUsers();
 
   const navigate = useNavigate();
 
@@ -43,7 +46,7 @@ const Create = () => {
       const { data, error } = await supabase
         .from('blog_posts')
         .insert([{
-          user_id,
+          user_id: user.id,
           blog_title,
           summary,
           blog_content,
@@ -73,7 +76,7 @@ const Create = () => {
     if (!error) {
       console.log(data);
       setImageURL(
-        `https://kvgueljvvnnrbfjsohnf.supabase.co/storage/v1/object/public/${data.fullPath}`
+        `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/${data.fullPath}`
       )
     }
     else console.log(error);

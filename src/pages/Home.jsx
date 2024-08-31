@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import useUsers from "../context/User";
+import toast, { Toaster } from "react-hot-toast";
 
 const Home = () => {
     const [blogPost, setBlogPost] = useState([]);
@@ -73,43 +74,58 @@ const Home = () => {
         await supabase.auth.signOut().then(res => oAuthStateChange({}));
     }
 
+    const handleTost = () => {
+        toast((t) => (
+            <span>
+                Login to Read
+            </span>
+        ));
+    }
+
     return (
-        <main className={`md:p-8 ${model ? 'blur-[5px]' : ''}`}>
-            <button className="px-2"
-                onClick={signOut}>Logout</button>
-            <div className="container mx-auto w-3/4">
-                {
-                    blogPost?.map((post, _) => {
-                        const persons = users?.find((person) => person.id === post.user_id);
-                        const summary = (post?.summary).substring(0, 230) + '...';
-                        return (
-                            <div key={_} className="my-5 flex shadow-md bg-white rounded-lg">
-                                <div className="mx-2 w-3/4 p-2">
-                                    <p className="my-2 font-medium">
-                                        ✨ {persons?.name}
-                                    </p>
-                                    <p onClick={() => handlePost(post?.id)}
-                                        className="text-3xl font-medium cursor-pointer">
-                                        {post?.blog_title}
-                                    </p>
-                                    <p className="text-xl mt-2 mb-3 text-gray-500">
-                                        {summary}
-                                    </p>
-                                    <p className="font-light text-black text-sm mt-2">
-                                        {post?.formated_time}
-                                    </p>
+        <>
+            <Toaster
+                position="top-center"
+            />
+            <main className={`md:p-8 ${model ? 'blur-[5px]' : ''}`}>
+                {Object.keys(user).length > 0 && <button className="px-2"
+                    onClick={signOut}>Logout</button>}
+                <div className="container mx-auto w-3/4">
+                    {
+                        blogPost?.map((post, _) => {
+                            const persons = users?.find((person) => person.id === post.user_id);
+                            const summary = (post?.summary).substring(0, 230) + '...';
+                            return (
+                                <div key={_} className="my-5 flex shadow-md bg-white rounded-lg">
+                                    <div className="w-1/3 mx-1 p-1 my-auto cursor-pointer"
+                                        onClick={() => Object.keys(user).length > 0 ? handlePost(post?.id) : handleTost()}>
+                                        <img src={post?.image_url}
+                                            className="object-contain h-72 w-full" />
+                                    </div>
+                                    <div className="mx-2 w-3/4 p-2">
+                                        <p className="my-2 font-medium">
+                                            ✨ {persons?.name}
+                                        </p>
+                                        <p onClick={() => Object.keys(user).length > 0 ? handlePost(post?.id) :
+                                            handleTost()
+                                        }
+                                            className="text-3xl font-medium cursor-pointer">
+                                            {post?.blog_title}
+                                        </p>
+                                        <p className="text-xl mt-2 mb-3 text-gray-500">
+                                            {summary}
+                                        </p>
+                                        <p className="font-light text-black text-sm mt-2">
+                                            {post?.formated_time}
+                                        </p>
+                                    </div>
                                 </div>
-                                <p className="w-1/3 mx-1 p-1 my-auto cursor-pointer"
-                                    onClick={() => Object.keys(user).length !== 0 && handlePost(post?.id)}>
-                                    <img src={post?.image_url}
-                                        className="object-contain h-72 w-full" />
-                                </p>
-                            </div>
-                        )
-                    })
-                }
-            </div>
-        </main>
+                            )
+                        })
+                    }
+                </div>
+            </main>
+        </>
     )
 };
 
