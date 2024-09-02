@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { useForm } from 'react-hook-form';
 import { BiLogoGithub, BiLogoGoogle, BiSearch } from "react-icons/bi";
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { SlNote } from "react-icons/sl";
 import { NavLink, useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
-import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import useUsers from "../context/User";
 
 const Navbar = () => {
@@ -312,9 +312,9 @@ const Navbar = () => {
                                 <div className="p-4 md:p-5">
                                     <button
                                         disabled={isSubmitting}
-                                        className="w-full text-white bg-slate-300 hover:bg-slate-300 font-medium rounded-lg text-sm px-5 py-3 text-center dark:bg-gray-500 dark:hover:bg-gray-500 flex items-center justify-center outline-none" onClick={googleSighUp}>
+                                        className="my-3 w-full border bg-white hover:bg-slate-300 font-medium rounded-lg text-sm px-5 py-3 text-center dark:bg-gray-500 dark:hover:bg-gray-500 flex items-center justify-center outline-none" onClick={googleSighUp}>
                                         <BiLogoGoogle
-                                            className="mx-1" />
+                                            className="mx-1 text-2xl text-slate-500" />
                                         Login to your account
                                     </button>
                                     <button
