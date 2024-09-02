@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useForm } from 'react-hook-form';
-import { BiLogoGoogle, BiSearch } from "react-icons/bi";
+import { BiLogoGithub, BiLogoGoogle, BiSearch } from "react-icons/bi";
 import { SlNote } from "react-icons/sl";
 import { NavLink, useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
@@ -56,7 +56,15 @@ const Navbar = () => {
                     changeModel(!model);
                 }
             } else if (model) {
-                console.log(model);
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+                console.log("Login From");
+                console.log(data);
+                console.log(error);
+                oAuthStateChange(data);
+                chnageNewUser();
             }
             await new Promise((reslove) => setTimeout(reslove, 100));
             reset();
@@ -69,15 +77,16 @@ const Navbar = () => {
         try {
             const { user } = response;
             console.log(response);
+            console.log(user.user_metadata.avatar_url);
             // if (user.identities[0].provider === 'email') {
             const { data } = await supabase
                 .from('users')
                 .insert({
                     id: user.id,
-                    name: "Ritika Nimesh",
+                    name: user.user_metadata.full_name,
                     email: user.email,
                     created_at: user.created_at,
-                    avatar_url: null
+                    avatar_url: user.user_metadata.avatar_url
                 });
             console.log(data);
         } catch (error) {
@@ -85,13 +94,24 @@ const Navbar = () => {
         }
     }
 
-
+    const githubSignIn = async () => {
+        try {
+            await supabase.auth.signInWithOAuth({
+                provider: "github"
+            });
+            changeModel(!model);
+            showNewUser && chnageNewUser()
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     const googleSighUp = async () => {
         try {
             await supabase.auth.signInWithOAuth({
                 provider: 'google',
             });
+            changeModel(!model);
         } catch (error) {
             console.log(error);
         }
@@ -120,7 +140,8 @@ const Navbar = () => {
                 if (user) {
                     const data = (await supabase.auth.getSession()).data
                     oAuthStateChange(data.session.user);
-                    console.log(data.session.user);
+                    authUser(data.session);
+                    console.log(data);
                 }
             } catch (err) {
                 console.log(err);
@@ -139,7 +160,7 @@ const Navbar = () => {
 
             {showNewUser && (
                 <>
-                    <div ref={showRef} className="absolute top-5 left-1/2 transform -translate-x-1/2 z-10 shadow-sm mx-auto w-[23%]">
+                    <div ref={showRef} className="absolute top-5 left-1/2 transform -translate-x-1/2 z-10 shadow-sm mx-auto w-[23%] bg-[#E9EFEC]">
                         {/* <!-- Modal content --> */}
                         <div className="relative bg-white rounded-lg shadow dark:bg-gray-700 p-2">
                             {/* <!-- Modal header --> */}
@@ -159,11 +180,17 @@ const Navbar = () => {
                             <div className="p-4 md:p-5">
                                 <button
                                     disabled={isSubmitting}
-                                    type="submit"
-                                    className="w-full text-white bg-slate-300 hover:bg-slate-300 font-medium rounded-lg text-sm px-5 py-3 text-center dark:bg-gray-500 dark:hover:bg-gray-500 flex items-center justify-center outline-none" onClick={googleSighUp}>
+                                    className="my-3 w-full border bg-white hover:bg-slate-300 font-medium rounded-lg text-sm px-5 py-3 text-center dark:bg-gray-500 dark:hover:bg-gray-500 flex items-center justify-center outline-none" onClick={googleSighUp}>
                                     <BiLogoGoogle
-                                        className="mx-1" />
+                                        className="mx-1 text-2xl text-slate-500" />
                                     Create Account with Google
+                                </button>
+                                <button
+                                    disabled={isSubmitting}
+                                    className="my-3 w-full text-white bg-gray-700 hover:bg-gray-900 font-medium rounded-lg text-sm px-5 py-3 text-center dark:bg-gray-700 dark:hover:bg-gray-900 flex items-center justify-center outline-none" onClick={githubSignIn}>
+                                    <BiLogoGithub
+                                        className="mx-1 text-2xl" />
+                                    Create Account with Github
                                 </button>
                                 <p className="font-medium text-center my-2">Or</p>
                                 <form className="space-y-4"
@@ -263,9 +290,9 @@ const Navbar = () => {
             )}
 
             {
-                    model && (
+                model && (
                     <>
-                        <div ref={modalRef} className="absolute top-5 left-1/2 transform -translate-x-1/2 z-10 shadow-sm mx-auto w-[23%]">
+                        <div ref={modalRef} className="absolute top-5 left-1/2 transform -translate-x-1/2 z-10 shadow-sm mx-auto w-[23%] bg-[#E9EFEC]">
                             {/* <!-- Modal content --> */}
                             <div className="relative bg-white rounded-lg shadow dark:bg-gray-700 p-2">
                                 {/* <!-- Modal header --> */}
@@ -285,11 +312,17 @@ const Navbar = () => {
                                 <div className="p-4 md:p-5">
                                     <button
                                         disabled={isSubmitting}
-                                        type="submit"
                                         className="w-full text-white bg-slate-300 hover:bg-slate-300 font-medium rounded-lg text-sm px-5 py-3 text-center dark:bg-gray-500 dark:hover:bg-gray-500 flex items-center justify-center outline-none" onClick={googleSighUp}>
                                         <BiLogoGoogle
                                             className="mx-1" />
                                         Login to your account
+                                    </button>
+                                    <button
+                                        disabled={isSubmitting}
+                                        className="my-3 w-full text-white bg-gray-700 hover:bg-gray-900 font-medium rounded-lg text-sm px-5 py-3 text-center dark:bg-gray-700 dark:hover:bg-gray-900 flex items-center justify-center outline-none" onClick={githubSignIn}>
+                                        <BiLogoGithub
+                                            className="mx-1 text-2xl" />
+                                        Create Account with Github
                                     </button>
                                     <p className="font-medium text-center my-2">Or</p>
                                     <form className="space-y-4"
@@ -378,7 +411,7 @@ const Navbar = () => {
                         </>) : (
                             <>
                                 <button className="bg-slate-300 px-4 p-2 rounded-md text-xl outline-none"
-                                    onClick={() => changeModel()}>
+                                    onClick={() => changeModel(!model)}>
                                     SignIn
                                 </button>
                             </>
