@@ -61,7 +61,7 @@ const Post = () => {
             .from('likes')
             .insert([{
                 post_id: post.id,
-                likes: 
+                likes: like
         }]);
         console.log(data);
         console.log(error);
