@@ -122,15 +122,15 @@ const Home = () => {
                                             </p>
                                             <div className="flex items-center">
                                                 <div className="mx-2 flex items-center">
-                                                    <MdOutlineMessage />
-                                                    <p className="mx-1 flex items-center font-thin mb-1">
-                                                        {(post?.comments).length}
+                                                    <MdOutlineMessage className="text-2xl" />
+                                                    <p className="mx-1 flex items-center font-medium text-lg mb-1">
+                                                        {(post?.comments)?.length}
                                                     </p>
                                                 </div>
                                                 <div className="mx-2 flex items-center">
-                                                    <FaHeart />
-                                                    <p className="mx-1 flex items-center font-thin mb-1">
-                                                        {(post?.likes).length}
+                                                    <FaHeart className="text-2xl text-pink-500" />
+                                                    <p className="mx-1 flex items-center font-medium text-lg mb-1">
+                                                        {(post?.likes)?.length}
                                                     </p>
                                                 </div>
                                             </div>

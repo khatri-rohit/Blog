@@ -10,6 +10,7 @@ const Post = () => {
     const { id } = useParams();
     const [post, setPost] = useState([]);
     const [thatUser, setThatUser] = useState('');
+    const [like, setLike] = useState(0);
 
     useEffect(() => {
         ; (async () => {
@@ -54,6 +55,18 @@ const Post = () => {
         })();
     }, [])
 
+    const updateLike = async () => {
+        setLike(1);
+        const { data, error } = await supabase
+            .from('likes')
+            .insert([{
+                post_id: post.id,
+                likes: 
+        }]);
+        console.log(data);
+        console.log(error);
+    }
+
     return (
         <section className="p-5 bg-slate-100">
             <div className="my-3 flex items-center justify-between container mx-auto p-4">
@@ -77,7 +90,8 @@ const Post = () => {
                             {(post?.comments)?.length}
                         </p>
                     </div>
-                    <div className="mx-2 flex items-center">
+                    <div className="mx-2 flex items-center cursor-pointer"
+                        onClick={updateLike}>
                         <FaHeart className="text-3xl text-pink-500" />
                         <p className="mx-1 flex items-center font-medium text-lg mb-1">
                             {(post?.likes)?.length}
@@ -95,16 +109,16 @@ const Post = () => {
                                     <p className="text-5xl text-center font-extrabold mb-7">
                                         {post?.blog_title}
                                     </p>
-                                    <p className="text-xl text-center text-gray-400">
+                                    <p className="text-xl text-center text-gray-400 mt-3 mb-5">
                                         {post?.summary}
                                     </p>
                                 </div>
-                                <div className="w-full">
+                                <div className="w-full my-3">
                                     <img src={post?.image_url}
-                                        className="h-[40em] my-4 mx-auto" />
+                                        className="h-[35em] mx-auto border" />
                                 </div>
                                 <div className="w-3/4 mx-auto">
-                                    <div className="text-xl p-3"
+                                    <div className="text-2xl p-3"
                                         dangerouslySetInnerHTML={{ __html: post?.blog_content }}
                                     />
                                 </div>

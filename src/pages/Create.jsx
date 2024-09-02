@@ -42,16 +42,32 @@ const Create = () => {
     try {
       const now = new Date();
       const formated_time = date.format(now, 'ddd, MMM DD YYYY');
-
+      const id = uuidv4();
+      
       await supabase
         .from('blog_posts')
         .insert([{
+          id: id,
           user_id: user.id,
           blog_title,
           summary,
           blog_content,
           formated_time,
           image_url
+        }]);
+
+      await supabase
+        .from('likes')
+        .insert([{
+          post_id: id,
+          likes: 0
+        }]);
+
+      await supabase
+        .from('comments')
+        .insert([{
+          post_id: id,
+          content: []
         }]);
 
       navigate('/');
@@ -68,6 +84,7 @@ const Create = () => {
         .storage
         .from('img_posts')
         .upload(uuidv4() + "/" + uuidv4(), file);
+      console.log(uuidv4());
 
       if (data) {
         console.log(data);
