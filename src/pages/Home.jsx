@@ -11,7 +11,7 @@ const Home = () => {
     const [blogPost, setBlogPost] = useState([]);
     const [users, setUsers] = useState([]);
     const navigate = useNavigate();
-    const { model, user, oAuthStateChange } = useUsers();
+    const { model, user, oAuthStateChange,showNewUser } = useUsers();
 
     // Fetching All Blogs
     useEffect(() => {
@@ -61,9 +61,6 @@ const Home = () => {
                 console.log("Something Wrong happned While fetching Users\n", error);
             }
         })();
-
-
-
     }, []);
 
     const handlePost = (id) => {
@@ -91,7 +88,7 @@ const Home = () => {
             <Toaster
                 position="top-center"
             />
-            <main className={`md:p-8 ${model ? 'blur-[5px]' : ''}`}>
+            <main className={`md:p-8 ${model || showNewUser ? 'blur-[5px]' : ''}`}>
                 {Object.keys(user).length > 0 && <button className="px-2"
                     onClick={signOut}>Logout</button>}
                 <div className="container mx-auto w-3/4">

@@ -24,23 +24,30 @@ const App = () => {
         <Route path="/posts" element={<UserBlogs />} />
       </Route>
     )
-  )
+  );
 
   const [model, setModel] = useState(false);
-
+  const [showNewUser, setNewUser] = useState(false);
   const [user, setUser] = useState({});
+
   const oAuthStateChange = (data) => {
     setUser(data);
   };
-  const changeModel = () => {
-    setModel(prev => {
+
+  const chnageNewUser = () => {
+    setNewUser(prev => {
       return !prev;
     });
-  }
+  };
+
+  const changeModel = (value) => {
+    setModel(value);
+  };
+  
   console.log(user);
   
   return (
-    <ContextProvider value={{ model, oAuthStateChange, changeModel, user }}>
+    <ContextProvider value={{ model, oAuthStateChange, changeModel, user,chnageNewUser,showNewUser }}>
       <div className="p-2">
         <RouterProvider router={router} />
       </div>

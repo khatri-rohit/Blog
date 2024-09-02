@@ -4,7 +4,9 @@ export const UserContext = createContext({
     oAuthStateChange: () => { },
     user: {},
     model: false,
+    showNewUser: false,
     changeModel: () => { },
+    chnageNewUser: () => { },
 });
 
 
