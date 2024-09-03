@@ -43,7 +43,7 @@ const Create = () => {
       const now = new Date();
       const formated_time = date.format(now, 'ddd, MMM DD YYYY');
       const id = uuidv4();
-      
+
       await supabase
         .from('blog_posts')
         .insert([{
@@ -60,7 +60,7 @@ const Create = () => {
         .from('likes')
         .insert([{
           post_id: id,
-          likes: 0
+          like: 0
         }]);
 
       await supabase

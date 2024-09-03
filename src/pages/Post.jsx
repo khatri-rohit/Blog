@@ -11,6 +11,7 @@ const Post = () => {
     const [post, setPost] = useState([]);
     const [thatUser, setThatUser] = useState('');
     const [like, setLike] = useState(0);
+    const [alter, setAlter] = useState(true);
 
     useEffect(() => {
         ; (async () => {
@@ -32,14 +33,13 @@ const Post = () => {
                         ),
                         likes(
                             id,
-                            likes
+                            like
                         )
                     `)
                     .eq('id', id);
                 if (data) {
                     setPost(data[0]);
                     setThatUser(data[0].user_id);
-                    console.log(data);
 
                     // Author Details
                     const response = await supabase.
@@ -53,18 +53,47 @@ const Post = () => {
                 console.log(error);
             }
         })();
+
     }, [])
 
+    useEffect(() => {
+        ; (async () => {
+            try {
+                const { data } = await supabase
+                    .from('likes')
+                    .select()
+                    .eq('post_id', id);
+                console.log(data);
+                if (data) {
+                    setLike(data)
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        })();
+    }, [like])
+
     const updateLike = async () => {
-        setLike(1);
-        const { data, error } = await supabase
-            .from('likes')
-            .insert([{
-                post_id: post.id,
-                likes: like
-        }]);
-        console.log(data);
-        console.log(error);
+        try {
+            if (alter) {
+                await supabase
+                    .from('likes')
+                    .update({ like: post?.likes[0]?.like + 1 })
+                    .eq('post_id', post.id);
+                setLike(post?.likes[0]?.like + 1);
+                setAlter(false);
+            } else {
+                await supabase
+                    .from('likes')
+                    .update({ like: post?.likes[0]?.like - 1 })
+                    .eq('post_id', post.id);
+                setLike(post?.likes[0]?.like - 1);
+                console.log(post?.likes[0]?.like - 1);
+                setAlter(true);
+            }
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     return (
@@ -87,14 +116,14 @@ const Post = () => {
                     <div className="mx-2 flex items-center">
                         <MdOutlineMessage className="text-3xl" />
                         <p className="mx-1 flex items-center font-medium text-lg mb-1">
-                            {(post?.comments)?.length}
+                            {post?.comments?.map((comment) => (comment.content).length)}
                         </p>
                     </div>
                     <div className="mx-2 flex items-center cursor-pointer"
                         onClick={updateLike}>
                         <FaHeart className="text-3xl text-pink-500" />
                         <p className="mx-1 flex items-center font-medium text-lg mb-1">
-                            {(post?.likes)?.length}
+                            {like}
                         </p>
                     </div>
                 </div>

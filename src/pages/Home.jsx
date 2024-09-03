@@ -11,7 +11,7 @@ const Home = () => {
     const [blogPost, setBlogPost] = useState([]);
     const [users, setUsers] = useState([]);
     const navigate = useNavigate();
-    const { model, user, oAuthStateChange,showNewUser } = useUsers();
+    const { model, user, oAuthStateChange, showNewUser } = useUsers();
 
     // Fetching All Blogs
     useEffect(() => {
@@ -33,7 +33,7 @@ const Home = () => {
                         ),
                         likes(
                             id,
-                            likes
+                            like
                         )
                     `)
                     .order('created_at', { ascending: false });
@@ -124,13 +124,13 @@ const Home = () => {
                                                 <div className="mx-2 flex items-center">
                                                     <MdOutlineMessage className="text-2xl" />
                                                     <p className="mx-1 flex items-center font-medium text-lg mb-1">
-                                                        {(post?.comments)?.length}
+                                                        {post?.comments?.map((comment) => (comment.content).length)}
                                                     </p>
                                                 </div>
                                                 <div className="mx-2 flex items-center">
                                                     <FaHeart className="text-2xl text-pink-500" />
                                                     <p className="mx-1 flex items-center font-medium text-lg mb-1">
-                                                        {(post?.likes)?.length}
+                                                        {/* {post?.likes?.map((like) => like)} */}
                                                     </p>
                                                 </div>
                                             </div>
@@ -139,6 +139,11 @@ const Home = () => {
                                 </div>
                             )
                         })
+                    }
+                    {
+                        blogPost.length === 0 && (<p className="text-center text-3xl font-bold">
+                            No Blog is Posted
+                        </p>)
                     }
                 </div>
             </main>
