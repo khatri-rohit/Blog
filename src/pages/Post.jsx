@@ -65,32 +65,34 @@ const Post = () => {
                     .eq('post_id', id);
                 console.log(data);
                 if (data) {
-                    setLike(data)
+                    setLike(data[0].like)
                 }
             } catch (error) {
                 console.log(error);
             }
         })();
-    }, [like])
+    }, [])
 
+    // Like Article
     const updateLike = async () => {
         try {
             if (alter) {
+                setLike(prev => prev + 1);
                 await supabase
                     .from('likes')
-                    .update({ like: post?.likes[0]?.like + 1 })
+                    .update({ like: like })
                     .eq('post_id', post.id);
-                setLike(post?.likes[0]?.like + 1);
                 setAlter(false);
             } else {
+                setLike(prev => like - 1 <= 0 ? 0 : prev - 1);
                 await supabase
                     .from('likes')
-                    .update({ like: post?.likes[0]?.like - 1 })
+                    .update({ like: like })
                     .eq('post_id', post.id);
-                setLike(post?.likes[0]?.like - 1);
-                console.log(post?.likes[0]?.like - 1);
                 setAlter(true);
             }
+
+            
         } catch (error) {
             console.log(error);
         }

@@ -13,13 +13,12 @@ const Home = () => {
     const navigate = useNavigate();
     const { model, user, oAuthStateChange, showNewUser } = useUsers();
 
-    // Fetching All Blogs
-    useEffect(() => {
-        ; (async () => {
-            try {
-                const { data } = await supabase
-                    .from('blog_posts')
-                    .select(`
+    // Pending Logic
+    const fetchBlogs = async () => {
+        try {
+            const { data } = await supabase
+                .from('blog_posts')
+                .select(`
                         id,
                         user_id,
                         blog_title,
@@ -36,32 +35,68 @@ const Home = () => {
                             like
                         )
                     `)
-                    .order('created_at', { ascending: false });
+                .order('created_at', { ascending: false });
 
-                setBlogPost(data);
-                console.log("Data fetched successfully:\n", data);
-            } catch (error) {
-                console.log("Something Wrong happned while fetching Blog Data\n", error);
-            }
-        })();
+            setBlogPost(data);
+            console.log("Data fetched successfully:\n", data);
+        } catch (error) {
+            console.log("Something Wrong happned while fetching Blog Data\n", error);
+        }
+    }
 
-        ; (async () => {
-            try {
-                const { data } = await supabase
-                    .from('users')
-                    .select(`
+
+    // Fetching All Blogs
+    useEffect(() => {
+        // ; (async () => {
+        //     try {
+        //         const { data } = await supabase
+        //             .from('blog_posts')
+        //             .select(`
+        //                 id,
+        //                 user_id,
+        //                 blog_title,
+        //                 summary,
+        //                 blog_content,
+        //                 formated_time,
+        //                 image_url,
+        //                 comments (
+        //                     id,
+        //                     content
+        //                 ),
+        //                 likes(
+        //                     id,
+        //                     like
+        //                 )
+        //             `)
+        //             .order('created_at', { ascending: false });
+
+        //         setBlogPost(data);
+        //         console.log("Data fetched successfully:\n", data);
+        //     } catch (error) {
+        //         console.log("Something Wrong happned while fetching Blog Data\n", error);
+        //     }
+        // })();
+
+        fetchBlogs()
+
+
+            ; (async () => {
+                try {
+                    const { data } = await supabase
+                        .from('users')
+                        .select(`
                         id,
                         name, 
                         email
                     `);
 
-                setUsers(data);
-                console.log(data);
-            } catch (error) {
-                console.log("Something Wrong happned While fetching Users\n", error);
-            }
-        })();
-    }, []);
+                    setUsers(data);
+                    console.log(data);
+                } catch (error) {
+                    console.log("Something Wrong happned While fetching Users\n", error);
+                }
+            })();
+    }, [user]);
 
     const handlePost = (id) => {
         navigate(`/post/${id}`);
