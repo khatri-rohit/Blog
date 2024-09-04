@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
 import useUsers from "../context/User";
 
+
 const Home = () => {
     const [blogPost, setBlogPost] = useState([]);
     const [users, setUsers] = useState([]);
@@ -38,69 +39,40 @@ const Home = () => {
                 .order('created_at', { ascending: false });
 
             setBlogPost(data);
-            console.log("Data fetched successfully:\n", data);
+            console.log(data);
         } catch (error) {
             console.log("Something Wrong happned while fetching Blog Data\n", error);
         }
-    }
+    };
 
 
     // Fetching All Blogs
     useEffect(() => {
-        // ; (async () => {
-        //     try {
-        //         const { data } = await supabase
-        //             .from('blog_posts')
-        //             .select(`
-        //                 id,
-        //                 user_id,
-        //                 blog_title,
-        //                 summary,
-        //                 blog_content,
-        //                 formated_time,
-        //                 image_url,
-        //                 comments (
-        //                     id,
-        //                     content
-        //                 ),
-        //                 likes(
-        //                     id,
-        //                     like
-        //                 )
-        //             `)
-        //             .order('created_at', { ascending: false });
+        
+        fetchBlogs();
 
-        //         setBlogPost(data);
-        //         console.log("Data fetched successfully:\n", data);
-        //     } catch (error) {
-        //         console.log("Something Wrong happned while fetching Blog Data\n", error);
-        //     }
-        // })();
-
-        fetchBlogs()
-
-
-            ; (async () => {
-                try {
-                    const { data } = await supabase
-                        .from('users')
-                        .select(`
+        ; (async () => {
+            try {
+                const { data } = await supabase
+                    .from('users')
+                    .select(`
                         id,
                         name, 
                         email
                     `);
 
-                    setUsers(data);
-                    console.log(data);
-                } catch (error) {
-                    console.log("Something Wrong happned While fetching Users\n", error);
-                }
-            })();
+                setUsers(data);
+                console.log(data);
+            } catch (error) {
+                console.log("Something Wrong happned While fetching Users\n", error);
+            }
+        })();
     }, [user]);
-
+        
     const handlePost = (id) => {
         navigate(`/post/${id}`);
-    }
+    };
+
     const signOut = async () => {
         try {
             await supabase.auth.signOut()
@@ -108,7 +80,7 @@ const Home = () => {
         } catch (error) {
             console.log("Error While Logout -> ", error);
         }
-    }
+    };
 
     const handleTost = () => {
         toast(() => (
@@ -116,7 +88,7 @@ const Home = () => {
                 Login to Read
             </span>
         ));
-    }
+    };
 
     return (
         <>
