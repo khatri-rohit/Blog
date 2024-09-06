@@ -1,17 +1,17 @@
+import { useState } from "react";
 import {
   createBrowserRouter,
   createRoutesFromElements,
   Route,
   RouterProvider
 } from "react-router-dom";
+import './App.css';
+import { ContextProvider } from './context/User.jsx';
 import Layout from "./layout/Layout";
 import Create from "./pages/Create";
 import Home from "./pages/Home";
 import Post from "./pages/Post";
 import UserBlogs from "./pages/UserBlogs";
-import { ContextProvider } from './context/User.jsx';
-import './App.css';
-import { useState } from "react";
 
 const App = () => {
 

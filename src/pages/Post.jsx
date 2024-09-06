@@ -18,7 +18,7 @@ const Post = () => {
 
     const [likeCount, setLikeCount] = useState(0);
 
-    const [registered, setRegistered] = useState([]);
+    const [registered, setRegister] = useState([]);
 
     const { user } = useUsers();
 
@@ -87,15 +87,12 @@ const Post = () => {
                 .from('likes')
                 .select()
                 .eq('post_id', id);
-            console.log("Likes", data[0]);
             if (data) {
                 setLikes(data[0]);
                 setLikeCount(data[0].like);
-                // const usersLike = data[0].liked_users.split('"');
-                // console.log(usersLike.filter((user) => user.length > 2 && user));
-                // setRegistered(usersLike.filter((user) => user.length > 2 && user));
-                console.log(registered);
-                console.log(user.id);
+                const usersLike = like.liked_users.split('"');
+                var users = usersLike.filter((user) => user.length > 2 && user);
+                setRegister(users);
                 registered.find((use) => use === user.id ? setAlter(true) : setAlter(false));
             }
         } catch (error) {
@@ -107,40 +104,18 @@ const Post = () => {
     // Like Article
     const updateLike = async () => {
         try {
-            // const updateLike = like.like;
-            // const usersLike = like.liked_users.split('"')
-            // var users = usersLike.filter((user) => user.length > 2 && user)
-            // console.log(users);
-            // console.log(user.id);
-            // if (!alter)
-            //     users.find((use) => use === user.id ? setAlter(true) : setAlter(false));
-
-            if (alter) {
-                console.log("Registered --");
-                var updateLikes = (likeCount - 1 <= 0) ? 0 : likeCount - 1;
-                const { data } = await supabase
-                    .from('likes')
-                    .update({ like: updateLikes })
-                    .eq('post_id', id);
-                console.log(data);
-                console.log("Like Decrement -> ", updateLikes);
-                setLikeCount(updateLikes);
-                setAlter(false);
-            } else {
-                setRegistered(prev => console.log([...prev, user.id]));
-                console.log("Not Registered ++");
-                await supabase
-                    .from('likes')
-                    .update({
-                        like: likeCount + 1,
-                        liked_users: registered
-                    })
-                    .eq('post_id', id);
-                console.log("Like Increment -> ", likeCount + 1);
-                console.log(registered);
-                setLikeCount(likeCount + 1);
-                setAlter(true);
-            }
+            var updateLikes = (likeCount - 1 <= 0) ? 0 : likeCount - 1;
+            var updateLikedUser = registered.filter((reg) => reg != user.id);
+            setRegister(alter ? updateLikedUser : [...registered, user.id]);
+            await supabase
+                .from('likes')
+                .update({
+                    like: alter ? updateLikes : likeCount + 1,
+                    liked_users: alter ? updateLikedUser : [...registered, user.id]
+                })
+                .eq('post_id', id);
+            setLikeCount(alter ? updateLikes : likeCount + 1);
+            setAlter(alter ? false : true);
         } catch (error) {
             console.log(error);
         }
@@ -152,7 +127,7 @@ const Post = () => {
                 <div className="flex items-center">
                     <img src={thatUser?.avatar_url ? thatUser?.avatar_url : "/blank-avatar.webp"}
                         className="w-20 rounded-full" />
-                    <div className="mx-2">
+                    <div className="mx-4">
                         <p className="text-slate-500 text-2xl font-semibold">
                             {thatUser?.name}
                         </p>
