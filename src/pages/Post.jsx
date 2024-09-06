@@ -3,6 +3,7 @@ import { FaHeart } from "react-icons/fa";
 import { MdOutlineMessage } from "react-icons/md";
 import { useParams } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
+import useUsers from "../context/User";
 
 
 const Post = () => {
@@ -10,8 +11,18 @@ const Post = () => {
     const { id } = useParams();
     const [post, setPost] = useState([]);
     const [thatUser, setThatUser] = useState('');
-    const [like, setLike] = useState(0);
-    const [alter, setAlter] = useState(true);
+
+    const [like, setLikes] = useState();
+
+    const [comments, setComments] = useState();
+
+    const [likeCount, setLikeCount] = useState(0);
+
+    const [registered, setRegistered] = useState([]);
+
+    const { user } = useUsers();
+
+    const [alter, setAlter] = useState(false);
 
     useEffect(() => {
         ; (async () => {
@@ -26,17 +37,10 @@ const Post = () => {
                         summary,
                         blog_content,
                         formated_time,
-                        image_url,
-                        comments (
-                            id,
-                            content
-                        ),
-                        likes(
-                            id,
-                            like
-                        )
+                        image_url
                     `)
                     .eq('id', id);
+
                 if (data) {
                     setPost(data[0]);
                     setThatUser(data[0].user_id);
@@ -56,43 +60,87 @@ const Post = () => {
 
     }, [])
 
-    useEffect(() => {
-        ; (async () => {
-            try {
-                const { data } = await supabase
-                    .from('likes')
-                    .select()
-                    .eq('post_id', id);
-                console.log(data);
-                if (data) {
-                    setLike(data[0].like)
-                }
-            } catch (error) {
-                console.log(error);
+    const comment = async () => {
+        try {
+            const { data } = await supabase
+                .from('comments')
+                .select()
+                .eq('post_id', id);
+            console.log("Comment", data);
+            if (data) {
+                setComments(data[0]);
             }
-        })();
-    }, [])
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    useEffect(() => {
+        likes();
+        comment();
+    }, [likeCount]);
+
+
+    const likes = async () => {
+        try {
+            const { data } = await supabase
+                .from('likes')
+                .select()
+                .eq('post_id', id);
+            console.log("Likes", data[0]);
+            if (data) {
+                setLikes(data[0]);
+                setLikeCount(data[0].like);
+                // const usersLike = data[0].liked_users.split('"');
+                // console.log(usersLike.filter((user) => user.length > 2 && user));
+                // setRegistered(usersLike.filter((user) => user.length > 2 && user));
+                console.log(registered);
+                console.log(user.id);
+                registered.find((use) => use === user.id ? setAlter(true) : setAlter(false));
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
 
     // Like Article
     const updateLike = async () => {
         try {
+            // const updateLike = like.like;
+            // const usersLike = like.liked_users.split('"')
+            // var users = usersLike.filter((user) => user.length > 2 && user)
+            // console.log(users);
+            // console.log(user.id);
+            // if (!alter)
+            //     users.find((use) => use === user.id ? setAlter(true) : setAlter(false));
+
             if (alter) {
-                setLike(prev => prev + 1);
-                await supabase
+                console.log("Registered --");
+                var updateLikes = (likeCount - 1 <= 0) ? 0 : likeCount - 1;
+                const { data } = await supabase
                     .from('likes')
-                    .update({ like: like })
-                    .eq('post_id', post.id);
+                    .update({ like: updateLikes })
+                    .eq('post_id', id);
+                console.log(data);
+                console.log("Like Decrement -> ", updateLikes);
+                setLikeCount(updateLikes);
                 setAlter(false);
             } else {
-                setLike(prev => like - 1 <= 0 ? 0 : prev - 1);
+                setRegistered(prev => console.log([...prev, user.id]));
+                console.log("Not Registered ++");
                 await supabase
                     .from('likes')
-                    .update({ like: like })
-                    .eq('post_id', post.id);
+                    .update({
+                        like: likeCount + 1,
+                        liked_users: registered
+                    })
+                    .eq('post_id', id);
+                console.log("Like Increment -> ", likeCount + 1);
+                console.log(registered);
+                setLikeCount(likeCount + 1);
                 setAlter(true);
             }
-
-            
         } catch (error) {
             console.log(error);
         }
@@ -118,14 +166,14 @@ const Post = () => {
                     <div className="mx-2 flex items-center">
                         <MdOutlineMessage className="text-3xl" />
                         <p className="mx-1 flex items-center font-medium text-lg mb-1">
-                            {post?.comments?.map((comment) => (comment.content).length)}
+                            {comments?.content.length}
                         </p>
                     </div>
                     <div className="mx-2 flex items-center cursor-pointer"
                         onClick={updateLike}>
                         <FaHeart className="text-3xl text-pink-500" />
                         <p className="mx-1 flex items-center font-medium text-lg mb-1">
-                            {like}
+                            {likeCount}
                         </p>
                     </div>
                 </div>

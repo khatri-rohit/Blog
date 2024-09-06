@@ -67,7 +67,8 @@ const Create = () => {
         .from('comments')
         .insert([{
           post_id: id,
-          content: []
+          content: [],
+          user: []
         }]);
 
       navigate('/');

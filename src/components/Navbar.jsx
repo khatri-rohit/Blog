@@ -77,7 +77,6 @@ const Navbar = () => {
         try {
             const { user } = response;
             console.log(response);
-            console.log(user.user_metadata.avatar_url);
             // if (user.identities[0].provider === 'email') {
             const { data } = await supabase
                 .from('users')
@@ -97,7 +96,10 @@ const Navbar = () => {
     const githubSignIn = async () => {
         try {
             await supabase.auth.signInWithOAuth({
-                provider: "github"
+                provider: "github",
+                options:{
+                    redirectTo:'http://localhost:5173'
+                }
             });
             changeModel(!model);
             showNewUser && chnageNewUser()
@@ -110,6 +112,9 @@ const Navbar = () => {
         try {
             await supabase.auth.signInWithOAuth({
                 provider: 'google',
+                options: {
+                    redirectTo: 'http://localhost:5173'
+                }
             });
             changeModel(!model);
         } catch (error) {
@@ -137,7 +142,7 @@ const Navbar = () => {
     useEffect(() => {
         (async () => {
             try {
-                if (user) {
+                if (user !== null) {
                     const data = (await supabase.auth.getSession()).data
                     oAuthStateChange(data.session.user);
                     authUser(data.session);
@@ -151,8 +156,10 @@ const Navbar = () => {
 
     // Remove Scroll while Login Model is Open
     useEffect(() => {
-        document.body.style.overflow = model ? "hidden" : "unset";
-        document.body.style.overflow = showNewUser ? "hidden" : "unset";
+        if (model)
+            document.body.style.overflow = model ? "hidden" : "unset";
+        else
+            document.body.style.overflow = showNewUser ? "hidden" : "unset";
     }, [model, showNewUser]);
 
     return (

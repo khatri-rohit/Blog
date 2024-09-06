@@ -1,5 +1,5 @@
 /* eslint-disable no-unsafe-optional-chaining */
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { FaHeart } from "react-icons/fa6";
 import { MdOutlineMessage } from "react-icons/md";
@@ -48,7 +48,7 @@ const Home = () => {
 
     // Fetching All Blogs
     useEffect(() => {
-        
+
         fetchBlogs();
 
         ; (async () => {
@@ -67,8 +67,9 @@ const Home = () => {
                 console.log("Something Wrong happned While fetching Users\n", error);
             }
         })();
+
     }, [user]);
-        
+
     const handlePost = (id) => {
         navigate(`/post/${id}`);
     };
@@ -90,6 +91,13 @@ const Home = () => {
         ));
     };
 
+    // function Loading() {
+    //     console.log("Loading");
+    //     return (
+    //         <p className="text-3xl text-black">Loading...</p>
+    //     )
+    // }
+
     return (
         <>
             <Toaster
@@ -98,6 +106,8 @@ const Home = () => {
             <main className={`md:p-8 ${model || showNewUser ? 'blur-[5px]' : ''}`}>
                 {Object.keys(user).length > 0 && <button className="px-2"
                     onClick={signOut}>Logout</button>}
+
+                {/* <Suspense fallback={<Loading />}> */}
                 <div className="container mx-auto w-3/4">
                     {
                         blogPost?.map((post, _) => {
@@ -137,7 +147,7 @@ const Home = () => {
                                                 <div className="mx-2 flex items-center">
                                                     <FaHeart className="text-2xl text-pink-500" />
                                                     <p className="mx-1 flex items-center font-medium text-lg mb-1">
-                                                        {/* {post?.likes?.map((like) => like)} */}
+                                                        {post?.likes?.map((like) => like.like)}
                                                     </p>
                                                 </div>
                                             </div>
@@ -147,15 +157,12 @@ const Home = () => {
                             )
                         })
                     }
-                    {
-                        blogPost.length === 0 && (<p className="text-center text-3xl font-bold">
-                            No Blog is Posted
-                        </p>)
-                    }
                 </div>
+                {/* </Suspense> */}
             </main>
         </>
     )
 };
 
 export default Home;
+
