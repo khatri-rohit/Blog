@@ -16,7 +16,8 @@ const Home = () => {
         user,
         oAuthStateChange,
         showNewUser,
-        searchResult
+        searchResult,
+        getPosts
     } = useUsers();
 
     // Pending Logic
@@ -44,7 +45,6 @@ const Home = () => {
                 .order('created_at', { ascending: false });
 
             setBlogPost(data);
-            console.log(data);
         } catch (error) {
             console.log("Something Wrong happned while fetching Blog Data\n", error);
         }
@@ -55,7 +55,9 @@ const Home = () => {
     }, [searchResult])
 
     const searchPost = (searchResult) => {
-        setBlogPost(blogPost?.filter((post) => post?.blog_title?.toLowerCase().includes(searchResult) && post));
+        const results = blogPost?.filter((post) => post?.blog_title?.toLowerCase().includes(searchResult) && post);
+        setBlogPost(results);
+        getPosts(results);
     };
 
     // Fetching All Blogs
@@ -72,7 +74,6 @@ const Home = () => {
                     `);
 
                 setUsers(data);
-                console.log(data);
             } catch (error) {
                 console.log("Something Wrong happned While fetching Users\n", error);
             }
@@ -101,13 +102,6 @@ const Home = () => {
         ));
     };
 
-    // function Loading() {
-    //     console.log("Loading");
-    //     return (
-    //         <p className="text-3xl text-black">Loading...</p>
-    //     )
-    // }
-
     return (
         <>
             <Toaster
@@ -117,7 +111,6 @@ const Home = () => {
                 {Object.keys(user).length > 0 && <button className="px-2"
                     onClick={signOut}>Logout</button>}
 
-                {/* <Suspense fallback={<Loading />}> */}
                 <div className="container mx-auto w-3/4">
                     {
                         blogPost?.map((post, _) => {
@@ -168,7 +161,6 @@ const Home = () => {
                         })
                     }
                 </div>
-                {/* </Suspense> */}
             </main>
         </>
     )

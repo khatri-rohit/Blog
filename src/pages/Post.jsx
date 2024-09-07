@@ -66,7 +66,7 @@ const Post = () => {
                 .from('comments')
                 .select()
                 .eq('post_id', id);
-            console.log("Comment", data);
+            console.log("Comment ", data);
             if (data) {
                 setComments(data[0]);
             }
@@ -91,19 +91,14 @@ const Post = () => {
                 setLikes(data[0]);
                 setLikeCount(data[0].like);
                 const usersLike = data[0].liked_users.split('"');
-                console.log(usersLike);
                 var users = usersLike.filter((user) => user.length > 2 && user);
                 setRegister(users);
                 users.find((use) => use === user.id ? setAlter(true) : setAlter(false));
-                users.find((use) => use === user.id ? console.log(use) : console.log(false));
-                console.log(registered[0] === user.id);
-                console.log();
             }
         } catch (error) {
             console.log(error);
         }
     }
-
 
     // Like Article
     const updateLike = async () => {
@@ -111,7 +106,6 @@ const Post = () => {
             var updateLikes = (likeCount - 1 <= 0) ? 0 : likeCount - 1;
             var updateLikedUser = registered.filter((reg) => reg != user.id);
             setRegister(alter ? updateLikedUser : [...registered, user.id]);
-            console.log(alter);
             await supabase
                 .from('likes')
                 .update({
@@ -121,8 +115,6 @@ const Post = () => {
                 .eq('post_id', id);
             setLikeCount(alter ? updateLikes : likeCount + 1);
             setAlter(prev => !prev);
-            console.log(alter ? updateLikes + " Subtract" : (likeCount + 1) + " Add");
-            console.log(alter ? updateLikedUser : [...registered, user.id]);
 
         } catch (error) {
             console.log(error);
@@ -186,7 +178,6 @@ const Post = () => {
                                 </div>
                             </div>
                         </div>
-
                     </>
                 )
             }

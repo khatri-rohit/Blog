@@ -3,9 +3,10 @@ import { useForm } from 'react-hook-form';
 import { BiLogoGithub, BiLogoGoogle, BiSearch } from "react-icons/bi";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { SlNote } from "react-icons/sl";
-import { NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, Route, useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
 import useUsers from "../context/User";
+import Home from "../pages/Home";
 
 const Navbar = () => {
 
@@ -168,15 +169,16 @@ const Navbar = () => {
         setTimeoutId(
             setTimeout(() => {
                 changeSearchResult(input);
-            }, 100)
+            }, 450)
         );
     };
 
     const handleSearchSubmit = (e) => {
         e.preventDefault();
         changeSearchResult(search);
-        setSearch('');
-    };
+        console.log(search);
+        navigate(`/search?q=${encodeURIComponent(search)}`)
+    }
 
     useEffect(() => {
         return () => clearTimeout(timeoutId);
