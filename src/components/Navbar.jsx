@@ -113,7 +113,7 @@ const Navbar = () => {
             await supabase.auth.signInWithOAuth({
                 provider: 'google',
                 options: {
-                    redirectTo: 'http://localhost:517/'
+                    redirectTo: 'http://localhost:5173'
                 }
             });
             changeModel(!model);
