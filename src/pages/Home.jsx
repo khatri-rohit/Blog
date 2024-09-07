@@ -1,5 +1,4 @@
-/* eslint-disable no-unsafe-optional-chaining */
-import {  useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { FaHeart } from "react-icons/fa6";
 import { MdOutlineMessage } from "react-icons/md";
@@ -12,7 +11,13 @@ const Home = () => {
     const [blogPost, setBlogPost] = useState([]);
     const [users, setUsers] = useState([]);
     const navigate = useNavigate();
-    const { model, user, oAuthStateChange, showNewUser } = useUsers();
+    const {
+        model,
+        user,
+        oAuthStateChange,
+        showNewUser,
+        searchResult
+    } = useUsers();
 
     // Pending Logic
     const fetchBlogs = async () => {
@@ -45,12 +50,17 @@ const Home = () => {
         }
     };
 
+    useEffect(() => {
+        searchResult.trim().length >= 2 ? searchPost(searchResult) : fetchBlogs();
+    }, [searchResult])
+
+    const searchPost = (searchResult) => {
+        setBlogPost(blogPost?.filter((post) => post?.blog_title?.toLowerCase().includes(searchResult) && post));
+    };
 
     // Fetching All Blogs
     useEffect(() => {
-
         fetchBlogs();
-
         ; (async () => {
             try {
                 const { data } = await supabase
@@ -68,7 +78,7 @@ const Home = () => {
             }
         })();
 
-    }, [user]);
+    }, []);
 
     const handlePost = (id) => {
         navigate(`/post/${id}`);
@@ -112,7 +122,7 @@ const Home = () => {
                     {
                         blogPost?.map((post, _) => {
                             const persons = users?.find((person) => person.id === post.user_id);
-                            const summary = (post?.summary).substring(0, 230) + '...';
+                            const summary = post?.summary.substring(0, 230) + '...';
                             return (
                                 <div key={_} className="my-5 flex shadow-md bg-white rounded-lg">
                                     <div className="w-1/3 mx-1 p-1 my-auto cursor-pointer"

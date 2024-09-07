@@ -7,6 +7,8 @@ export const UserContext = createContext({
     showNewUser: false,
     changeModel: () => { },
     chnageNewUser: () => { },
+    searchResult: [],
+    changeSearchResult: () => { }
 });
 
 

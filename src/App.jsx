@@ -29,6 +29,7 @@ const App = () => {
   const [model, setModel] = useState(false);
   const [showNewUser, setNewUser] = useState(false);
   const [user, setUser] = useState({});
+  const [searchResult, setSearchResult] = useState('');
 
   const oAuthStateChange = (data) => {
     setUser(data);
@@ -43,11 +44,18 @@ const App = () => {
   const changeModel = (value) => {
     setModel(value);
   };
-  
+
+  const changeSearchResult = (result) =>{
+    setSearchResult(result);
+    console.log(result);
+  }
+
   console.log(user);
-  
+
   return (
-    <ContextProvider value={{ model, oAuthStateChange, changeModel, user,chnageNewUser,showNewUser }}>
+    <ContextProvider value={
+      { model, oAuthStateChange, changeModel, user, chnageNewUser, showNewUser, searchResult, changeSearchResult }
+    }>
       <div className="p-2">
         <RouterProvider router={router} />
       </div>
