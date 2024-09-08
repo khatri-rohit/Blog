@@ -4,29 +4,27 @@ import { MdOutlineMessage } from "react-icons/md";
 import { useParams } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
 import useUsers from "../context/User";
-
+import { BeatLoader } from 'react-spinners';
 
 const Post = () => {
 
     const { id } = useParams();
+
     const [post, setPost] = useState([]);
     const [thatUser, setThatUser] = useState('');
-
+    const [loading, setLoading] = useState(false);
+    // eslint-disable-next-line no-unused-vars
     const [like, setLikes] = useState();
-
     const [comments, setComments] = useState();
-
     const [likeCount, setLikeCount] = useState(0);
-
     const [registered, setRegister] = useState([]);
-
-    const { user } = useUsers();
-
     const [alter, setAlter] = useState(false);
+    const { user } = useUsers();
 
     useEffect(() => {
         ; (async () => {
             try {
+                setLoading(true);
                 // Selected Blog
                 const { data } = await supabase
                     .from('blog_posts')
@@ -43,6 +41,7 @@ const Post = () => {
 
                 if (data) {
                     setPost(data[0]);
+                    setLoading(false);
                     setThatUser(data[0].user_id);
 
                     // Author Details
@@ -57,7 +56,6 @@ const Post = () => {
                 console.log(error);
             }
         })();
-
     }, [])
 
     const comment = async () => {
@@ -66,7 +64,7 @@ const Post = () => {
                 .from('comments')
                 .select()
                 .eq('post_id', id);
-            console.log("Comment ", data);
+            console.log("Comment ", data[0]);
             if (data) {
                 setComments(data[0]);
             }
@@ -74,12 +72,6 @@ const Post = () => {
             console.log(error);
         }
     }
-
-    useEffect(() => {
-        likes();
-        comment();
-    }, []);
-
 
     const likes = async () => {
         try {
@@ -121,6 +113,11 @@ const Post = () => {
         }
     }
 
+    useEffect(() => {
+        likes();
+        comment();
+    }, []);
+
     return (
         <section className="p-5 bg-slate-100">
             <div className="my-3 flex items-center justify-between container mx-auto p-4">
@@ -128,7 +125,7 @@ const Post = () => {
                     <img src={thatUser?.avatar_url ? thatUser?.avatar_url : "/blank-avatar.webp"}
                         className="w-20 rounded-full" />
                     <div className="mx-4">
-                        <p className="text-slate-500 text-2xl font-semibold">
+                        <p className="text-slate-500 text-2xl font-bold">
                             {thatUser?.name}
                         </p>
                         <p className="text-black text-lg font-medium">
@@ -138,7 +135,7 @@ const Post = () => {
                 </div>
 
                 <div className="flex items-center">
-                    <div className="mx-2 flex items-center">
+                    <div className="mx-2 flex items-center cursor-pointer">
                         <MdOutlineMessage className="text-3xl" />
                         <p className="mx-1 flex items-center font-medium text-lg mb-1">
                             {comments?.content.length}
@@ -146,7 +143,7 @@ const Post = () => {
                     </div>
                     <div className="mx-2 flex items-center cursor-pointer"
                         onClick={updateLike}>
-                        <FaHeart className="text-3xl text-pink-500" />
+                        <FaHeart className="text-3xl text-pink-500 cursor-pointer" />
                         <p className="mx-1 flex items-center font-medium text-lg mb-1">
                             {likeCount}
                         </p>
@@ -154,6 +151,12 @@ const Post = () => {
                 </div>
 
             </div>
+            {
+                loading &&
+                <p className="text-center">
+                    <BeatLoader color="#16325B" />
+                </p>
+            }
             {post &&
                 (
                     <>
@@ -169,7 +172,7 @@ const Post = () => {
                                 </div>
                                 <div className="w-full my-3">
                                     <img src={post?.image_url}
-                                        className="h-[35em] mx-auto border" />
+                                        className="h-[35em] mx-auto" />
                                 </div>
                                 <div className="w-3/4 mx-auto">
                                     <div className="text-2xl p-3"

@@ -5,11 +5,14 @@ import { MdOutlineMessage } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
 import useUsers from "../context/User";
+import { PuffLoader } from 'react-spinners';
 
 
 const Home = () => {
     const [blogPost, setBlogPost] = useState([]);
     const [users, setUsers] = useState([]);
+    const [loading, setLoading] = useState(false);
+
     const navigate = useNavigate();
     const {
         model,
@@ -23,6 +26,7 @@ const Home = () => {
     // Pending Logic
     const fetchBlogs = async () => {
         try {
+            setLoading(true);
             const { data } = await supabase
                 .from('blog_posts')
                 .select(`
@@ -43,8 +47,8 @@ const Home = () => {
                         )
                     `)
                 .order('created_at', { ascending: false });
-
             setBlogPost(data);
+            setLoading(false);
         } catch (error) {
             console.log("Something Wrong happned while fetching Blog Data\n", error);
         }
@@ -107,23 +111,32 @@ const Home = () => {
             <Toaster
                 position="top-center"
             />
-            <main className={`md:p-8 ${model || showNewUser ? 'blur-[5px]' : ''}`}>
-                {Object.keys(user).length > 0 && <button className="px-2"
-                    onClick={signOut}>Logout</button>}
 
-                <div className="container mx-auto w-3/4">
+            <main className={`md:p-8 ${model || showNewUser ? 'blur-[5px]' : ''}`}>
+                {
+                    Object.keys(user).length > 0 && <button className="px-2"
+                        onClick={signOut}>Logout</button>
+                }
+
+                <div className="container mx-auto w-3/4 flex flex-col items-center justify-center transition-all">
+                    {
+                        loading &&
+                        <p className="flex justify-center">
+                            <PuffLoader speedMultiplier={2} color="#48CFCB" />
+                        </p>
+                    }
                     {
                         blogPost?.map((post, _) => {
                             const persons = users?.find((person) => person.id === post.user_id);
                             const summary = post?.summary.substring(0, 230) + '...';
                             return (
-                                <div key={_} className="my-5 flex shadow-md bg-white rounded-lg">
-                                    <div className="w-1/3 mx-1 p-1 my-auto cursor-pointer"
+                                <div key={_} className={`my-5 flex justify-around shadow-md bg-white rounded-lg duration-300 transition hover:-translate-y-3  ${_ % 2 == 0 ? `origin-right` : `origin-left`} hover:scale-95 `}>
+                                    <div className="w-[33%] p-1 my-auto cursor-pointer"
                                         onClick={() => Object.keys(user).length > 0 ? handlePost(post?.id) : handleTost()}>
                                         <img src={post?.image_url}
-                                            className="object-contain h-72 w-full" />
+                                            className="object-contain w-full rounded-xl m-1" />
                                     </div>
-                                    <div className="mx-2 w-3/4 p-2 flex flex-col justify-evenly">
+                                    <div className="w-[65%] p-2 flex flex-col justify-evenly">
                                         <p className="my-2 font-medium">
                                             ✨ {persons?.name}
                                         </p>

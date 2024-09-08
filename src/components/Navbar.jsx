@@ -1,12 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from 'react-hook-form';
+import { Link, useNavigate } from "react-router-dom";
+import { supabase } from "../../supabaseClient";
+import useUsers from "../context/User";
 import { BiLogoGithub, BiLogoGoogle, BiSearch } from "react-icons/bi";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { SlNote } from "react-icons/sl";
-import { Link, NavLink, Route, useNavigate } from "react-router-dom";
-import { supabase } from "../../supabaseClient";
-import useUsers from "../context/User";
-import Home from "../pages/Home";
 
 const Navbar = () => {
 
@@ -26,7 +25,8 @@ const Navbar = () => {
         oAuthStateChange,
         showNewUser,
         chnageNewUser,
-        changeSearchResult
+        changeSearchResult,
+        searchResult
     } = useUsers();
 
     const modalContainerRef = useRef();
@@ -98,9 +98,9 @@ const Navbar = () => {
         try {
             await supabase.auth.signInWithOAuth({
                 provider: "github",
-                // options: {
-                //     // redirectTo: 'http://localhost:5173'
-                // }
+                options: {
+                    redirectTo: 'http://localhost:5173'
+                }
             });
             changeModel(!model);
             showNewUser && chnageNewUser()
@@ -113,9 +113,9 @@ const Navbar = () => {
         try {
             await supabase.auth.signInWithOAuth({
                 provider: 'google',
-                // options: {
-                //     // redirectTo: 'http://localhost:5173'
-                // }
+                options: {
+                    redirectTo: 'http://localhost:5173'
+                }
             });
             changeModel(!model);
         } catch (error) {
@@ -163,22 +163,22 @@ const Navbar = () => {
             document.body.style.overflow = showNewUser ? "hidden" : "unset";
     }, [model, showNewUser]);
 
-    const handleSearch = (e) => {
+    const handleSearch = useCallback((e) => {
         const input = e.target.value;
         setSearch(input);
         setTimeoutId(
             setTimeout(() => {
                 changeSearchResult(input);
-            }, 450)
+            }, 350)
         );
-    };
+    }, [searchResult])
 
-    const handleSearchSubmit = (e) => {
+    const handleSearchSubmit = useCallback((e) => {
         e.preventDefault();
         changeSearchResult(search);
         console.log(search);
         navigate(`/search?q=${encodeURIComponent(search)}`)
-    }
+    }, [changeSearchResult, navigate, search])
 
     useEffect(() => {
         return () => clearTimeout(timeoutId);
@@ -405,13 +405,13 @@ const Navbar = () => {
 
             <nav ref={modalContainerRef} className={`flex items-center justify-between px-2 py-4 border-b-2 ${model || showNewUser ? 'blur ' : ''}`}>
                 <div className="flex items-center justify-between">
-                    <NavLink to={'/'} className="flex items-center mx-3 outline-none">
+                    <Link to={'/'} className="flex items-center mx-3 outline-none">
                         <img src="/blogicon.png"
                             className="w-10" />
                         <p className="mx-2 font-semibold text-2xl">
                             DevDiscuss
                         </p>
-                    </NavLink>
+                    </Link>
                     <form
                         className="input-feild flex mx-1 items-center bg-slate-200  rounded-xl"
                         onSubmit={handleSearchSubmit}
@@ -431,13 +431,15 @@ const Navbar = () => {
                     Object.keys(user).length !== 0 ?
                         (<>
                             <div className="flex items-center justify-between">
-                                <NavLink to={"/create"} className="flex items-center mx-1 hover:text-slate-500 cursor-pointer">
-                                    <SlNote className="text-xl" />
-                                    <p className="mx-1 font-normal">Write</p>
-                                </NavLink>
+                                <Link to={"/create"} className="flex items-center mx-1">
+                                    <div className="mx-3 flex items-center hover:text-slate-500 cursor-pointer">
+                                        <SlNote className="text-xl" />
+                                        <p className="mx-1 font-normal">Write</p>
+                                    </div>
+                                </Link>
                                 <div className="mx-1">
                                     <img src={user?.user_metadata.avatar_url ? user?.user_metadata.avatar_url : "/blank-avatar.webp"}
-                                        className="w-10 rounded-full" />
+                                        className="w-10 rounded-full hover:border-2 border-gray-700 cursor-pointer transition-all duration-75" />
                                 </div>
                             </div>
                         </>) : (

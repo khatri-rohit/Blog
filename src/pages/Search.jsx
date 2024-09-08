@@ -1,24 +1,25 @@
-import toast from "react-hot-toast";
-import useUsers from "../context/User";
-import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
 import { FaHeart } from "react-icons/fa6";
 import { MdOutlineMessage } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
+import useUsers from "../context/User";
+
 
 const Search = () => {
 
     const queryParams = new URLSearchParams(location.search);
-    const search = queryParams.get('q');
+    const q = queryParams.get('q');
 
-    const { getPost, user, getPosts } = useUsers();
+    const { getPost, user, getPosts, searchResult } = useUsers();
     const navigate = useNavigate();
     const [users, setUsers] = useState([]);
 
     const handleTost = () => {
         toast(() => (
-            <span>
-                Login to Read
+            <span className="text-xl">
+                Enter Something
             </span>
         ));
     };
@@ -43,9 +44,10 @@ const Search = () => {
                             id,
                             like
                         )
-                    `).or(`blog_title.ilike.%${search}%`)
+                    `).or(`blog_title.ilike.%${searchResult.trim().length >= 2 ? searchResult : q}%`)
                 .order('created_at', { ascending: false });
             getPosts(data);
+            console.log(data);
         } catch (error) {
             console.log("Something Wrong happned while fetching Searched Blog\n", error);
         }
@@ -68,9 +70,12 @@ const Search = () => {
     };
 
     useEffect(() => {
-        fetchBlogs();
-        fetchUsers();
-    }, []);
+        if (searchResult.trim().length !== 0){
+            fetchBlogs();
+            fetchUsers();
+        } else
+            handleTost()
+    }, [searchResult.trim().length >= 2, q]);
 
     const handlePost = (id) => {
         navigate(`/post/${id}`);
@@ -78,6 +83,14 @@ const Search = () => {
 
     return (
         <>
+            <Toaster
+                position="top-center"
+            />
+
+            {
+
+            }
+
             <div className="container mx-auto w-3/4">
                 {
                     getPost?.map((post, _) => {
