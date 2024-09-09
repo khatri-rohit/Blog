@@ -119,72 +119,78 @@ const Post = () => {
     }, []);
 
     return (
-        <section className="p-5 bg-slate-100">
-            <div className="my-3 flex items-center justify-between container mx-auto p-4">
-                <div className="flex items-center">
-                    <img src={thatUser?.avatar_url ? thatUser?.avatar_url : "/blank-avatar.webp"}
-                        className="w-20 rounded-full" />
-                    <div className="mx-4">
-                        <p className="text-slate-500 text-2xl font-bold">
-                            {thatUser?.name}
-                        </p>
-                        <p className="text-black text-lg font-medium">
-                            {post?.formated_time}
-                        </p>
-                    </div>
-                </div>
+        <>
+            <aside className="">
 
-                <div className="flex items-center">
-                    <div className="mx-2 flex items-center cursor-pointer">
-                        <MdOutlineMessage className="text-3xl" />
-                        <p className="mx-1 flex items-center font-medium text-lg mb-1">
-                            {comments?.content.length}
-                        </p>
+            </aside>
+            <section className="p-5 bg-slate-100">
+                <div className="my-3 flex items-center justify-between container mx-auto p-4">
+                    <div className="flex items-center">
+                        <img src={thatUser?.avatar_url ? thatUser?.avatar_url : "/blank-avatar.webp"}
+                            className="w-20 rounded-full" />
+                        <div className="mx-4">
+                            <p className="text-slate-500 text-2xl font-bold">
+                                {thatUser?.name}
+                            </p>
+                            <p className="text-black text-lg font-medium">
+                                {post?.formated_time}
+                            </p>
+                        </div>
                     </div>
-                    <div className="mx-2 flex items-center cursor-pointer"
-                        onClick={updateLike}>
-                        <FaHeart className="text-3xl text-pink-500 cursor-pointer" />
-                        <p className="mx-1 flex items-center font-medium text-lg mb-1">
-                            {likeCount}
-                        </p>
-                    </div>
-                </div>
 
-            </div>
-            {
-                loading &&
-                <p className="text-center">
-                    <BeatLoader color="#16325B" />
-                </p>
-            }
-            {post &&
-                (
-                    <>
-                        <div className="p-3 container mx-auto w-3/4">
-                            <div className="mt-10">
-                                <div className="w-3/4 mx-auto">
-                                    <p className="text-5xl text-center font-extrabold mb-7">
-                                        {post?.blog_title}
-                                    </p>
-                                    <p className="text-xl text-center text-gray-400 mt-3 mb-5">
-                                        {post?.summary}
-                                    </p>
-                                </div>
-                                <div className="w-full my-3">
-                                    <img src={post?.image_url}
-                                        className="h-[35em] mx-auto" />
-                                </div>
-                                <div className="w-3/4 mx-auto">
-                                    <div className="text-2xl p-3"
-                                        dangerouslySetInnerHTML={{ __html: post?.blog_content }}
-                                    />
+                    <div className="flex items-center">
+                        <div className="mx-2 flex items-center cursor-pointer">
+                            <MdOutlineMessage className="text-3xl" />
+                            <p className="mx-1 flex items-center font-medium text-lg mb-1">
+                                {comments?.content.length}
+                            </p>
+                        </div>
+                        <div className="mx-2 flex items-center cursor-pointer"
+                            onClick={updateLike}>
+                            <FaHeart className="text-3xl text-pink-500 cursor-pointer" />
+                            <p className="mx-1 flex items-center font-medium text-lg mb-1">
+                                {likeCount}
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+                {
+                    loading &&
+                    <p className="text-center">
+                        <BeatLoader color="#16325B" />
+                    </p>
+                }
+                {
+                    post &&
+                    (
+                        <>
+                            <div className="p-3 container mx-auto w-3/4">
+                                <div className="mt-10">
+                                    <div className="w-3/4 mx-auto">
+                                        <p className="text-5xl text-center font-extrabold mb-7 text-balance">
+                                            {post?.blog_title}
+                                        </p>
+                                        <p className="text-xl text-center text-gray-400 mt-3 mb-5 text-balance">
+                                            {post?.summary}
+                                        </p>
+                                    </div>
+                                    <div className="w-full my-3">
+                                        <img src={post?.image_url}
+                                            className="h-[35em] mx-auto" />
+                                    </div>
+                                    <div className="w-[75%] mx-auto">
+                                        <div className="text-2xl p-3 text-pretty"
+                                            dangerouslySetInnerHTML={{ __html: post?.blog_content }}
+                                        />
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </>
-                )
-            }
-        </section>
+                        </>
+                    )
+                }
+            </section>
+        </>
     )
 };
 

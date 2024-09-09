@@ -8,28 +8,14 @@ import { ScaleLoader } from 'react-spinners';
 import './App.css';
 import { ContextProvider } from './context/User.jsx';
 import Layout from "./layout/Layout";
-import UserBlogs from "./pages/UserBlogs";
 
 const Home = lazy(() => import("./pages/Home"))
 const Post = lazy(() => import("./pages/Post"))
 const Search = lazy(() => import("./pages/Search"))
 const Create = lazy(() => import("./pages/Create"))
+const UserBlogs = lazy(() => import("./pages/UserBlogs"))
 
 const App = () => {
-
-  // const router = createBrowserRouter(
-  //   createRoutesFromElements(
-  //     <Suspense fallback={<p className="text-3xl text-center">Loading...</p>}>
-  //       <Route path="/" element={<Layout />} >
-  //         <Route index Component={Home} />
-  //         <Route path="/post/:id" element={<Post />} />
-  //         <Route path="/search" element={<Search />} />
-  //         <Route path="/create" element={<Create />} />
-  //         <Route path="/posts" element={<UserBlogs />} />
-  //       </Route>
-  //     </Suspense>
-  //   )
-  // );
 
   const [model, setModel] = useState(false);
   const [showNewUser, setNewUser] = useState(false);
@@ -73,7 +59,6 @@ const App = () => {
     <ContextProvider value={
       { model, oAuthStateChange, changeModel, user, chnageNewUser, showNewUser, searchResult, changeSearchResult, getPost, getPosts }
     }>
-      {/* <RouterProvider router={router} /> */}
       <BrowserRouter>
         <Suspense fallback={<Loader />}>
           <div className="p-2">
@@ -83,7 +68,7 @@ const App = () => {
                 <Route path="/post/:id" Component={Post} />
                 <Route path="/search" Component={Search} />
                 <Route path="/create" Component={Create} />
-                <Route path="/posts" element={<UserBlogs />} />
+                <Route path="/posts" element={UserBlogs} />
               </Route>
             </Routes>
           </div>

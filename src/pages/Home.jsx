@@ -100,7 +100,7 @@ const Home = () => {
 
     const handleTost = () => {
         toast(() => (
-            <span>
+            <span className="text-xl">
                 Login to Read
             </span>
         ));
@@ -122,7 +122,7 @@ const Home = () => {
                     {
                         loading &&
                         <p className="flex justify-center">
-                            <PuffLoader speedMultiplier={2} color="#48CFCB" />
+                            <PuffLoader speedMultiplier={2} />
                         </p>
                     }
                     {
