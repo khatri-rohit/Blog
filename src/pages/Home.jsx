@@ -130,7 +130,7 @@ const Home = () => {
                             const persons = users?.find((person) => person.id === post.user_id);
                             const summary = post?.summary.substring(0, 230) + '...';
                             return (
-                                <div key={_} className={`my-5 flex justify-around shadow-md bg-white rounded-lg duration-300 transition hover:-translate-y-3  ${_ % 2 == 0 ? `origin-right` : `origin-left`} hover:scale-95 `}>
+                                <div key={_} className={`my-5 flex justify-around shadow-md bg-white rounded-lg duration-300 transition hover:-translate-y-4 origin-center hover:scale-95 `}>
                                     <div className="w-[33%] p-1 my-auto cursor-pointer"
                                         onClick={() => Object.keys(user).length > 0 ? handlePost(post?.id) : handleTost()}>
                                         <img src={post?.image_url}
