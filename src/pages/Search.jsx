@@ -1,8 +1,10 @@
+/* eslint-disable react/no-unescaped-entities */
 import { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { FaHeart } from "react-icons/fa6";
 import { MdOutlineMessage } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
+import { BeatLoader } from 'react-spinners';
 import { supabase } from "../../supabaseClient";
 import useUsers from "../context/User";
 
@@ -12,9 +14,11 @@ const Search = () => {
     const queryParams = new URLSearchParams(location.search);
     const q = queryParams.get('q');
 
-    const { getPost, user, getPosts, searchResult } = useUsers();
     const navigate = useNavigate();
     const [users, setUsers] = useState([]);
+    const [loading, setLoading] = useState(false);
+
+    const { getPost, user, getPosts, searchResult } = useUsers();
 
     const handleTost = () => {
         toast(() => (
@@ -26,6 +30,7 @@ const Search = () => {
 
     const fetchBlogs = async () => {
         try {
+            setLoading(true);
             const { data } = await supabase
                 .from('blog_posts')
                 .select(`
@@ -46,10 +51,13 @@ const Search = () => {
                         )
                     `).or(`blog_title.ilike.%${searchResult.trim().length >= 2 ? searchResult : q}%`)
                 .order('created_at', { ascending: false });
+
+            setLoading(false);
             getPosts(data);
             console.log(data);
         } catch (error) {
             console.log("Something Wrong happned while fetching Searched Blog\n", error);
+            setLoading(false);
         }
     };
 
@@ -70,11 +78,10 @@ const Search = () => {
     };
 
     useEffect(() => {
-        if (searchResult.trim().length !== 0){
+        if (searchResult.trim().length !== 0) {
             fetchBlogs();
             fetchUsers();
-        } else
-            handleTost()
+        }
     }, [searchResult.trim().length >= 2, q]);
 
     const handlePost = (id) => {
@@ -92,7 +99,8 @@ const Search = () => {
             }
 
             <div className="container mx-auto w-3/4">
-                {
+
+                {getPost.length > 0 ?
                     getPost?.map((post, _) => {
                         const persons = users?.find((person) => person.id === post.user_id);
                         const summary = post?.summary.substring(0, 230) + '...';
@@ -138,7 +146,13 @@ const Search = () => {
                                 </div>
                             </div>
                         )
-                    })
+                    }) :
+                    loading ? <p className="text-center my-9">
+                        <BeatLoader color="#16325B" />
+                    </p> :
+                        <p className="text-3xl text-center font-medium my-6">
+                            Didn't find the result {searchResult.trim().length <= 0 ? "from 'blank space'" :`'${searchResult}'`}
+                        </p>
                 }
             </div>
         </>

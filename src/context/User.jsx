@@ -13,8 +13,6 @@ export const UserContext = createContext({
     getPosts: () => { }
 });
 
-
-
 export const ContextProvider = UserContext.Provider;
 
 export default function useUsers() {

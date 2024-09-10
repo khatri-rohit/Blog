@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaHeart } from "react-icons/fa";
 import { MdOutlineMessage } from "react-icons/md";
 import { useParams } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
 import useUsers from "../context/User";
 import { BeatLoader } from 'react-spinners';
+import { ImCross } from "react-icons/im";
 
 const Post = () => {
 
@@ -19,6 +20,8 @@ const Post = () => {
     const [likeCount, setLikeCount] = useState(0);
     const [registered, setRegister] = useState([]);
     const [alter, setAlter] = useState(false);
+    const [slidebar, setSildebar] = useState(false);
+    const commentRef = useRef();
     const { user } = useUsers();
 
     useEffect(() => {
@@ -56,6 +59,7 @@ const Post = () => {
                 console.log(error);
             }
         })();
+        console.log("Rohit");
     }, [])
 
     const comment = async () => {
@@ -118,12 +122,50 @@ const Post = () => {
         comment();
     }, []);
 
+    // useEffect(() => {
+    //     const handleClickOutside = (event) => {
+    //         if (!commentRef.current.contains(event.target)) {
+    //             setSildebar(true);
+    //         }
+    //     };
+    //     document.addEventListener('click', handleClickOutside);
+    //     return () => {
+    //         document.removeEventListener('click', handleClickOutside);
+    //     };
+    // }, [commentRef])
+
     return (
         <>
-            <aside className="">
-
+            <aside ref={commentRef}
+                className={`bg-gray-100 fixed top-0 m-0 h-screen ${slidebar ? `left-0 transition-all duration-200 ${slidebar && 'w-[22%]'}` : '-left-full transition-all duration-200'}`}>
+                <div className="flex items-center justify-between p-4">
+                    <p className="text-xl font-medium">
+                        {comments?.content.length <= 0 ? "No Comments Wet"
+                            : "Comments " + comments?.content.length}
+                    </p>
+                    <ImCross className="mx-2 cursor-pointer"
+                        onClick={() => setSildebar(false)} />
+                </div>
+                <div className="border-t-2">
+                    <div className="bg-white rounded-lg border-2 m-3">
+                        <div className="flex items-center justify-start my-3">
+                            <img src={user?.user_metadata?.avatar_url}
+                                alt="profile_pic"
+                                className="mx-2 rounded-full w-12" />
+                            <p className="text-lg font-light">{user?.user_metadata?.full_name}</p>
+                        </div>
+                        <form className="mx-3 my-4">
+                            <textarea name="comment"
+                                className="w-full h-32 outline-none"
+                                placeholder="Say Something..."></textarea>
+                            <button className="bg-slate-600 my-2 px-4 py-1 rounded-xl text-white">
+                                Post
+                            </button>
+                        </form>
+                    </div>
+                </div>
             </aside>
-            <section className="p-5 bg-slate-100">
+            <section className={`p-5 bg-slate-100 ${slidebar && 'w-[70%] inline-flex justify-end '}`}>
                 <div className="my-3 flex items-center justify-between container mx-auto p-4">
                     <div className="flex items-center">
                         <img src={thatUser?.avatar_url ? thatUser?.avatar_url : "/blank-avatar.webp"}
@@ -140,7 +182,8 @@ const Post = () => {
 
                     <div className="flex items-center">
                         <div className="mx-2 flex items-center cursor-pointer">
-                            <MdOutlineMessage className="text-3xl" />
+                            <MdOutlineMessage className="text-3xl"
+                                onClick={() => setSildebar(true)} />
                             <p className="mx-1 flex items-center font-medium text-lg mb-1">
                                 {comments?.content.length}
                             </p>

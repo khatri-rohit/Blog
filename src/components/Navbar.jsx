@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from 'react-hook-form';
-import { Link, useNavigate } from "react-router-dom";
-import { supabase } from "../../supabaseClient";
-import useUsers from "../context/User";
+import toast, { Toaster } from "react-hot-toast";
 import { BiLogoGithub, BiLogoGoogle, BiSearch } from "react-icons/bi";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { SlNote } from "react-icons/sl";
+import { Link, useNavigate } from "react-router-dom";
+import { supabase } from "../../supabaseClient";
+import useUsers from "../context/User";
 
 const Navbar = () => {
 
@@ -173,8 +174,20 @@ const Navbar = () => {
         );
     }, [searchResult])
 
+    const handleTost = () => {
+        toast(() => (
+            <span className="text-xl">
+                Enter Something
+            </span>
+        ));
+    };
+
     const handleSearchSubmit = useCallback((e) => {
         e.preventDefault();
+        if (search.trim().length <= 0) {
+            handleTost();
+            return
+        }
         changeSearchResult(search);
         console.log(search);
         navigate(`/search?q=${encodeURIComponent(search)}`)
@@ -402,6 +415,9 @@ const Navbar = () => {
                     </div>
                 </>
             )}
+            <Toaster
+                position="top-center"
+            />
 
             <nav ref={modalContainerRef} className={`flex items-center justify-between px-2 py-4 border-b-2 ${model || showNewUser ? 'blur ' : ''}`}>
                 <div className="flex items-center justify-between">

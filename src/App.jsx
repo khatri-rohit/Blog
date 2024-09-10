@@ -55,6 +55,9 @@ const App = () => {
     )
   }
 
+  console.log(user);
+  
+
   return (
     <ContextProvider value={
       { model, oAuthStateChange, changeModel, user, chnageNewUser, showNewUser, searchResult, changeSearchResult, getPost, getPosts }
