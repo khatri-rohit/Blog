@@ -1,5 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap');
+
+
 .modal-overlay.blur {
     filter: blur(5px);
     background-color: rgba(0, 0, 0, 0);
     /* adjust the opacity as needed */
+}
+.custom-font{
+    font-family: "Oswald", sans-serif;
+    font-optical-sizing: auto;
+}
+.custom-font .title {
+    font-weight: 500;
+    letter-spacing: 1.2px;
+}
+
+.custom-font .description {
+    font-weight: 400;
+    letter-spacing: 1.2px;
 }

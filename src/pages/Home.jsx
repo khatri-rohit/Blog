@@ -130,23 +130,24 @@ const Home = () => {
                             const persons = users?.find((person) => person.id === post.user_id);
                             const summary = post?.summary.substring(0, 230) + '...';
                             return (
-                                <div key={_} className={`my-5 flex justify-around shadow-md bg-white rounded-lg duration-300 transition hover:-translate-y-4 origin-center hover:scale-95 `}>
+                                <div key={_}
+                                    className={`custom-font my-5 flex justify-around shadow-md bg-white rounded-lg duration-300 transition hover:-translate-y-4 origin-center hover:scale-95 `}>
                                     <div className="w-[33%] p-1 my-auto cursor-pointer"
                                         onClick={() => Object.keys(user).length > 0 ? handlePost(post?.id) : handleTost()}>
                                         <img src={post?.image_url}
-                                            className="object-contain w-full rounded-xl m-1" />
+                                            className="object-cover w-full rounded-xl m-1 h-[27vh]" />
                                     </div>
                                     <div className="w-[65%] p-2 flex flex-col justify-evenly">
-                                        <p className="my-2 font-medium">
+                                        <p className="my-2 tracking-wider">
                                             ✨ {persons?.name}
                                         </p>
                                         <p onClick={() => Object.keys(user).length > 0 ? handlePost(post?.id) :
                                             handleTost()
                                         }
-                                            className="text-3xl font-medium cursor-pointer">
+                                            className="text-3xl title hover:subpixel-antialiased cursor-pointer text-black">
                                             {post?.blog_title}
                                         </p>
-                                        <p className="text-xl mt-2 mb-3 text-gray-500">
+                                        <p className="text-xl description mt-2 mb-3 text-slate-500">
                                             {summary}
                                         </p>
                                         <div className="flex items-center justify-between">

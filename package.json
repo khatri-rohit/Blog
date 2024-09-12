@@ -13,6 +13,7 @@
     "@supabase/supabase-js": "^2.45.2",
     "date-and-time": "^3.5.0",
     "dotenv": "^16.4.5",
+    "javascript-time-ago": "^2.5.11",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.53.0",
