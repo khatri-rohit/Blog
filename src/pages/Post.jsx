@@ -1,5 +1,3 @@
-import TimeAgo from 'javascript-time-ago';
-import en from 'javascript-time-ago/locale/en';
 import { useEffect, useRef, useState } from "react";
 import { FaHeart } from "react-icons/fa";
 import { ImCross } from "react-icons/im";
@@ -132,19 +130,16 @@ const Post = () => {
         console.log("Comments Updates");
     }, [commentText.length === 0]);
 
+    // const date1 = new Date("September 14, 2024");
+    // console.log(Math.floor((((date.getTime() - date1.getTime()) / 1000) / 60) / 60));
+
     const postComment = async (e) => {
         e.preventDefault();
         const updateComment = comments.content;
         console.log(updateComment);
 
-        TimeAgo.addDefaultLocale(en);
-        // Create formatter (English).
-        const timeAgo = new TimeAgo('en-US');
-        var created_date = timeAgo.format(new Date());
+        const created_date = new Date().getTime();
         console.log(created_date);
-        const date = new Date().getTime()
-        console.log(date);
-
 
         const newComment = [...updateComment, {
             key: uuidv4(),
@@ -154,26 +149,30 @@ const Post = () => {
             img: user.user_metadata.avatar_url,
             created_date
         }]
+
         console.log(newComment.length);
-        // try {
-        //     await supabase
-        //         .from('comments')
-        //         .update(
-        //             {
-        //                 content: newComment
-        //             }
-        //         ).eq('post_id', id);
-        //     console.log("Comment Posted");
-        //     setCommentText('');
-        //     setCommentsCount(newComment);
-        // } catch (error) {
-        //     console.error("Error -> " + error);
-        // }
+
+        try {
+            await supabase
+                .from('comments')
+                .update(
+                    {
+                        content: newComment
+                    }
+                ).eq('post_id', id);
+            console.log("Comment Posted");
+            setCommentText('');
+            setCommentsCount(newComment);
+        } catch (error) {
+            console.error("Error -> " + error);
+        }
     }
+
     const likeComment = async (e, changeID) => {
         e.preventDefault();
         const updateComment = comments.content;
         console.log(updateComment);
+        
         const newComment = updateComment.map((changeComment) => (
             changeComment.key === changeID ?
                 { ...changeComment, like: changeComment.like + 1 }
@@ -192,6 +191,21 @@ const Post = () => {
             setCommentsCount(newComment);
         } catch (error) {
             console.error("Error -> " + error);
+        }
+    }
+
+    function convertMinutes(minutes) {
+        if (minutes < 60) {
+            console.log(minutes);
+            return [minutes, "minutes"];
+        } else if (minutes < 1440) {
+            const hours = Math.floor(minutes / 60);
+            console.log(hours);
+            return [hours, "hours"];
+        } else {
+            const days = Math.floor(minutes / 1440);
+            console.log(days);
+            return [days, "days"];
         }
     }
 
@@ -245,30 +259,44 @@ const Post = () => {
                     </p>
                     <div className="m-3">
                         {
-                            commentsCount?.map((response, _) => (
-                                <div className="bg-white my-4 p-3 py-5 flex items-center justify-between"
-                                    key={_}>
-                                    <div className="mx-1 flex items-center">
-                                        <img src={response?.img ? response?.img : `"/blank-avatar.webp"`}
-                                            className="w-10 rounded-full" />
-                                        <div className="mx-3 leading-none">
-                                            <p className="font-medium">
-                                                {response?.name}
-                                            </p>
-                                            <p className="text-lg mx-1 text-balance font-light">
-                                                {response?.content}
-                                            </p>
+                            commentsCount?.map((response, _) => {
+                                const date = new Date().getTime();
+                                var timeSpended = Math.floor((((date - response?.created_date) / 1000) / 60));
+                                console.log(timeSpended);
+                                const rlt = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
+                                const created_time = rlt.format(-Math.abs(convertMinutes(timeSpended)[0]), `${convertMinutes(timeSpended)[1]}`);
+                                console.log(created_time);
+
+                                return (
+                                    <>
+                                        <div className="bg-white my-4 p-3 py-5 flex items-center justify-between"
+                                            key={_}>
+                                            <div className="mx-1 flex items-center">
+                                                <img src={response?.img ? response?.img : `"/blank-avatar.webp"`}
+                                                    className="w-10 rounded-full" />
+                                                <div className="mx-3 leading-none">
+                                                    <p className="font-medium">
+                                                        {response?.name}
+                                                    </p>
+                                                    <p className="text-2xl text-balance font-light">
+                                                        {response?.content}
+                                                    </p>
+                                                    <p className="text-xs font-sans">
+                                                        {created_time === "this minute" ? "just now" : created_time}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div className="me-3 flex items-center">
+                                                <FaHeart className="text-pink-300"
+                                                    onClick={() => likeComment(event, response?.key)} />
+                                                <span className="mx-1 font-semibold">
+                                                    {response?.like <= 0 ? "" : response?.like}
+                                                </span>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="me-3 flex items-center">
-                                        <FaHeart className="text-pink-300"
-                                            onClick={() => likeComment(event, response?.key)} />
-                                        <span className="mx-1 font-semibold">
-                                            {response?.like <= 0 ? "" : response?.like}
-                                        </span>
-                                    </div>
-                                </div>
-                            ))
+                                    </>
+                                )
+                            })
                         }
                     </div>
                 </div>
