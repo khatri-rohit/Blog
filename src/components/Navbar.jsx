@@ -41,6 +41,7 @@ const Navbar = () => {
     const [eye, setEye] = useState(false);
     const [search, setSearch] = useState('');
     const [timeoutId, setTimeoutId] = useState();
+    const [profile, setProfile] = useState(true);
 
     const newUser = () => {
         changeModel(!model);
@@ -56,7 +57,9 @@ const Navbar = () => {
                     email: email,
                     password: password,
                 });
+
                 console.log({ ...data, name });
+                
                 if (data) {
                     oAuthStateChange({ ...data, name });
                     authUser({ ...data, name });
@@ -194,11 +197,11 @@ const Navbar = () => {
         changeSearchResult(search);
         console.log(search);
         navigate(`/search?q=${encodeURIComponent(search)}`)
-    }, [changeSearchResult, navigate, search])
+    }, [changeSearchResult, navigate, search]);
 
     useEffect(() => {
         return () => clearTimeout(timeoutId);
-    }, [timeoutId])
+    }, [timeoutId]);
 
     const profileDropDown = () => {
         console.log("Profile Menu");
@@ -462,23 +465,24 @@ const Navbar = () => {
                                 </Link>
                                 <div className="mx-1 " onClick={profileDropDown}>
                                     <img src={user?.user_metadata.avatar_url ? user?.user_metadata.avatar_url : "/blank-avatar.webp"}
-                                        className="w-10 rounded-full hover:border-2 border-gray-700 cursor-pointer transition-all duration-75 relative" />
-                                    <div className="absolute right-7 my-2 bg-[#dfdfdf] px-2 py-2 w-60 rounded-xl items-start justify-start hover:flex hover:flex-col  hidden">
-                                        <div className="flex items-center px-3 py-1 justify-start">
+                                        className="w-10 rounded-full hover:border-2 border-gray-700 cursor-pointer transition-all duration-75 relative"
+                                        onClick={() => setProfile(prev => !prev)} />
+                                    <div className={`absolute right-7 my-2 bg-[#dfdfdf] px-2 py-2 w-60 rounded-xl items-start justify-start ${profile && `hidden`}`} >
+                                        <div className="flex items-center px-3 py-1 justify-start cursor-pointer">
                                             <img src={user.user_metadata.avatar_url} className="rounded-full w-8" />
-                                            <p className="text-xl font-medium text-slate-900 mx-1">
+                                            <p className="text-xl font-medium hover:text-slate-500 text-slate-900 mx-1">
                                                 Profile
                                             </p>
                                         </div>
-                                        <div className="flex items-center px-3 py-1 justify-start">
+                                        <div className="flex items-center px-3 py-1 justify-start  cursor-pointer">
                                             <CgDarkMode className="text-2xl" />
-                                            <p className="text-xl font-medium text-slate-900 mx-3">
+                                            <p className="text-xl font-medium hover:text-slate-500 text-slate-900 mx-3">
                                                 Dark / Light
                                             </p>
                                         </div>
-                                        <div className="flex items-center px-3 py-1 justify-start">
+                                        <div className="flex items-center px-3 py-1 justify-start cursor-pointer">
                                             <HiOutlineLogout className="text-2xl" />
-                                            <p className="text-xl font-medium text-slate-900 mx-3">
+                                            <p className="text-xl font-medium hover:text-slate-500 text-slate-900 mx-3">
                                                 Logout
                                             </p>
                                         </div>
