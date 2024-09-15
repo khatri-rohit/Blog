@@ -107,7 +107,7 @@ const Home = () => {
                     {
                         loading &&
                         <p className="flex justify-center">
-                            <PuffLoader speedMultiplier={2} />
+                            <PuffLoader speedMultiplier={2} color="#B2B1B9" />
                         </p>
                     }
                     {
@@ -116,7 +116,7 @@ const Home = () => {
                             const summary = post?.summary.substring(0, 230) + '...';
                             return (
                                 <div key={_}
-                                    className={`custom-font my-5 flex justify-around shadow-md bg-white rounded-lg duration-300 transition hover:-translate-y-4 origin-center hover:scale-95 `}>
+                                    className={`custom-font my-5 flex justify-around shadow-white shadow-md bg-white dark:bg-[#100f0fab] dark:text-white rounded-lg duration-300 transition hover:-translate-y-4 origin-center hover:scale-95 `}>
                                     <div className="w-[33%] p-1 my-auto cursor-pointer"
                                         onClick={() => Object.keys(user).length > 0 ? handlePost(post?.id) : handleTost()}>
                                         <img src={post?.image_url}
@@ -129,14 +129,14 @@ const Home = () => {
                                         <p onClick={() => Object.keys(user).length > 0 ? handlePost(post?.id) :
                                             handleTost()
                                         }
-                                            className="text-3xl title hover:subpixel-antialiased cursor-pointer text-black">
+                                            className="text-3xl title hover:subpixel-antialiased cursor-pointer text-black dark:text-white text-pretty">
                                             {post?.blog_title}
                                         </p>
-                                        <p className="text-xl description mt-2 mb-3 text-slate-500">
+                                        <p className="text-xl description mt-2 mb-3 text-slate-500 dark:text-slate-100 text-balance">
                                             {summary}
                                         </p>
                                         <div className="flex items-center justify-between">
-                                            <p className="font-light text-black text-sm mt-2">
+                                            <p className="font-light text-black text-sm mt-2 dark:text-slate-50">
                                                 {post?.formated_time}
                                             </p>
                                             <div className="flex items-center">

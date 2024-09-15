@@ -34,7 +34,7 @@ const Navbar = () => {
         searchResult
     } = useUsers();
 
-    const { darkTheme, lightTheme } = useTheme();
+    const { darkTheme, lightTheme, themeMode } = useTheme();
     const [isDark, setIsDark] = useState(false);
 
     const darkMode = () => {
@@ -42,6 +42,10 @@ const Navbar = () => {
         else darkTheme();
         setIsDark(prev => !prev);
     }
+
+    useEffect(() => {
+        themeMode === "light" ? setIsDark(false) : setIsDark(true);
+    }, []);
 
     const modalContainerRef = useRef();
     const modalRef = useRef();
@@ -452,9 +456,9 @@ const Navbar = () => {
             <nav ref={modalContainerRef} className={`flex items-center justify-between px-2 py-4 border-b-2 ${model || showNewUser ? 'blur ' : ''}`}>
                 <div className="flex items-center justify-between">
                     <Link to={'/'} className="flex items-center mx-3 outline-none">
-                        <img src="/blogicon.png"
+                        <img src={themeMode === "light" ? "/blogicon.png" : "/whiteblogicon.png"}
                             className="w-10" />
-                        <p className="mx-2 font-semibold text-2xl">
+                        <p className="mx-2 font-semibold text-2xl dark:text-white">
                             DevDiscuss
                         </p>
                     </Link>
@@ -466,7 +470,7 @@ const Navbar = () => {
                             <BiSearch className="text-2xl mx-2" />
                         </div>
                         <input type="text"
-                            className="bg-slate-200 p-2 rounded-xl outline-none"
+                            className="bg-slate-200 p-2 rounded-xl outline-none placeholder:dark:text-black"
                             placeholder="Search"
                             value={search}
                             onChange={e => handleSearch(e)}
@@ -479,8 +483,8 @@ const Navbar = () => {
                             <div className="flex items-center justify-between">
                                 <Link to={"/create"} className="flex items-center mx-1">
                                     <div className="mx-3 flex items-center hover:text-slate-500 cursor-pointer">
-                                        <SlNote className="text-xl" />
-                                        <p className="mx-1 font-normal">Write</p>
+                                        <SlNote className="dark:text-white text-xl" />
+                                        <p className="mx-1 font-normal dark:text-white">Write</p>
                                     </div>
                                 </Link>
                                 <div className="mx-1 " onClick={profileDropDown}>

@@ -59,14 +59,12 @@ const Post = () => {
                         from('users')
                         .select()
                         .eq('id', data[0].user_id);
-                    console.log(response.data[0]);
                     setThatUser(response.data[0]);
                 }
             } catch (error) {
                 console.log(error);
             }
         })();
-        console.log("Rohit");
     }, [])
 
     const comment = async () => {
@@ -128,7 +126,6 @@ const Post = () => {
     useEffect(() => {
         likes();
         comment();
-        console.log("Comments Updates");
     }, [commentText.length === 0]);
 
     // const date1 = new Date("September 14, 2024");
@@ -232,17 +229,18 @@ const Post = () => {
 
     return (
         <>
+            {/* Sidebar */}
             <aside ref={commentRef}
-                className={`bg-gray-100 fixed top-0 m-0 h-screen ${slidebar ? `left-0 transition-all duration-200 ${slidebar && 'w-[23%]'}` : '-left-full transition-all duration-200'}`}>
+                className={`bg-gray-100 border-r-2 dark:bg-slate-700 fixed top-0 m-0 min-h-screen ${slidebar ? `left-0 transition-all duration-200 ${slidebar && 'w-[23%]'}` : '-left-full transition-all duration-500'}`}>
                 <div className="flex items-center justify-between p-4">
-                    <p className="text-xl font-medium">
+                    <p className="text-xl font-medium dark:text-white">
                         Comments
                     </p>
-                    <ImCross className="mx-2 cursor-pointer"
+                    <ImCross className="mx-2 cursor-pointer  dark:text-white"
                         onClick={() => setSildebar(false)} />
                 </div>
                 <div className="border-t-2">
-                    <div className="bg-white rounded-lg border-2 m-3">
+                    <div className="bg-white rounded-lg border-2 m-3 dark:border-none dark:py-1">
                         <div className="flex items-center justify-start my-3">
                             <img src={user?.user_metadata?.avatar_url}
                                 alt="profile_pic"
@@ -251,19 +249,19 @@ const Post = () => {
                                 {user?.user_metadata?.full_name}
                             </p>
                         </div>
-                        <form className="mx-3 my-4">
+                        <form className="mx-3 my-2">
                             <textarea name="comment"
-                                className="w-full h-32 outline-none text-slate-800 text-lg font-medium resize-none bg-slate-100 p-2 rounded-md"
+                                className="w-full h-40 outline-none text-slate-800 text-lg font-medium resize-none bg-slate-100 p-2 rounded-md placeholder:dark:text-black text-pretty placeholder:opacity-85 border"
                                 value={commentText}
                                 onChange={e => setCommentText(e.target.value)}
-                                placeholder="Say Something..." autoFocus autoCorrect ></textarea>
+                                placeholder="Your Thoughts on This ..." autoFocus autoCorrect ></textarea>
                             <button className="bg-slate-600 my-2 px-4 py-1 rounded-xl text-white"
                                 onClick={postComment}>
                                 Post
                             </button>
                         </form>
                     </div>
-                    <p className="font-medium text-xl mx-3">
+                    <p className="font-medium text-xl mx-3 dark:text-white">
                         {comments?.content?.length <= 0 ? "No Comments Wet" : `Responses (${comments?.content?.length})`}
                     </p>
                     <div className="m-3">
@@ -277,7 +275,7 @@ const Post = () => {
 
                                 return (
                                     <>
-                                        <div className="bg-white my-4 p-3 py-5 flex items-center justify-between"
+                                        <div className="bg-white my-4 p-3 py-5 flex items-center justify-between rounded-lg"
                                             key={_}>
                                             <div className="mx-1 flex items-center">
                                                 <img src={response?.img ? response?.img : `"/blank-avatar.webp"`}
@@ -309,30 +307,30 @@ const Post = () => {
                     </div>
                 </div>
             </aside>
-            <section className="p-5 bg-slate-100 ">
-                <div className="my-3 flex items-center justify-between container mx-auto p-4">
+            <section className="p-5">
+                <div className="my-3 flex items-center justify-between container mx-auto p-4 border-b-2">
                     <div className="flex items-center">
                         <img src={thatUser?.avatar_url ? thatUser?.avatar_url : "/blank-avatar.webp"}
                             className="w-20 rounded-full" />
                         <div className="mx-4">
-                            <p className="text-slate-500 text-2xl font-bold">
+                            <p className="text-slate-500 dark:text-white text-2xl font-bold">
                                 {thatUser?.name}
                             </p>
-                            <p className="text-black text-lg font-medium">
+                            <p className="text-black text-lg font-medium dark:text-white">
                                 {post?.formated_time}
                             </p>
                         </div>
                     </div>
 
                     <div className="flex items-center">
-                        <div className="mx-2 flex items-center cursor-pointer">
+                        <div className="mx-2 dark:text-white flex items-center cursor-pointer">
                             <MdOutlineMessage className="text-3xl"
                                 onClick={() => setSildebar(true)} />
                             <p className="mx-1 flex items-center font-medium text-lg mb-1">
                                 {comments?.content.length}
                             </p>
                         </div>
-                        <div className="mx-2 flex items-center cursor-pointer"
+                        <div className="dark:text-white mx-2 flex items-center cursor-pointer"
                             onClick={updateLike}>
                             <FaHeart className="text-3xl text-pink-500 cursor-pointer" />
                             <p className="mx-1 flex items-center font-medium text-lg mb-1">
@@ -345,7 +343,7 @@ const Post = () => {
                 {
                     loading &&
                     <p className="text-center">
-                        <BeatLoader color="#16325B" />
+                        <BeatLoader color="#73777B" />
                     </p>
                 }
                 {
@@ -355,10 +353,10 @@ const Post = () => {
                             <div className="p-3 container mx-auto w-3/4">
                                 <div className="mt-10">
                                     <div className="w-3/4 mx-auto">
-                                        <p className="text-5xl text-center font-extrabold mb-7 text-balance">
+                                        <p className="text-5xl text-center font-extrabold mb-7 dark:text-white text-balance">
                                             {post?.blog_title}
                                         </p>
-                                        <p className="text-xl text-center text-gray-400 mt-3 mb-5 text-balance">
+                                        <p className="text-xl text-center text-gray-400 mt-3 mb-5 text-balance dark:text-stone-200">
                                             {post?.summary}
                                         </p>
                                     </div>
@@ -367,7 +365,7 @@ const Post = () => {
                                             className="h-[35em] mx-auto" />
                                     </div>
                                     <div className="w-[75%] mx-auto">
-                                        <div className="text-2xl p-3 text-pretty"
+                                        <div className="text-2xl dark:text-white p-3 text-pretty"
                                             dangerouslySetInnerHTML={{ __html: post?.blog_content }}
                                         />
                                     </div>

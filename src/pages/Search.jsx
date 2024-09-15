@@ -99,13 +99,12 @@ const Search = () => {
             }
 
             <div className="container mx-auto w-3/4">
-
                 {getPost.length > 0 ?
                     getPost?.map((post, _) => {
                         const persons = users?.find((person) => person.id === post.user_id);
                         const summary = post?.summary.substring(0, 230) + '...';
                         return (
-                            <div key={_} className="my-5 flex shadow-md bg-white rounded-lg">
+                            <div key={_} className="my-5 flex bg-white rounded-lg shadow-white shadow-md dark:bg-[#100f0fab] dark:text-white">
                                 <div className="w-1/3 mx-1 p-1 my-auto cursor-pointer"
                                     onClick={() => Object.keys(user).length > 0 ? handlePost(post?.id) : handleTost()}>
                                     <img src={post?.image_url}
@@ -118,7 +117,7 @@ const Search = () => {
                                     <p onClick={() => Object.keys(user).length > 0 ? handlePost(post?.id) :
                                         handleTost()
                                     }
-                                        className="text-3xl font-medium cursor-pointer">
+                                        className="text-3xl font-medium cursor-pointer text-pretty">
                                         {post?.blog_title}
                                     </p>
                                     <p className="text-xl mt-2 mb-3 text-gray-500">
@@ -151,7 +150,7 @@ const Search = () => {
                         <BeatLoader color="#16325B" />
                     </p> :
                         <p className="text-3xl text-center font-medium my-6">
-                            Didn't find the result {searchResult.trim().length <= 0 ? "from 'blank space'" :`'${searchResult}'`}
+                            Didn't find the result {searchResult.trim().length <= 0 ? "from 'blank space'" : `'${searchResult}'`}
                         </p>
                 }
             </div>

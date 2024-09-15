@@ -49,7 +49,7 @@ const App = () => {
     return (
       <>
         <div className="flex items-center justify-center my-auto p-2 h-screen">
-          <ScaleLoader />
+          <ScaleLoader color="#B2B1B9" />
         </div>
       </>
     )
@@ -80,7 +80,7 @@ const App = () => {
   useEffect(() => {
     document.querySelector('html').classList.remove('dark', 'light');
     document.querySelector('html').classList.add(themeMode);
-    if (themeMode === 'dark') document.body.style.backgroundColor = "#021526";
+    if (themeMode === 'dark') document.body.style.backgroundColor = "#181D31";
     else document.body.style.backgroundColor = "#f7f7f7";
   }, [themeMode])
 
