@@ -17,7 +17,6 @@ const Home = () => {
     const {
         model,
         user,
-        oAuthStateChange,
         showNewUser,
         searchResult,
         getPosts
@@ -89,15 +88,6 @@ const Home = () => {
         navigate(`/post/${id}`);
     };
 
-    const signOut = async () => {
-        try {
-            await supabase.auth.signOut()
-            oAuthStateChange({});
-        } catch (error) {
-            console.log("Error While Logout -> ", error);
-        }
-    };
-
     const handleTost = () => {
         toast(() => (
             <span className="text-xl">
@@ -113,11 +103,6 @@ const Home = () => {
             />
 
             <main className={`md:p-8 ${model || showNewUser ? 'blur-[5px]' : ''}`}>
-                {
-                    Object.keys(user).length > 0 && <button className="px-2"
-                        onClick={signOut}>Logout</button>
-                }
-
                 <div className="container mx-auto w-3/4 flex flex-col items-center justify-center transition-all">
                     {
                         loading &&

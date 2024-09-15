@@ -9,6 +9,7 @@ import { SlNote } from "react-icons/sl";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
 import useUsers from "../context/User";
+import useTheme from "../context/theme";
 
 
 const Navbar = () => {
@@ -32,6 +33,15 @@ const Navbar = () => {
         changeSearchResult,
         searchResult
     } = useUsers();
+
+    const { darkTheme, lightTheme } = useTheme();
+    const [isDark, setIsDark] = useState(false);
+
+    const darkMode = () => {
+        if (isDark) lightTheme();
+        else darkTheme();
+        setIsDark(prev => !prev);
+    }
 
     const modalContainerRef = useRef();
     const modalRef = useRef();
@@ -59,7 +69,7 @@ const Navbar = () => {
                 });
 
                 console.log({ ...data, name });
-                
+
                 if (data) {
                     oAuthStateChange({ ...data, name });
                     authUser({ ...data, name });
@@ -115,6 +125,16 @@ const Navbar = () => {
             console.log(error);
         }
     }
+
+    const signOut = async () => {
+        try {
+            await supabase.auth.signOut()
+            oAuthStateChange([]);
+            setProfile(false);
+        } catch (error) {
+            console.log("Error While Logout -> ", error);
+        }
+    };
 
     const googleSighUp = async () => {
         try {
@@ -474,13 +494,15 @@ const Navbar = () => {
                                                 Profile
                                             </p>
                                         </div>
-                                        <div className="flex items-center px-3 py-1 justify-start  cursor-pointer">
+                                        <div className="flex items-center px-3 py-1 justify-start cursor-pointer"
+                                            onClick={darkMode}>
                                             <CgDarkMode className="text-2xl" />
                                             <p className="text-xl font-medium hover:text-slate-500 text-slate-900 mx-3">
                                                 Dark / Light
                                             </p>
                                         </div>
-                                        <div className="flex items-center px-3 py-1 justify-start cursor-pointer">
+                                        <div className="flex items-center px-3 py-1 justify-start cursor-pointer"
+                                            onClick={signOut}>
                                             <HiOutlineLogout className="text-2xl" />
                                             <p className="text-xl font-medium hover:text-slate-500 text-slate-900 mx-3">
                                                 Logout
