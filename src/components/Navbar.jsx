@@ -2,11 +2,14 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from 'react-hook-form';
 import toast, { Toaster } from "react-hot-toast";
 import { BiLogoGithub, BiLogoGoogle, BiSearch } from "react-icons/bi";
+import { CgDarkMode } from "react-icons/cg";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
+import { HiOutlineLogout } from "react-icons/hi";
 import { SlNote } from "react-icons/sl";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
 import useUsers from "../context/User";
+
 
 const Navbar = () => {
 
@@ -196,6 +199,10 @@ const Navbar = () => {
     useEffect(() => {
         return () => clearTimeout(timeoutId);
     }, [timeoutId])
+
+    const profileDropDown = () => {
+        console.log("Profile Menu");
+    }
 
     return (
         <>
@@ -453,9 +460,29 @@ const Navbar = () => {
                                         <p className="mx-1 font-normal">Write</p>
                                     </div>
                                 </Link>
-                                <div className="mx-1">
+                                <div className="mx-1 " onClick={profileDropDown}>
                                     <img src={user?.user_metadata.avatar_url ? user?.user_metadata.avatar_url : "/blank-avatar.webp"}
-                                        className="w-10 rounded-full hover:border-2 border-gray-700 cursor-pointer transition-all duration-75" />
+                                        className="w-10 rounded-full hover:border-2 border-gray-700 cursor-pointer transition-all duration-75 relative" />
+                                    <div className="absolute right-7 my-2 bg-[#dfdfdf] px-2 py-2 w-60 rounded-xl items-start justify-start hover:flex hover:flex-col  hidden">
+                                        <div className="flex items-center px-3 py-1 justify-start">
+                                            <img src={user.user_metadata.avatar_url} className="rounded-full w-8" />
+                                            <p className="text-xl font-medium text-slate-900 mx-1">
+                                                Profile
+                                            </p>
+                                        </div>
+                                        <div className="flex items-center px-3 py-1 justify-start">
+                                            <CgDarkMode className="text-2xl" />
+                                            <p className="text-xl font-medium text-slate-900 mx-3">
+                                                Dark / Light
+                                            </p>
+                                        </div>
+                                        <div className="flex items-center px-3 py-1 justify-start">
+                                            <HiOutlineLogout className="text-2xl" />
+                                            <p className="text-xl font-medium text-slate-900 mx-3">
+                                                Logout
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </>) : (

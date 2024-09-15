@@ -26,6 +26,7 @@ const Post = () => {
     const [slidebar, setSildebar] = useState(false);
     const [commentText, setCommentText] = useState('');
     const [commentsCount, setCommentsCount] = useState([]);
+    const [likeCommet, setLikeComment] = useState(false);
 
     const commentRef = useRef();
     const { user } = useUsers();
@@ -139,7 +140,6 @@ const Post = () => {
         console.log(updateComment);
 
         const created_date = new Date().getTime();
-        console.log(created_date);
 
         const newComment = [...updateComment, {
             key: uuidv4(),
@@ -170,24 +170,36 @@ const Post = () => {
 
     const likeComment = async (e, changeID) => {
         e.preventDefault();
+        const liked_user = comments.user;
+        console.log(liked_user);
+        liked_user.find((that) => that === user.id ? setLikeComment(true) : setLikeComment(false));
+        console.log(likeCommet);
+
         const updateComment = comments.content;
         console.log(updateComment);
-        
+
         const newComment = updateComment.map((changeComment) => (
             changeComment.key === changeID ?
-                { ...changeComment, like: changeComment.like + 1 }
+                {
+                    ...changeComment, like: likeCommet ? changeComment.like - 1
+                        : changeComment.like + 1
+                }
                 : { ...changeComment }
         ))
+
         console.log(newComment);
         try {
             await supabase
                 .from('comments')
                 .update(
                     {
-                        content: newComment
+                        content: newComment,
+                        user: likeCommet ? [...liked_user] : [...liked_user, user.id]
                     }
                 ).eq('post_id', id);
             console.log("Comment Liked");
+            console.log(likeCommet);
+
             setCommentsCount(newComment);
         } catch (error) {
             console.error("Error -> " + error);
@@ -196,15 +208,12 @@ const Post = () => {
 
     function convertMinutes(minutes) {
         if (minutes < 60) {
-            console.log(minutes);
             return [minutes, "minutes"];
         } else if (minutes < 1440) {
             const hours = Math.floor(minutes / 60);
-            console.log(hours);
             return [hours, "hours"];
         } else {
             const days = Math.floor(minutes / 1440);
-            console.log(days);
             return [days, "days"];
         }
     }
@@ -265,7 +274,6 @@ const Post = () => {
                                 console.log(timeSpended);
                                 const rlt = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
                                 const created_time = rlt.format(-Math.abs(convertMinutes(timeSpended)[0]), `${convertMinutes(timeSpended)[1]}`);
-                                console.log(created_time);
 
                                 return (
                                     <>
@@ -287,7 +295,7 @@ const Post = () => {
                                                 </div>
                                             </div>
                                             <div className="me-3 flex items-center">
-                                                <FaHeart className="text-pink-300"
+                                                <FaHeart className="text-pink-300 cursor-pointer active:text-pink-500"
                                                     onClick={() => likeComment(event, response?.key)} />
                                                 <span className="mx-1 font-semibold">
                                                     {response?.like <= 0 ? "" : response?.like}
