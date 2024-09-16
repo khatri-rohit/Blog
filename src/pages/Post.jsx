@@ -210,106 +210,103 @@ const Post = () => {
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (!commentRef.current.contains(event.target)) {
-                if (slidebar) {
-                    console.log("Open");
-                    console.log(slidebar);
-                }
-                else if (!slidebar) {
-                    console.log(slidebar);
-                    setSildebar();
-                    console.log("CLose");
-                    return
-                }
+                console.log("Open");
+                if (slidebar)
+                    setSildebar(false)
+                else console.log(slidebar);
+                console.log(slidebar);
             }
         };
         document.addEventListener('click', handleClickOutside);
         return () => {
             document.removeEventListener('click', handleClickOutside);
         };
-    }, [postRef])
+    }, [commentRef])
 
     return (
         <div > {/* Sidebar */}
-            <section className="p-5" ref={postRef}>
-                <aside ref={commentRef}
-                    className={`bg-gray-100 border-r-2 dark:bg-slate-700 fixed top-0 m-0 min-h-screen ${slidebar ? `left-0 transition-all duration-200 ${slidebar && 'w-[23%]'}` : '-left-full transition-all duration-500'}`}>
-                    <div className="flex items-center justify-between p-4">
-                        <p className="text-xl font-medium dark:text-white">
-                            Comments
-                        </p>
-                        <ImCross className="mx-2 cursor-pointer  dark:text-white"
-                            onClick={() => setSildebar(false)} />
-                    </div>
-                    <div className="border-t-2">
-                        <div className="bg-white rounded-lg border-2 m-3 dark:border-none dark:py-1">
-                            <div className="flex items-center justify-start my-3">
-                                <img src={user?.user_metadata?.avatar_url}
-                                    alt="profile_pic"
-                                    className="mx-2 rounded-full w-12" />
-                                <p className="text-xl font-normal">
-                                    {user?.user_metadata?.full_name}
-                                </p>
-                            </div>
-                            <form className="mx-3 my-2">
-                                <textarea name="comment"
-                                    className="w-full h-40 outline-none text-slate-800 text-lg font-medium resize-none bg-slate-100 p-2 rounded-md placeholder:dark:text-black text-pretty placeholder:opacity-85 border"
-                                    value={commentText}
-                                    onChange={e => setCommentText(e.target.value)}
-                                    placeholder="Your Thoughts on This ..." autoFocus autoCorrect ></textarea>
-                                <button className="bg-slate-600 my-2 px-4 py-1 rounded-xl text-white"
-                                    onClick={postComment}>
-                                    Post
-                                </button>
-                            </form>
+            <aside ref={commentRef}
+                className={`bg-gray-100 border-r-2 dark:bg-slate-700 fixed top-0 m-0 min-h-screen ${slidebar ? `left-0 transition-all duration-200 ${slidebar && 'w-[23%]'}` : '-left-full transition-all duration-500'}`}>
+                <div className="flex items-center justify-between p-4">
+                    <p className="text-xl font-medium dark:text-white">
+                        Comments
+                    </p>
+                    <ImCross className="mx-2 cursor-pointer  dark:text-white"
+                        onClick={() => setSildebar(prev => !prev)} />
+                </div>
+                <div className="border-t-2">
+                    <div className="bg-white rounded-lg border-2 m-3 dark:border-none dark:py-1">
+                        <div className="flex items-center justify-start my-3">
+                            <img src={user?.user_metadata?.avatar_url}
+                                alt="profile_pic"
+                                className="mx-2 rounded-full w-12" />
+                            <p className="text-xl font-normal">
+                                {user?.user_metadata?.full_name}
+                            </p>
                         </div>
-                        <p className="font-medium text-xl mx-3 dark:text-white">
-                            {comments?.content?.length <= 0 ? "No Comments Wet" : `Responses (${comments?.content?.length})`}
-                        </p>
-                        <div className="m-3">
-                            {
-                                commentsCount?.map((response, _) => {
-                                    const date = new Date().getTime();
-                                    var timeSpended = Math.floor((((date - response?.created_date) / 1000) / 60));
-                                    const rlt = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
-                                    const created_time = rlt.format(-Math.abs(convertMinutes(timeSpended)[0]), `${convertMinutes(timeSpended)[1]}`);
+                        <form className="mx-3 my-2">
+                            <textarea name="comment"
+                                className="w-full h-40 outline-none text-slate-800 text-lg font-medium resize-none bg-slate-100 p-2 rounded-md placeholder:dark:text-black text-pretty placeholder:opacity-85 border"
+                                value={commentText}
+                                onChange={e => setCommentText(e.target.value)}
+                                placeholder="Your Thoughts on This ..." autoFocus autoCorrect ></textarea>
+                            <button className="bg-slate-600 my-2 px-4 py-1 rounded-xl text-white"
+                                onClick={postComment}>
+                                Post
+                            </button>
+                        </form>
+                    </div>
+                    <p className="font-medium text-xl mx-3 dark:text-white">
+                        {comments?.content?.length <= 0 ? "No Comments Wet" : `Responses (${comments?.content?.length})`}
+                    </p>
+                    <div className="m-3">
+                        {
+                            commentsCount?.map((response, _) => {
+                                const date = new Date().getTime();
+                                var timeSpended = Math.floor((((date - response?.created_date) / 1000) / 60));
+                                const rlt = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
+                                const created_time = rlt.format(-Math.abs(convertMinutes(timeSpended)[0]), `${convertMinutes(timeSpended)[1]}`);
 
-                                    return (
-                                        <>
-                                            <div className="bg-white my-4 p-3 py-5 flex items-center justify-between rounded-lg"
-                                                key={_}>
-                                                <div className="mx-1 flex items-center">
-                                                    <img src={response?.img ? response?.img : `"/blank-avatar.webp"`}
-                                                        className="w-10 rounded-full" />
-                                                    <div className="mx-3 leading-none">
-                                                        <p className="font-medium">
-                                                            {response?.name}
-                                                        </p>
-                                                        <p className="text-2xl text-balance font-light">
-                                                            {response?.content}
-                                                        </p>
-                                                        <p className="text-xs font-sans">
-                                                            {created_time === "this minute" ? "just now" : created_time}
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                                <div className="me-3 flex items-center">
-                                                    <FaHeart className="text-pink-300 cursor-pointer active:text-pink-500"
-                                                        onClick={() => likeComment(event, response?.key)} />
-                                                    <span className="mx-1 font-semibold">
-                                                        {response?.like <= 0 ? "" : response?.like}
-                                                    </span>
+                                return (
+                                    <>
+                                        <div className="bg-white my-4 p-3 py-5 flex items-center justify-between rounded-lg"
+                                            key={_}>
+                                            <div className="mx-1 flex items-center">
+                                                <img src={response?.img ? response?.img : `"/blank-avatar.webp"`}
+                                                alt="profile_pic"
+                                                    className="w-10 rounded-full" />
+                                                <div className="mx-3 leading-none">
+                                                    <p className="font-medium">
+                                                        {response?.name}
+                                                    </p>
+                                                    <p className="text-2xl text-balance font-light">
+                                                        {response?.content}
+                                                    </p>
+                                                    <p className="text-xs font-sans">
+                                                        {created_time === "this minute" ? "just now" : created_time}
+                                                    </p>
                                                 </div>
                                             </div>
-                                        </>
-                                    )
-                                })
-                            }
-                        </div>
+                                            <div className="me-3 flex items-center">
+                                                <FaHeart className="text-pink-300 cursor-pointer active:text-pink-500"
+                                                    onClick={() => likeComment(event, response?.key)} />
+                                                <span className="mx-1 font-semibold">
+                                                    {response?.like <= 0 ? "" : response?.like}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </>
+                                )
+                            })
+                        }
                     </div>
-                </aside>
+                </div>
+            </aside>
+            <section className="p-5" ref={postRef}>
                 <div className="my-3 flex items-center justify-between container mx-auto p-4 border-b-2">
                     <div className="flex items-center">
                         <img src={thatUser?.avatar_url ? thatUser?.avatar_url : "/blank-avatar.webp"}
+                            alt={thatUser?.name}
                             className="w-20 rounded-full" />
                         <div className="mx-4">
                             <p className="text-slate-500 dark:text-white text-2xl font-bold">
@@ -361,6 +358,7 @@ const Post = () => {
                                     </div>
                                     <div className="w-full my-3">
                                         <img src={post?.image_url}
+                                            alt={post?.blog_title}
                                             className="h-[35em] mx-auto" />
                                     </div>
                                     <div className="w-[75%] mx-auto">
