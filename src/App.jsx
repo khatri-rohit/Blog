@@ -6,15 +6,8 @@ import {
 } from "react-router-dom";
 import { ScaleLoader } from 'react-spinners';
 import './App.css';
-import { ContextProvider } from './context/User.jsx';
-import Layout from "./layout/Layout";
 import { ThemeProvider } from "./context/theme.js";
-
-const Home = lazy(() => import("./pages/Home"))
-const Post = lazy(() => import("./pages/Post"))
-const Search = lazy(() => import("./pages/Search"))
-const Create = lazy(() => import("./pages/Create"))
-const UserBlogs = lazy(() => import("./pages/UserBlogs"))
+import { ContextProvider } from './context/User.jsx';
 
 const App = () => {
 
@@ -105,12 +98,14 @@ const App = () => {
           <Suspense fallback={<Loader />}>
             <div className="p-2">
               <Routes>
-                <Route path="/" element={<Layout />}>
-                  <Route index Component={Home} />
-                  <Route path="/post/:id" Component={Post} />
-                  <Route path="/search" Component={Search} />
-                  <Route path="/create" Component={Create} />
-                  <Route path="/posts" element={UserBlogs} />
+                <Route path="/" Component={lazy(() => import("./layout/Layout"))}>
+                  <Route index Component={lazy(() => import("./pages/Home"))} />
+                  <Route path="/post/:id" Component={lazy(() => import("./pages/Post"))} />
+                  <Route path="/search" Component={lazy(() => import("./pages/Search"))} />
+                  <Route path="/create" Component={lazy(() => import("./pages/Create"))} />
+                  <Route path="/profile"
+                    Component={lazy(() => import("./pages/Profile"))} />
+                  <Route path="/*" Component={lazy(() => import("./pages/Redirect"))} />
                 </Route>
               </Routes>
             </div>

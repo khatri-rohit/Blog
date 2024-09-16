@@ -23,7 +23,7 @@ const Search = () => {
     const handleTost = () => {
         toast(() => (
             <span className="text-xl">
-                Enter Something
+                Login To Read
             </span>
         ));
     };
@@ -104,14 +104,14 @@ const Search = () => {
                         const persons = users?.find((person) => person.id === post.user_id);
                         const summary = post?.summary.substring(0, 230) + '...';
                         return (
-                            <div key={_} className="my-5 flex bg-white rounded-lg shadow-white shadow-md dark:bg-[#100f0fab] dark:text-white">
+                            <div key={_} className="relative my-5 flex bg-white rounded-lg shadow-white shadow-md dark:bg-[#100f0fab] dark:text-white">
                                 <div className="w-1/3 mx-1 p-1 my-auto cursor-pointer"
                                     onClick={() => Object.keys(user).length > 0 ? handlePost(post?.id) : handleTost()}>
                                     <img src={post?.image_url}
                                         className="object-contain h-72 w-full" />
                                 </div>
                                 <div className="mx-2 w-3/4 p-2 flex flex-col justify-evenly">
-                                    <p className="my-2 font-medium">
+                                    <p className="my-2 tracking-wider absolute top-0 right-1 p-2">
                                         ✨ {persons?.name}
                                     </p>
                                     <p onClick={() => Object.keys(user).length > 0 ? handlePost(post?.id) :
@@ -120,11 +120,11 @@ const Search = () => {
                                         className="text-3xl font-medium cursor-pointer text-pretty">
                                         {post?.blog_title}
                                     </p>
-                                    <p className="text-xl mt-2 mb-3 text-gray-500">
+                                    <p className="text-xl mb-3 text-slate-500 dark:text-slate-100 text-balance">
                                         {summary}
                                     </p>
                                     <div className="flex items-center justify-between">
-                                        <p className="font-light text-black text-sm mt-2">
+                                        <p className="font-light dark:text-white text-black text-sm mt-2">
                                             {post?.formated_time}
                                         </p>
                                         <div className="flex items-center">
@@ -149,8 +149,8 @@ const Search = () => {
                     loading ? <p className="text-center my-9">
                         <BeatLoader color="#16325B" />
                     </p> :
-                        <p className="text-3xl text-center font-medium my-6">
-                            Didn't find the result {searchResult.trim().length <= 0 ? "from 'blank space'" : `'${searchResult}'`}
+                        <p className="text-3xl dark:text-white text-center font-medium my-6">
+                            Didn't find the results {searchResult.trim().length <= 0 ? "" : `'${searchResult}'`}
                         </p>
                 }
             </div>

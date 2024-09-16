@@ -123,7 +123,7 @@ const Home = () => {
                                             className="object-cover w-full rounded-xl m-1 h-[27vh]" />
                                     </div>
                                     <div className="w-[65%] p-2 flex flex-col justify-evenly">
-                                        <p className="my-2 tracking-wider">
+                                        <p className="tracking-wider ">
                                             ✨ {persons?.name}
                                         </p>
                                         <p onClick={() => Object.keys(user).length > 0 ? handlePost(post?.id) :
@@ -132,11 +132,11 @@ const Home = () => {
                                             className="text-3xl title hover:subpixel-antialiased cursor-pointer text-black dark:text-white text-pretty">
                                             {post?.blog_title}
                                         </p>
-                                        <p className="text-xl description mt-2 mb-3 text-slate-500 dark:text-slate-100 text-balance">
+                                        <p className="text-xl description mb-3 text-slate-500 dark:text-slate-100 text-balance tracking-widest font-light">
                                             {summary}
                                         </p>
                                         <div className="flex items-center justify-between">
-                                            <p className="font-light text-black text-sm mt-2 dark:text-slate-50">
+                                            <p className="font-normal text-black text-sm mt-2 dark:text-slate-50">
                                                 {post?.formated_time}
                                             </p>
                                             <div className="flex items-center">

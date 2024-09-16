@@ -6,7 +6,7 @@ import { CgDarkMode } from "react-icons/cg";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { HiOutlineLogout } from "react-icons/hi";
 import { SlNote } from "react-icons/sl";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
 import useUsers from "../context/User";
 import useTheme from "../context/theme";
@@ -50,6 +50,7 @@ const Navbar = () => {
     const modalContainerRef = useRef();
     const modalRef = useRef();
     const showRef = useRef();
+    const profiler = useRef();
     const navigate = useNavigate();
 
     const [eye, setEye] = useState(false);
@@ -135,6 +136,7 @@ const Navbar = () => {
             await supabase.auth.signOut()
             oAuthStateChange([]);
             setProfile(false);
+            navigate('/');
         } catch (error) {
             console.log("Error While Logout -> ", error);
         }
@@ -170,6 +172,20 @@ const Navbar = () => {
             document.removeEventListener('click', handleClickOutside);
         };
     }, [modalContainerRef, modalRef, showRef]);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (!modalContainerRef.current.contains(event.target)) {
+                if (!profiler.current.contains(event.target)) {
+                    setProfile(true);
+                }
+            }
+        };
+        document.addEventListener('click', handleClickOutside);
+        return () => {
+            document.removeEventListener('click', handleClickOutside);
+        };
+    }, [modalContainerRef, profiler]);
 
     useEffect(() => {
         (async () => {
@@ -487,16 +503,18 @@ const Navbar = () => {
                                         <p className="mx-1 font-normal dark:text-white">Write</p>
                                     </div>
                                 </Link>
-                                <div className="mx-1 " onClick={profileDropDown}>
+                                <div className="mx-1" ref={profiler} onClick={profileDropDown}>
                                     <img src={user?.user_metadata.avatar_url ? user?.user_metadata.avatar_url : "/blank-avatar.webp"}
                                         className="w-10 rounded-full hover:border-2 border-gray-700 cursor-pointer transition-all duration-75 relative"
                                         onClick={() => setProfile(prev => !prev)} />
-                                    <div className={`absolute right-7 my-2 bg-[#dfdfdf] px-2 py-2 w-60 rounded-xl items-start justify-start ${profile && `hidden`}`} >
+                                    <div className={`absolute z-10 right-7 my-2 bg-[#dfdfdf] px-2 py-2 w-60 rounded-xl items-start justify-start ${profile && `hidden`}`} >
                                         <div className="flex items-center px-3 py-1 justify-start cursor-pointer">
                                             <img src={user.user_metadata.avatar_url} className="rounded-full w-8" />
-                                            <p className="text-xl font-medium hover:text-slate-500 text-slate-900 mx-1">
+                                            <NavLink to={'/profile'}
+                                                onClick={() => setProfile(true)}
+                                                className="text-xl font-medium hover:text-slate-500 text-slate-900 mx-1">
                                                 Profile
-                                            </p>
+                                            </NavLink>
                                         </div>
                                         <div className="flex items-center px-3 py-1 justify-start cursor-pointer"
                                             onClick={darkMode}>
