@@ -13,7 +13,7 @@ const Profile = () => {
           alt="profile pic" />
       </div>
       <div className="">
-        <p className="text-2xl">{user?.user_metadata?.full_name}</p>
+        <p className="text-2xl dark:text-white">{user?.user_metadata?.full_name}</p>
       </div>
     </div>
   )

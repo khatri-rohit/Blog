@@ -124,7 +124,7 @@ const Home = () => {
                                     </div>
                                     <div className="w-[65%] p-2 flex flex-col justify-evenly">
                                         <p className="tracking-wider ">
-                                            ✨ {persons?.name}
+                                            ✨ {persons?.name} {user.id == post.user_id && "(You)" }
                                         </p>
                                         <p onClick={() => Object.keys(user).length > 0 ? handlePost(post?.id) :
                                             handleTost()

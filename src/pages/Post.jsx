@@ -224,7 +224,8 @@ const Post = () => {
     }, [commentRef])
 
     return (
-        <div > {/* Sidebar */}
+        <div> {/* Sidebar */}
+
             <aside ref={commentRef}
                 className={`bg-gray-100 border-r-2 dark:bg-slate-700 fixed top-0 m-0 min-h-screen ${slidebar ? `left-0 transition-all duration-200 ${slidebar && 'w-[23%]'}` : '-left-full transition-all duration-500'}`}>
                 <div className="flex items-center justify-between p-4">
@@ -259,6 +260,7 @@ const Post = () => {
                     <p className="font-medium text-xl mx-3 dark:text-white">
                         {comments?.content?.length <= 0 ? "No Comments Wet" : `Responses (${comments?.content?.length})`}
                     </p>
+
                     <div className="m-3">
                         {
                             commentsCount?.map((response, _) => {
@@ -300,6 +302,7 @@ const Post = () => {
                             })
                         }
                     </div>
+
                 </div>
             </aside>
             <section className="p-5" ref={postRef}>

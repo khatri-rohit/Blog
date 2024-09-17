@@ -48,8 +48,6 @@ const App = () => {
     )
   }
 
-  console.log(user);
-
   const darkTheme = () => {
     setThemeMode('dark');
     localStorage.setItem("theme", 'dark');
