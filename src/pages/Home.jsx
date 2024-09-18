@@ -1,17 +1,19 @@
 import { useEffect, useState } from "react";
-import toast, { Toaster } from "react-hot-toast";
 import { FaHeart } from "react-icons/fa6";
 import { MdOutlineMessage } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "../../supabaseClient";
-import useUsers from "../context/User";
 import { PuffLoader } from 'react-spinners';
+import { supabase } from "../../supabaseClient";
+import useTheme from "../context/theme";
+import useUsers from "../context/User";
 
 
 const Home = () => {
     const [blogPost, setBlogPost] = useState([]);
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
+
+    const { themeMode } = useTheme();
 
     const navigate = useNavigate();
     const {
@@ -88,20 +90,16 @@ const Home = () => {
         navigate(`/post/${id}`);
     };
 
-    const handleTost = () => {
-        toast(() => (
-            <span className="text-xl">
-                Login to Read
-            </span>
-        ));
-    };
+    // const handleTost = () => {
+    //     toast(() => (
+    //         <span className="text-xl">
+    //             Login to Read
+    //         </span>
+    //     ));
+    // };
 
     return (
         <>
-            <Toaster
-                position="top-center"
-            />
-
             <main className={`md:p-8 ${model || showNewUser ? 'blur-[5px]' : ''}`}>
                 <div className="container mx-auto w-3/4 flex flex-col items-center justify-center transition-all">
                     {
@@ -116,19 +114,17 @@ const Home = () => {
                             const summary = post?.summary.substring(0, 230) + '...';
                             return (
                                 <div key={_}
-                                    className={`custom-font my-5 flex justify-around shadow-white shadow-md bg-white dark:bg-[#100f0fab] dark:text-white rounded-lg duration-300 transition hover:-translate-y-4 origin-center hover:scale-95 `}>
+                                    className={`custom-font my-5 flex justify-around ${themeMode && 'shadow-white'} shadow-md bg-white dark:bg-[#100f0fab] dark:text-white rounded-lg duration-300 transition hover:-translate-y-4 origin-center hover:scale-95 `}>
                                     <div className="w-[33%] p-1 my-auto cursor-pointer"
-                                        onClick={() => Object.keys(user).length > 0 ? handlePost(post?.id) : handleTost()}>
+                                        onClick={() => handlePost(post?.id)}>
                                         <img src={post?.image_url}
                                             className="object-cover w-full rounded-xl m-1 h-[27vh]" />
                                     </div>
                                     <div className="w-[65%] p-2 flex flex-col justify-evenly">
                                         <p className="tracking-wider ">
-                                            ✨ {persons?.name} {user.id == post.user_id && "(You)" }
+                                            ✨ {persons?.name} {user.id == post.user_id && "(You)"}
                                         </p>
-                                        <p onClick={() => Object.keys(user).length > 0 ? handlePost(post?.id) :
-                                            handleTost()
-                                        }
+                                        <p onClick={() => handlePost(post?.id)}
                                             className="text-3xl title hover:subpixel-antialiased cursor-pointer text-black dark:text-white text-pretty">
                                             {post?.blog_title}
                                         </p>

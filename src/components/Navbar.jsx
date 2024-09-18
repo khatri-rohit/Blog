@@ -120,9 +120,9 @@ const Navbar = () => {
         try {
             await supabase.auth.signInWithOAuth({
                 provider: "github",
-                // options: {
-                //     redirectTo: 'http://localhost:5173'
-                // }
+                options: {
+                    redirectTo: 'http://localhost:5173'
+                }
             });
             changeModel(!model);
             showNewUser && chnageNewUser()
@@ -146,9 +146,9 @@ const Navbar = () => {
         try {
             await supabase.auth.signInWithOAuth({
                 provider: 'google',
-                // options: {
-                //     redirectTo: 'http://localhost:5173'
-                // }
+                options: {
+                    redirectTo: 'http://localhost:5173'
+                }
             });
             changeModel(!model);
         } catch (error) {
@@ -504,12 +504,13 @@ const Navbar = () => {
                                     </div>
                                 </Link>
                                 <div className="mx-1" ref={profiler} onClick={profileDropDown}>
-                                    <img src={user?.user_metadata.avatar_url ? user?.user_metadata.avatar_url : "/blank-avatar.webp"}
+                                    <img src={user.user_metadata.avatar_url ? 
+                                    user?.user_metadata.avatar_url : "/blank-avatar.webp"}
                                         className="w-10 rounded-full hover:border-2 border-gray-700 cursor-pointer transition-all duration-75 relative"
                                         onClick={() => setProfile(prev => !prev)} />
                                     <div className={`absolute z-10 right-7 my-2 bg-[#dfdfdf] px-2 py-2 w-60 rounded-xl items-start justify-start ${profile && `hidden`}`} >
                                         <div className="flex items-center px-3 py-1 justify-start cursor-pointer">
-                                            <img src={user.user_metadata.avatar_url} className="rounded-full w-8" />
+                                            <img src={user?.user_metadata.avatar_url} className="rounded-full w-8" />
                                             <NavLink to={'/profile'}
                                                 onClick={() => setProfile(true)}
                                                 className="text-xl font-medium hover:text-slate-500 text-slate-900 mx-1">

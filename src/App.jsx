@@ -60,12 +60,12 @@ const App = () => {
 
   useEffect(() => {
     const localTheme = localStorage.getItem("theme");
-    if (localTheme === null) {
-      const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      setThemeMode(isDarkMode ? 'dark' : 'light');
-    } else {
-      setThemeMode(localTheme);
-    }
+    // if (localTheme === null) {
+    // const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    // setThemeMode(isDarkMode ? 'dark' : 'light');
+    // } else {
+    setThemeMode(localTheme);
+    // }
   }, []);
 
   useEffect(() => {
@@ -75,6 +75,7 @@ const App = () => {
     else document.body.style.backgroundColor = "#f7f7f7";
   }, [themeMode])
 
+  console.log(user);
 
   return (
     <ThemeProvider value={{ darkTheme, lightTheme, themeMode }}>
