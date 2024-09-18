@@ -120,9 +120,9 @@ const Navbar = () => {
         try {
             await supabase.auth.signInWithOAuth({
                 provider: "github",
-                options: {
-                    redirectTo: 'http://localhost:5173'
-                }
+                // options: {
+                //     redirectTo: 'http://localhost:5173'
+                // }
             });
             changeModel(!model);
             showNewUser && chnageNewUser()
@@ -146,9 +146,9 @@ const Navbar = () => {
         try {
             await supabase.auth.signInWithOAuth({
                 provider: 'google',
-                options: {
-                    redirectTo: 'http://localhost:5173'
-                }
+                // options: {
+                //     redirectTo: 'http://localhost:5173'
+                // }
             });
             changeModel(!model);
         } catch (error) {
