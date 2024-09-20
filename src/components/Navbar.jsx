@@ -193,6 +193,7 @@ const Navbar = () => {
                 if (user !== null) {
                     const data = (await supabase.auth.getSession()).data
                     oAuthStateChange(data.session.user);
+                    console.log(data.session.user);
                     authUser(data.session);
                 }
             } catch (err) {
@@ -237,7 +238,7 @@ const Navbar = () => {
         changeSearchResult(search);
         console.log(search);
         navigate(`/search?q=${encodeURIComponent(search)}`)
-    }, [changeSearchResult, navigate, search]);
+    }, [changeSearchResult, search]);
 
     useEffect(() => {
         return () => clearTimeout(timeoutId);
@@ -245,6 +246,7 @@ const Navbar = () => {
 
     const profileDropDown = () => {
         console.log("Profile Menu");
+        console.log(user.user_metadata.avatar_url);
     }
 
     return (
@@ -465,6 +467,7 @@ const Navbar = () => {
                     </div>
                 </>
             )}
+
             <Toaster
                 position="top-center"
             />
@@ -503,8 +506,9 @@ const Navbar = () => {
                                         <p className="mx-1 font-normal dark:text-white">Write</p>
                                     </div>
                                 </Link>
-                                <div className="mx-1" ref={profiler} onClick={profileDropDown}>
-                                    <img src={user.user_metadata.avatar_url ? 
+                                <div className="mx-1" ref={profiler}
+                                    onClick={profileDropDown}>
+                                    <img src={user.user_metadata.avatar_url ?
                                     user?.user_metadata.avatar_url : "/blank-avatar.webp"}
                                         className="w-10 rounded-full hover:border-2 border-gray-700 cursor-pointer transition-all duration-75 relative"
                                         onClick={() => setProfile(prev => !prev)} />

@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useEffect, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { MdCamera } from "react-icons/md";
 import { supabase } from "../../supabaseClient";
 import useUsers from "../context/User";
@@ -28,38 +28,44 @@ const Profile = () => {
     }
   }
 
-  useEffect(() => {
-    (async () => {
+  // const userProfile = memo(function fetchProfile({ user }) {
+  //   console.log(user);
+  // }, user.id);
 
-      try {
-        setLoading(true);
-        const { data } = await supabase
-          .from('users')
-          .select()
-          .eq("id", user.id);
+  const fetchProfile = async (id) => {
+    try {
+      setLoading(true);
+      const { data } = await supabase
+        .from('users')
+        .select()
+        .eq("id", user.id);
 
-        if (data) {
-          console.log(data[0]);
-          setCur_user(data[0]);
-          setName(data[0].name);
-        }
+      console.log(user.id);
 
-        const response = await supabase
-          .from('blog_posts')
-          .select()
-          .eq('user_id', user.id);
-        setBlog(response.data);
-        console.log(response.data);
-        setLoading(false);
-      } catch (error) {
-        setLoading(false);
-        console.log(error);
+
+      if (data) {
+        console.log(data[0]);
+        setCur_user(data[0]);
+        setName(data[0].name);
       }
 
-    })()
+      const response = await supabase
+        .from('blog_posts')
+        .select()
+        .eq('user_id', user.id);
+      setBlog(response.data);
+      console.log(response.data);
+
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    fetchProfile(user.id);
   }, [])
-
-
 
 
   return (
@@ -79,7 +85,7 @@ const Profile = () => {
           </div>
 
           {/*  */}
-          <div className="w-[65%] rounded-lg bg-gray-300 p-3">
+          <div className="w-[65%] rounded-lg bg-gray-300 p-3 cursor-pointer">
 
             <div className="flex items-center m-3">
 
@@ -87,7 +93,7 @@ const Profile = () => {
                 <div className="absolute inset-x-11 inset-y-9">
                   <MdCamera className="group-hover:block hidden text-2xl text-white" />
                 </div>
-                <img src={user?.user_metadata?.avatar_url}
+                <img src={cur_user.avatar_url ? cur_user?.avatar_url : '/blank-avtar.webp'}
                   className="rounded-full cursor-pointer mx-2 w-22 border-black border"
                   alt="profile" />
               </div>
@@ -135,9 +141,9 @@ const Profile = () => {
                 <div className="flex overflow-x-scroll scroll-smooth"
                   style={{ scrollbarWidth: "none" }}>
                   <div className={`flex flex-nowrap ms-0.5 ${loading && 'items-center justify-center'}`}>
-                    {loading && (<div className="items-center">
+                    {loading && (<p className="text-center">
                       <SyncLoader />
-                    </div>)}
+                    </p>)}
                     {blog?.length !== 0 ?
                       (blog?.map((post, _) => (
                         <NavLink to={`/post/${post?.id}`} className="border-r p-2 bg-white mr-1 drop-shadow-lg rounded-lg cursor-auto" key={_} >
