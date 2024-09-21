@@ -4,6 +4,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { BiLogoGithub, BiLogoGoogle, BiSearch } from "react-icons/bi";
 import { CgDarkMode } from "react-icons/cg";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
+import { IoIosArrowDown } from "react-icons/io";
 import { HiOutlineLogout } from "react-icons/hi";
 import { SlNote } from "react-icons/sl";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
@@ -508,8 +509,8 @@ const Navbar = () => {
                                 {
                                     pathname === '/write' ? (
                                         <button
-                                            className="px-5 py-1 bg-green-600 rounded-full text-white mx-3 text-xl" onClick={changePublish}>
-                                            Publish
+                                            className="px-5 py-1 bg-[#2D3250] rounded-full text-white mx-3 text-xl" onClick={changePublish}>
+                                            Post
                                         </button>
                                     )
                                         : <Link to={"/write"} className="flex items-center mx-1">
@@ -521,9 +522,13 @@ const Navbar = () => {
                                 }
                                 <div className="mx-1" ref={profiler}
                                     onClick={profileDropDown}>
-                                    <img src={user?.user_metadata.avatar_url || "/blank-avatar.webp"}
-                                        className="w-10 rounded-full hover:border-2 border-gray-700 cursor-pointer transition-all duration-75 relative"
-                                        onClick={() => setProfile(prev => !prev)} />
+                                    <div className="flex items-center cursor-pointer"
+                                        onClick={() => setProfile(prev => !prev)}>
+                                        <img src={user?.user_metadata.avatar_url || "/blank-avatar.webp"}
+                                            className="w-10 rounded-full hover:border-2 border-gray-700 transition-all duration-75 relative"
+                                        />
+                                        <IoIosArrowDown className="mx-2" />
+                                    </div>
                                     <div className={`absolute z-10 right-7 my-2 bg-[#dfdfdf] px-2 py-2 w-60 rounded-xl items-start justify-start ${profile && `hidden`}`} >
                                         <div className="flex items-center px-3 py-1 justify-start cursor-pointer">
                                             <img src={user?.user_metadata.avatar_url} className="rounded-full w-8" />

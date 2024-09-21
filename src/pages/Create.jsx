@@ -1,103 +1,23 @@
-/* eslint-disable no-unused-vars */
-import date from 'date-and-time';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ReactQuill from "react-quill";
 import 'react-quill/dist/quill.bubble.css';
-import { useNavigate } from "react-router-dom";
-import { v4 as uuidv4 } from 'uuid';
-import { supabase } from "../../supabaseClient";
+// import { useNavigate } from "react-router-dom";
 import useUsers from "../context/User";
 import Preview from '../components/Preview';
 
 
-const modules = {
-  toolbar: [
-    [{ 'header': '1' }, { 'header': '2' }, { 'font': [] }],
-    [{ size: [] }],
-    ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-    [{ 'list': 'ordered' }, { 'list': 'bullet' },
-    { 'indent': '-1' }, { 'indent': '+1' }],
-  ],
-};
-
-const formats = [
-  'header', 'font', 'size',
-  'bold', 'italic', 'underline', 'strike', 'blockquote',
-  'list', 'bullet', 'indent',
-]
-
 const Create = () => {
 
   const [title, setTitle] = useState('');
-  const [value, setValue] = useState('');
-  const [image_url, setImageURL] = useState('');
-  const [view, setView] = useState(false);
+  const [blog_content, setBlog_content] = useState('');
 
   // const [user_id, setUserId] = useState('b8f2393b-d896-41e2-83b9-4248da0634b6');
-  const { user, publish } = useUsers();
+  const { publish } = useUsers();
 
-  const navigate = useNavigate();
+  useEffect(() => {
+    console.log(blog_content, title);
+  }, [blog_content, title])
 
-  const handleCreatePost = async (e) => {
-    e.preventDefault();
-    try {
-      const now = new Date();
-      const formated_time = date.format(now, 'ddd, MMM DD YYYY');
-      const id = uuidv4();
-
-      await supabase
-        .from('blog_posts')
-        .insert([{
-          id: id,
-          user_id: user.id,
-          blog_title,
-          summary,
-          blog_content,
-          formated_time,
-          image_url
-        }]);
-
-      await supabase
-        .from('likes')
-        .insert([{
-          post_id: id,
-          like: 0
-        }]);
-
-      await supabase
-        .from('comments')
-        .insert([{
-          post_id: id,
-          content: [],
-          user: []
-        }]);
-
-      navigate('/');
-
-    } catch (error) {
-      console.log("Can't Create Post\n", error);
-    }
-  }
-
-  const uploadImg = async (e) => {
-    try {
-      const file = e.target.files[0];
-      const { data } = await supabase
-        .storage
-        .from('img_posts')
-        .upload(uuidv4() + "/" + uuidv4(), file);
-      console.log(uuidv4());
-
-      if (data) {
-        console.log(data);
-        setImageURL(
-          `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/${data.fullPath}`
-        )
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
 
   return (
 
@@ -110,13 +30,13 @@ const Create = () => {
 
       <ReactQuill
         theme='bubble'
-        value={value}
-        onChange={setValue}
+        value={blog_content}
+        onChange={setBlog_content}
         placeholder='Write About Pour Post...'
         className='my-5 p-0 create' />
 
-      <div className="">
-        {publish && <Preview />}
+      <div className={`${publish ? 'visible opacity-100' : 'invisible opacity-0'} transition-all duration-200`}>
+        <Preview title={title} blog_content={blog_content} />
       </div>
     </section>
 

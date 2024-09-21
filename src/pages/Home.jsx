@@ -38,6 +38,7 @@ const Home = () => {
                         blog_content,
                         formated_time,
                         image_url,
+                        preview,
                         comments (
                             id,
                             content
@@ -90,14 +91,6 @@ const Home = () => {
         navigate(`/post/${id}`);
     };
 
-    // const handleTost = () => {
-    //     toast(() => (
-    //         <span className="text-xl">
-    //             Login to Read
-    //         </span>
-    //     ));
-    // };
-
     return (
         <>
             <main className={`md:p-8 ${model || showNewUser ? 'blur-[5px]' : ''}`}>
@@ -111,25 +104,24 @@ const Home = () => {
                     {
                         blogPost?.map((post, _) => {
                             const persons = users?.find((person) => person.id === post.user_id);
-                            const summary = post?.summary.substring(0, 230) + '...';
+
                             return (
                                 <div key={_}
-                                    className={`custom-font my-5 flex justify-around ${themeMode && 'shadow-white'} shadow-md bg-white dark:bg-[#100f0fab] dark:text-white rounded-lg duration-300 transition hover:-translate-y-4 origin-center hover:scale-95 `}>
+                                    className={`w-full custom-font my-5 flex justify-around ${themeMode && 'shadow-white'} shadow-md bg-white dark:bg-[#100f0fab] dark:text-white rounded-lg duration-300 transition hover:-translate-y-4 origin-center hover:scale-95 `}>
                                     <div className="w-[33%] p-1 my-auto cursor-pointer"
                                         onClick={() => handlePost(post?.id)}>
                                         <img src={post?.image_url}
-                                            className="object-cover w-full rounded-xl m-1 h-[27vh]" />
+                                            className="object-cover w-full rounded-xl h-[27vh]" />
                                     </div>
                                     <div className="w-[65%] p-2 flex flex-col justify-evenly">
-                                        <p className="tracking-wider ">
+                                        <p className="tracking-wider">
                                             ✨ {persons?.name} {user.id == post.user_id && "(You)"}
                                         </p>
                                         <p onClick={() => handlePost(post?.id)}
-                                            className="text-3xl title hover:subpixel-antialiased cursor-pointer text-black dark:text-white text-pretty">
-                                            {post?.blog_title}
+                                            className="text-3xl title hover:subpixel-antialiased cursor-pointer text-black dark:text-white text-pretty" dangerouslySetInnerHTML={{ __html: post?.preview._title }}>
                                         </p>
-                                        <p className="text-xl description mb-3 text-slate-500 dark:text-slate-100 text-balance tracking-widest font-light">
-                                            {summary}
+                                        <p className="text-xl description mb-3 text-slate-500 dark:text-slate-100 text-balance tracking-widest font-light"
+                                            dangerouslySetInnerHTML={{ __html: post?.summary }}>
                                         </p>
                                         <div className="flex items-center justify-between">
                                             <p className="font-normal text-black text-sm mt-2 dark:text-slate-50">
