@@ -93,7 +93,7 @@ const Profile = () => {
                 <div className="absolute inset-x-11 inset-y-9">
                   <MdCamera className="group-hover:block hidden text-2xl text-white" />
                 </div>
-                <img src={cur_user.avatar_url ? cur_user?.avatar_url : '/blank-avtar.webp'}
+                <img src={cur_user?.avatar_url || '/blank-avtar.webp'}
                   className="rounded-full cursor-pointer mx-2 w-22 border-black border"
                   alt="profile" />
               </div>

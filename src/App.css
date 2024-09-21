@@ -4,10 +4,12 @@
     filter: blur(5px);
     background-color: rgba(0, 0, 0, 0);
 }
-.custom-font{
+
+.custom-font {
     font-family: "Oswald", sans-serif;
     font-optical-sizing: auto;
 }
+
 .custom-font .title {
     font-weight: 500;
     letter-spacing: 1.2px;
@@ -16,4 +18,8 @@
 .custom-font .description {
     font-weight: 200;
     letter-spacing: 2px;
+}
+
+.create .ql-editor {
+    font-size: 1.5em;
 }

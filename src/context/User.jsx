@@ -10,7 +10,9 @@ export const UserContext = createContext({
     searchResult: [],
     changeSearchResult: () => { },
     getPost: [],
-    getPosts: () => { }
+    getPosts: () => { },
+    publish: false,
+    changePublish: () => { }
 });
 
 export const ContextProvider = UserContext.Provider;

@@ -6,13 +6,17 @@ import { CgDarkMode } from "react-icons/cg";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { HiOutlineLogout } from "react-icons/hi";
 import { SlNote } from "react-icons/sl";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
 import useUsers from "../context/User";
 import useTheme from "../context/theme";
 
 
 const Navbar = () => {
+
+    const { pathname } = useLocation();
+    console.log(pathname.replace('/', ''));
+
 
     // React Hook Form
     const {
@@ -31,7 +35,8 @@ const Navbar = () => {
         showNewUser,
         chnageNewUser,
         changeSearchResult,
-        searchResult
+        searchResult,
+        changePublish
     } = useUsers();
 
     const { darkTheme, lightTheme, themeMode } = useTheme();
@@ -500,16 +505,23 @@ const Navbar = () => {
                     Object.keys(user).length !== 0 ?
                         (<>
                             <div className="flex items-center justify-between">
-                                <Link to={"/create"} className="flex items-center mx-1">
-                                    <div className="mx-3 flex items-center hover:text-slate-500 cursor-pointer">
-                                        <SlNote className="dark:text-white text-xl" />
-                                        <p className="mx-1 font-normal dark:text-white">Write</p>
-                                    </div>
-                                </Link>
+                                {
+                                    pathname === '/write' ? (
+                                        <button
+                                            className="px-5 py-1 bg-green-600 rounded-full text-white mx-3 text-xl" onClick={changePublish}>
+                                            Publish
+                                        </button>
+                                    )
+                                        : <Link to={"/write"} className="flex items-center mx-1">
+                                            <div className="mx-3 flex items-center hover:text-slate-500 cursor-pointer">
+                                                <SlNote className="dark:text-white text-xl" />
+                                                <p className="mx-1 font-normal dark:text-white">Write</p>
+                                            </div>
+                                        </Link>
+                                }
                                 <div className="mx-1" ref={profiler}
                                     onClick={profileDropDown}>
-                                    <img src={user.user_metadata.avatar_url ?
-                                    user?.user_metadata.avatar_url : "/blank-avatar.webp"}
+                                    <img src={user?.user_metadata.avatar_url || "/blank-avatar.webp"}
                                         className="w-10 rounded-full hover:border-2 border-gray-700 cursor-pointer transition-all duration-75 relative"
                                         onClick={() => setProfile(prev => !prev)} />
                                     <div className={`absolute z-10 right-7 my-2 bg-[#dfdfdf] px-2 py-2 w-60 rounded-xl items-start justify-start ${profile && `hidden`}`} >

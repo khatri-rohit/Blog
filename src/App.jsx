@@ -5,9 +5,9 @@ import {
   Routes
 } from "react-router-dom";
 import { ScaleLoader } from 'react-spinners';
-import './App.css';
 import { ThemeProvider } from "./context/theme.js";
 import { ContextProvider } from './context/User.jsx';
+import './App.css';
 
 const App = () => {
 
@@ -17,6 +17,8 @@ const App = () => {
   const [searchResult, setSearchResult] = useState('');
   const [getPost, setGetPost] = useState([]);
   const [themeMode, setThemeMode] = useState(false);
+  const [publish, setPublish] = useState(false);
+
 
   const oAuthStateChange = (data) => {
     setUser(data);
@@ -68,6 +70,10 @@ const App = () => {
     // }
   }, []);
 
+  const changePublish = () => {
+    setPublish(prev => !prev)
+  }
+
   useEffect(() => {
     document.querySelector('html').classList.remove('dark', 'light');
     document.querySelector('html').classList.add(themeMode);
@@ -90,7 +96,9 @@ const App = () => {
           searchResult,
           changeSearchResult,
           getPost,
-          getPosts
+          getPosts,
+          changePublish,
+          publish
         }
       }>
         <BrowserRouter>
@@ -101,9 +109,8 @@ const App = () => {
                   <Route index Component={lazy(() => import("./pages/Home"))} />
                   <Route path="/post/:id" Component={lazy(() => import("./pages/Post"))} />
                   <Route path="/search" Component={lazy(() => import("./pages/Search"))} />
-                  <Route path="/create" Component={lazy(() => import("./pages/Create"))} />
-                  <Route path="/profile"
-                    Component={lazy(() => import("./pages/Profile"))} />
+                  <Route path="/write" Component={lazy(() => import("./pages/Create"))} />
+                  <Route path="/profile" Component={lazy(() => import("./pages/Profile"))} />
                   <Route path="/*" Component={lazy(() => import("./pages/Redirect"))} />
                 </Route>
               </Routes>
