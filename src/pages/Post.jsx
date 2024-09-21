@@ -275,7 +275,7 @@ const Post = () => {
                                             key={_}>
                                             <div className="mx-1 flex items-center">
                                                 <img src={response?.img ? response?.img : `"/blank-avatar.webp"`}
-                                                alt="profile_pic"
+                                                    alt="profile_pic"
                                                     className="w-10 rounded-full" />
                                                 <div className="mx-3 leading-none">
                                                     <p className="font-medium">
@@ -355,8 +355,8 @@ const Post = () => {
                                         <p className="text-5xl text-center font-extrabold mb-7 dark:text-white text-balance">
                                             {post?.blog_title}
                                         </p>
-                                        <p className="text-xl text-center text-gray-400 mt-3 mb-5 text-balance dark:text-stone-200">
-                                            {post?.summary}
+                                        <p className="text-xl text-center text-gray-400 mt-3 mb-5 text-balance dark:text-stone-200"
+                                                dangerouslySetInnerHTML={{ __html: post?.summary }}>
                                         </p>
                                     </div>
                                     <div className="w-full my-3">

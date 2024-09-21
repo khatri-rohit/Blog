@@ -12,7 +12,6 @@ import { useNavigate } from 'react-router-dom';
 
 
 const Preview = ({ title, blog_content }) => {
-    console.log(blog_content, title);
 
     const imageRef = useRef(null);
     const [tags, setTags] = useState([]);
@@ -29,14 +28,15 @@ const Preview = ({ title, blog_content }) => {
         imageRef.current.click();
     }
 
-
     const navigate = useNavigate();
 
     const handleCreatePost = async () => {
         try {
             const now = new Date();
             const formated_time = date.format(now, 'ddd, MMM DD YYYY');
-            const id = uuidv4();
+            // const id = uuidv4();
+            const id = encodeURIComponent(title) + uuidv4().substring(0, 10);
+            console.log(id);
 
             await supabase
                 .from('blog_posts')
@@ -77,16 +77,16 @@ const Preview = ({ title, blog_content }) => {
         try {
             const file = e.target.files[0];
             const { data } = await supabase
-            .storage
-            .from('img_posts')
-            .upload(uuidv4() + "/" + uuidv4(), file);
+                .storage
+                .from('img_posts')
+                .upload(uuidv4() + "/" + uuidv4(), file);
             console.log(uuidv4());
-            
+
             if (data) {
                 console.log(data);
                 setImageURL(`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/${data.fullPath}`);
             }
-            setPreview({ ...preview, imageURL: URL.createObjectURL(e.target.files[0])});
+            setPreview({ ...preview, imageURL: URL.createObjectURL(e.target.files[0]) });
         } catch (error) {
             console.log(error);
         }
@@ -94,10 +94,9 @@ const Preview = ({ title, blog_content }) => {
 
     console.log(tags);
     
-
     useEffect(() => {
-        console.log(blog_content, title);
         setPreview({ ...preview, _title: title });
+        console.log(blog_content, title);
     }, [blog_content, title])
 
     return (
@@ -150,7 +149,7 @@ const Preview = ({ title, blog_content }) => {
                             value={tags}
                             onChange={setTags} />
                         <button
-                        onClick={handleCreatePost}
+                            onClick={handleCreatePost}
                             className="px-5 w-fit py-1 bg-[#2c2f44] rounded-full text-white mx-3 text-xl">
                             Post Blog
                         </button>

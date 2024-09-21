@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ReactQuill from "react-quill";
 import 'react-quill/dist/quill.bubble.css';
 // import { useNavigate } from "react-router-dom";
@@ -13,11 +13,6 @@ const Create = () => {
 
   // const [user_id, setUserId] = useState('b8f2393b-d896-41e2-83b9-4248da0634b6');
   const { publish } = useUsers();
-
-  useEffect(() => {
-    console.log(blog_content, title);
-  }, [blog_content, title])
-
 
   return (
 
