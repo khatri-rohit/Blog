@@ -16,8 +16,6 @@ import useTheme from "../context/theme";
 const Navbar = () => {
 
     const { pathname } = useLocation();
-    console.log(pathname.replace('/', ''));
-
 
     // React Hook Form
     const {

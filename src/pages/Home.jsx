@@ -29,7 +29,7 @@ const Home = () => {
         try {
             setLoading(true);
             const { data } = await supabase
-                .from('blog_posts')
+                .from('posts')
                 .select(`
                         id,
                         user_id,
@@ -51,6 +51,8 @@ const Home = () => {
                 .order('created_at', { ascending: false });
             setBlogPost(data);
             setLoading(false);
+            console.log(data);
+
         } catch (error) {
             console.log("Something Wrong happned while fetching Blog Data\n", error);
         }
@@ -80,6 +82,8 @@ const Home = () => {
                     `);
 
                 setUsers(data);
+                console.log(data);
+
             } catch (error) {
                 console.log("Something Wrong happned While fetching Users\n", error);
             }
@@ -91,42 +95,65 @@ const Home = () => {
         navigate(`/post/${id}`);
     };
 
+    function calculateReadingTime(text) {
+        const parser = new DOMParser();
+        const desc = parser.parseFromString(text, "text/html");
+        const plainText = desc.body.textContent;
+        const wordsPerMinute = 200;
+        const wordCount = plainText.split(/\s+/).length;
+        const readingTime = Math.ceil(wordCount / wordsPerMinute);
+        return readingTime;
+    }
+
     return (
         <>
             <main className={`md:p-8 ${model || showNewUser ? 'blur-[5px]' : ''}`}>
                 <div className="container mx-auto w-3/4 flex flex-col items-center justify-center transition-all">
                     {
-                        loading &&
-                        <p className="flex justify-center">
-                            <PuffLoader speedMultiplier={2} color="#B2B1B9" />
-                        </p>
+                        loading ?
+                            <p className="flex justify-center">
+                                <PuffLoader speedMultiplier={1} color="#B2B1B9" />
+                            </p>
+                            : blogPost?.length === 0 && (<p className="text-3xl font-medium flex justify-center flex-col">Empty Server Cant find Blogs <br /> <span className="text-center">Comeback later</span></p>)
                     }
                     {
                         blogPost?.map((post, _) => {
                             const persons = users?.find((person) => person.id === post.user_id);
+                            const readingtime = calculateReadingTime(post.blog_content);
 
                             return (
                                 <div key={_}
                                     className={`w-full custom-font my-5 flex justify-around ${themeMode && 'shadow-white'} shadow-md bg-white dark:bg-[#100f0fab] dark:text-white rounded-lg duration-300 transition hover:-translate-y-4 origin-center hover:scale-95 `}>
+
                                     <div className="w-[33%] p-1 my-auto cursor-pointer"
                                         onClick={() => handlePost(post?.id)}>
                                         <img src={post?.image_url}
                                             className="object-cover w-full rounded-xl h-[27vh]" />
                                     </div>
+
                                     <div className="w-[65%] p-2 flex flex-col justify-evenly">
                                         <p className="tracking-wider">
                                             ✨ {persons?.name} {user.id == post.user_id && "(You)"}
                                         </p>
+
                                         <p onClick={() => handlePost(post?.id)}
                                             className="text-3xl title hover:subpixel-antialiased cursor-pointer text-black dark:text-white text-pretty" dangerouslySetInnerHTML={{ __html: post?.preview._title }}>
                                         </p>
+
                                         <p className="text-xl description mb-3 text-slate-500 dark:text-slate-100 text-balance tracking-widest font-light"
                                             dangerouslySetInnerHTML={{ __html: post?.summary }}>
                                         </p>
+
                                         <div className="flex items-center justify-between">
-                                            <p className="font-normal text-black text-sm mt-2 dark:text-slate-50">
-                                                {post?.formated_time}
-                                            </p>
+                                            <div className="flex items-center">
+                                                <p className="mx-2 font-normal text-black text-[10px] dark:text-slate-50">
+                                                    {post?.formated_time}
+                                                </p>
+                                                <p className="text-gray-500 text-xs">
+                                                    {readingtime} min read
+                                                </p>
+                                            </div>
+
                                             <div className="flex items-center">
                                                 <div className="mx-2 flex items-center">
                                                     <MdOutlineMessage className="text-2xl" />
@@ -141,6 +168,7 @@ const Home = () => {
                                                     </p>
                                                 </div>
                                             </div>
+
                                         </div>
                                     </div>
                                 </div>

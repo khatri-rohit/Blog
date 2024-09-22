@@ -8,8 +8,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { supabase } from "../../supabaseClient";
 import useUsers from "../context/User";
 
-
-
 const Post = () => {
 
     const { id } = useParams();
@@ -38,7 +36,7 @@ const Post = () => {
                 setLoading(true);
                 // Selected Blog
                 const { data } = await supabase
-                    .from('blog_posts')
+                    .from('posts')
                     .select(`
                         id,
                         user_id,

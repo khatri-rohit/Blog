@@ -32,7 +32,7 @@ const Search = () => {
         try {
             setLoading(true);
             const { data } = await supabase
-                .from('blog_posts')
+                .from('posts')
                 .select(`
                         id,
                         user_id,

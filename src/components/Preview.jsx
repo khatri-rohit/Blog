@@ -33,13 +33,12 @@ const Preview = ({ title, blog_content }) => {
     const handleCreatePost = async () => {
         try {
             const now = new Date();
-            const formated_time = date.format(now, 'ddd, MMM DD YYYY');
-            // const id = uuidv4();
-            const id = encodeURIComponent(title) + uuidv4().substring(0, 10);
+            const formated_time = date.format(now, 'ddd, MMM DD');
+            const id = uuidv4();
             console.log(id);
 
             await supabase
-                .from('blog_posts')
+                .from('posts')
                 .insert([{
                     id: id,
                     user_id: user.id,
@@ -67,6 +66,7 @@ const Preview = ({ title, blog_content }) => {
                 }]);
 
             navigate('/');
+            console.log(tags);
 
         } catch (error) {
             console.log("Can't Create Post\n", error);
@@ -80,10 +80,10 @@ const Preview = ({ title, blog_content }) => {
                 .storage
                 .from('img_posts')
                 .upload(uuidv4() + "/" + uuidv4(), file);
-            console.log(uuidv4());
 
             if (data) {
                 console.log(data);
+                console.log("Image Uploaded");
                 setImageURL(`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/${data.fullPath}`);
             }
             setPreview({ ...preview, imageURL: URL.createObjectURL(e.target.files[0]) });
@@ -92,11 +92,10 @@ const Preview = ({ title, blog_content }) => {
         }
     }
 
-    console.log(tags);
-    
+
     useEffect(() => {
+
         setPreview({ ...preview, _title: title });
-        console.log(blog_content, title);
     }, [blog_content, title])
 
     return (

@@ -19,7 +19,6 @@ const App = () => {
   const [themeMode, setThemeMode] = useState(false);
   const [publish, setPublish] = useState(false);
 
-
   const oAuthStateChange = (data) => {
     setUser(data);
   };
@@ -80,8 +79,6 @@ const App = () => {
     if (themeMode === 'dark') document.body.style.backgroundColor = "#181D31";
     else document.body.style.backgroundColor = "#f7f7f7";
   }, [themeMode])
-
-  console.log(user);
 
   return (
     <ThemeProvider value={{ darkTheme, lightTheme, themeMode }}>
