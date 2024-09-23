@@ -94,7 +94,6 @@ const Preview = ({ title, blog_content }) => {
 
 
     useEffect(() => {
-
         setPreview({ ...preview, _title: title });
     }, [blog_content, title])
 

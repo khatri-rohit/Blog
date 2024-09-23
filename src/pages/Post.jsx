@@ -363,7 +363,7 @@ const Post = () => {
                                             className="h-[35em] mx-auto" />
                                     </div>
                                     <div className="w-[75%] mx-auto">
-                                        <div className="text-2xl dark:text-white p-3 text-pretty"
+                                        <div className="dark:text-white p-3"
                                             dangerouslySetInnerHTML={{ __html: post?.blog_content }}
                                         />
                                     </div>

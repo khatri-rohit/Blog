@@ -15,6 +15,8 @@ const Profile = () => {
   const [cur_user, setCur_user] = useState('');
   const [blog, setBlog] = useState([]);
   const [loading, setLoading] = useState(false);
+  
+
 
   const handleChange = async (method) => {
     setChangeName(prev => !prev);
@@ -28,11 +30,7 @@ const Profile = () => {
     }
   }
 
-  // const userProfile = memo(function fetchProfile({ user }) {
-  //   console.log(user);
-  // }, user.id);
-
-  const fetchProfile = async (id) => {
+  const fetchProfile = async () => {
     try {
       setLoading(true);
       const { data } = await supabase
@@ -42,7 +40,6 @@ const Profile = () => {
 
       console.log(user.id);
 
-
       if (data) {
         console.log(data[0]);
         setCur_user(data[0]);
@@ -50,7 +47,7 @@ const Profile = () => {
       }
 
       const response = await supabase
-        .from('blog_posts')
+        .from('posts')
         .select()
         .eq('user_id', user.id);
       setBlog(response.data);
@@ -64,7 +61,7 @@ const Profile = () => {
   }
 
   useEffect(() => {
-    fetchProfile(user.id);
+    fetchProfile();
   }, [])
 
 
@@ -76,19 +73,17 @@ const Profile = () => {
           {/*  */}
           <div className="rounded-lg w-[20%] bg-gray-600">
             <div className="flex items-center p-2 font-medium bg-slate-300 mt-9 cursor-pointer">
-              <img src="/blank-avatar.webp"
-                className="mx-2 w-10 rounded-full border-black border-2" />
+              <img src={cur_user?.avatar_url}
+                className="mx-2 w-10 rounded-full border-gray-400 border-2" />
               <p className="text-xl">
-                Accounts
+                Account
               </p>
             </div>
           </div>
 
           {/*  */}
           <div className="w-[65%] rounded-lg bg-gray-300 p-3 cursor-pointer">
-
             <div className="flex items-center m-3">
-
               <div className="relative group hover:opacity-60">
                 <div className="absolute inset-x-11 inset-y-9">
                   <MdCamera className="group-hover:block hidden text-2xl text-white" />
@@ -162,12 +157,6 @@ const Profile = () => {
                         </NavLink>
                       )))
                       : loading ? '' : (<p className="text-xl">No Data</p>)}
-
-                    {/* <div className="inline-block px-3">
-                      <div
-                        className="w-64 h-64 max-w-xs overflow-hidden rounded-lg shadow-md bg-white hover:shadow-xl transition-shadow duration-300 ease-in-out"
-                      ></div>
-                    </div> */}
 
                   </div>
 

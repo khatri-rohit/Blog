@@ -69,8 +69,8 @@ const App = () => {
     // }
   }, []);
 
-  const changePublish = () => {
-    setPublish(prev => !prev)
+  const changePublish = (value) => {
+    setPublish(value);
   }
 
   useEffect(() => {

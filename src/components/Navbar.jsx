@@ -11,7 +11,8 @@ import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
 import useUsers from "../context/User";
 import useTheme from "../context/theme";
-
+import { GiBookmarklet } from "react-icons/gi";
+import Model from "./Model";
 
 const Navbar = () => {
 
@@ -54,13 +55,12 @@ const Navbar = () => {
     const modalContainerRef = useRef();
     const modalRef = useRef();
     const showRef = useRef();
-    const profiler = useRef();
     const navigate = useNavigate();
 
     const [eye, setEye] = useState(false);
     const [search, setSearch] = useState('');
     const [timeoutId, setTimeoutId] = useState();
-    const [profile, setProfile] = useState(true);
+    const [profile, setProfile] = useState(false);
 
     const newUser = () => {
         changeModel(!model);
@@ -178,20 +178,6 @@ const Navbar = () => {
     }, [modalContainerRef, modalRef, showRef]);
 
     useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (!modalContainerRef.current.contains(event.target)) {
-                if (!profiler.current.contains(event.target)) {
-                    setProfile(true);
-                }
-            }
-        };
-        document.addEventListener('click', handleClickOutside);
-        return () => {
-            document.removeEventListener('click', handleClickOutside);
-        };
-    }, [modalContainerRef, profiler]);
-
-    useEffect(() => {
         (async () => {
             try {
                 if (user !== null) {
@@ -247,11 +233,6 @@ const Navbar = () => {
     useEffect(() => {
         return () => clearTimeout(timeoutId);
     }, [timeoutId]);
-
-    const profileDropDown = () => {
-        console.log("Profile Menu");
-        console.log(user.user_metadata.avatar_url);
-    }
 
     return (
         <>
@@ -507,7 +488,7 @@ const Navbar = () => {
                                 {
                                     pathname === '/write' ? (
                                         <button
-                                            className="px-5 py-1 bg-[#2D3250] rounded-full text-white mx-3 text-xl" onClick={changePublish}>
+                                            className="px-5 py-1 bg-[#2D3250] rounded-full text-white mx-3 text-xl" onClick={() => changePublish(true)}>
                                             Post
                                         </button>
                                     )
@@ -518,8 +499,7 @@ const Navbar = () => {
                                             </div>
                                         </Link>
                                 }
-                                <div className="mx-1" ref={profiler}
-                                    onClick={profileDropDown}>
+                                <div className="mx-1" >
                                     <div className="flex items-center cursor-pointer"
                                         onClick={() => setProfile(prev => !prev)}>
                                         <img src={user?.user_metadata.avatar_url || "/blank-avatar.webp"}
@@ -527,30 +507,41 @@ const Navbar = () => {
                                         />
                                         <IoIosArrowDown className="mx-2" />
                                     </div>
-                                    <div className={`absolute z-10 right-7 my-2 bg-[#dfdfdf] px-2 py-2 w-60 rounded-xl items-start justify-start ${profile && `hidden`}`} >
-                                        <div className="flex items-center px-3 py-1 justify-start cursor-pointer">
-                                            <img src={user?.user_metadata.avatar_url} className="rounded-full w-8" />
-                                            <NavLink to={'/profile'}
-                                                onClick={() => setProfile(true)}
-                                                className="text-xl font-medium hover:text-slate-500 text-slate-900 mx-1">
-                                                Profile
-                                            </NavLink>
+                                    <Model profile={profile} setProfile={setProfile}>
+
+                                        <div className={`absolute z-30 right-7 my-2 bg-slate-100 border-2 border-gray-300 px-2 py-2 w-60 items-start justify-start ${profile || `hidden`}`} >
+                                            <div className="flex gap-2 items-center px-3 py-1 justify-start cursor-pointer">
+                                                <img src={user?.user_metadata.avatar_url} className="rounded-full w-[2rem]" />
+                                                <NavLink to={'/profile'}
+                                                    onClick={() => setProfile(false)}
+                                                    className="text-xl font-medium hover:text-slate-500 text-slate-900 mx-1">
+                                                    Profile
+                                                </NavLink>
+                                            </div>
+                                            <div className="flex gap-2 items-center px-3 py-1 justify-start cursor-pointer"
+                                                onClick={signOut}>
+                                                <GiBookmarklet className="text-2xl" />
+                                                <p className="text-xl font-medium hover:text-slate-500 text-slate-900 mx-3">
+                                                    Saved Posts
+                                                </p>
+                                            </div>
+                                            <div className="flex gap-2 items-center px-3 py-1 justify-start cursor-pointer"
+                                                onClick={darkMode}>
+                                                <CgDarkMode className="text-2xl" />
+                                                <p className="text-xl font-medium hover:text-slate-500 text-slate-900 mx-3">
+                                                    Dark / Light
+                                                </p>
+                                            </div>
+                                            <div className="flex gap-2 items-center px-3 py-1 justify-start cursor-pointer"
+                                                onClick={signOut}>
+                                                <HiOutlineLogout className="text-2xl" />
+                                                <p className="text-xl font-medium hover:text-slate-500 text-slate-900 mx-3">
+                                                    Logout
+                                                </p>
+                                            </div>
                                         </div>
-                                        <div className="flex items-center px-3 py-1 justify-start cursor-pointer"
-                                            onClick={darkMode}>
-                                            <CgDarkMode className="text-2xl" />
-                                            <p className="text-xl font-medium hover:text-slate-500 text-slate-900 mx-3">
-                                                Dark / Light
-                                            </p>
-                                        </div>
-                                        <div className="flex items-center px-3 py-1 justify-start cursor-pointer"
-                                            onClick={signOut}>
-                                            <HiOutlineLogout className="text-2xl" />
-                                            <p className="text-xl font-medium hover:text-slate-500 text-slate-900 mx-3">
-                                                Logout
-                                            </p>
-                                        </div>
-                                    </div>
+                                    </Model>
+
                                 </div>
                             </div>
                         </>) : (

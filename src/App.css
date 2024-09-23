@@ -7,8 +7,8 @@
 
 .custom-font {
     font-family: "Oswald", sans-serif;
-    font-optical-sizing: auto;
 }
+
 
 .custom-font .title {
     font-weight: 500;
@@ -16,9 +16,10 @@
 }
 
 .custom-font .description {
-    font-weight: 200;
-    letter-spacing: 2px;
+    font-weight: 300;
+    letter-spacing: 2.2px;
 }
+
 
 .create .ql-editor {
     font-size: 1.5em;
