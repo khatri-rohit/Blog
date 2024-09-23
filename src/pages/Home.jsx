@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { FaHeart } from "react-icons/fa6";
-import { MdOutlineMessage } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { PuffLoader } from 'react-spinners';
 import { supabase } from "../../supabaseClient";
 import useTheme from "../context/theme";
 import useUsers from "../context/User";
+import { IoBookmarksOutline } from "react-icons/io5";
+import toast from "react-hot-toast";
 
 
 const Home = () => {
@@ -17,9 +18,9 @@ const Home = () => {
 
     const navigate = useNavigate();
     const {
-        model,
+        // model,
         user,
-        showNewUser,
+        // showNewUser,
         searchResult,
         getPosts
     } = useUsers();
@@ -95,6 +96,32 @@ const Home = () => {
         navigate(`/post/${id}`);
     };
 
+    const handleSave = () => {
+        toast('Bookmark Saved', {
+            duration: 2000,
+            position: 'top-right',
+
+            // Styling
+            style: { padding: '1rem 1.5rem' },
+            className: 'font-bold',
+
+            // Custom Icon
+            icon: '✅',
+
+            // Change colors of success/error/loading icon
+            iconTheme: {
+                primary: '#000',
+                secondary: '#fff',
+            },
+
+            // Aria
+            ariaProps: {
+                role: 'alert',
+                'aria-live': 'polite',
+            },
+        });
+    }
+
     function calculateReadingTime(text) {
         const parser = new DOMParser();
         const desc = parser.parseFromString(text, "text/html");
@@ -107,7 +134,7 @@ const Home = () => {
 
     return (
         <>
-            <main className={`md:p-8 ${model || showNewUser ? 'blur-[5px]' : ''}`}>
+            <main className="md:p-8">
                 <div className="container mx-auto w-3/4 flex flex-col items-center justify-center transition-all">
                     {
                         loading ?
@@ -155,15 +182,14 @@ const Home = () => {
                                             </div>
 
                                             <div className="flex items-center">
+                                                {user.id && (<div className="mx-2 dark:text-white flex items-center cursor-pointer">
+                                                    <IoBookmarksOutline
+                                                        className="text-2xl"
+                                                        onClick={handleSave} />
+                                                </div>)}
                                                 <div className="mx-2 flex items-center">
-                                                    <MdOutlineMessage className="text-2xl" />
-                                                    <p className="mx-1 flex items-center font-medium text-lg mb-1">
-                                                        {post?.comments?.map((comment) => (comment.content).length)}
-                                                    </p>
-                                                </div>
-                                                <div className="mx-2 flex items-center">
-                                                    <FaHeart className="text-2xl text-pink-500" />
-                                                    <p className="mx-1 flex items-center font-medium text-lg mb-1">
+                                                    <FaHeart className="text-xl text-pink-500" />
+                                                    <p className="mx-1 flex items-center font-medium">
                                                         {post?.likes?.map((like) => like.like)}
                                                     </p>
                                                 </div>

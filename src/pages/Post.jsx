@@ -1,12 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { FaHeart } from "react-icons/fa";
 import { ImCross } from "react-icons/im";
+import { IoBookmarksOutline } from "react-icons/io5";
 import { MdOutlineMessage } from "react-icons/md";
 import { useParams } from "react-router-dom";
 import { BeatLoader } from 'react-spinners';
 import { v4 as uuidv4 } from 'uuid';
 import { supabase } from "../../supabaseClient";
 import useUsers from "../context/User";
+import toast from "react-hot-toast";
 
 const Post = () => {
 
@@ -193,6 +195,32 @@ const Post = () => {
         }
     }
 
+    const handleSave = () => {
+        toast('Bookmark Saved', {
+            duration: 2000,
+            position: 'top-right',
+
+            // Styling
+            style: { padding: '1rem 1.5rem' },
+            className: 'font-bold',
+
+            // Custom Icon
+            icon: '✅',
+
+            // Change colors of success/error/loading icon
+            iconTheme: {
+                primary: '#000',
+                secondary: '#fff',
+            },
+
+            // Aria
+            ariaProps: {
+                role: 'alert',
+                'aria-live': 'polite',
+            },
+        });
+    }
+
     function convertMinutes(minutes) {
         if (minutes < 60) {
             return [minutes, "minutes"];
@@ -313,15 +341,20 @@ const Post = () => {
                             <p className="text-slate-500 dark:text-white text-2xl font-bold">
                                 {thatUser?.name}
                             </p>
-                            <p className="text-black text-lg font-medium dark:text-white">
+                            <p className="text-black text-xs font-medium dark:text-white">
                                 {post?.formated_time}
                             </p>
                         </div>
                     </div>
 
                     <div className="flex items-center">
+                        {user.id && (<div className="mx-2 dark:text-white flex items-center cursor-pointer">
+                            <IoBookmarksOutline
+                                className="text-2xl"
+                                onClick={handleSave} />
+                        </div>)}
                         <div className="mx-2 dark:text-white flex items-center cursor-pointer">
-                            <MdOutlineMessage className="text-3xl"
+                            <MdOutlineMessage className="text-2xl"
                                 onClick={() => setSildebar(true)} />
                             <p className="mx-1 flex items-center font-medium text-lg mb-1">
                                 {comments?.content.length}
@@ -329,7 +362,7 @@ const Post = () => {
                         </div>
                         <div className="dark:text-white mx-2 flex items-center cursor-pointer"
                             onClick={updateLike}>
-                            <FaHeart className="text-3xl text-pink-500 cursor-pointer" />
+                            <FaHeart className="text-2xl text-pink-500 cursor-pointer" />
                             <p className="mx-1 flex items-center font-medium text-lg mb-1">
                                 {likeCount}
                             </p>
@@ -354,7 +387,7 @@ const Post = () => {
                                             {post?.blog_title}
                                         </p>
                                         <p className="text-xl text-center text-gray-400 mt-3 mb-5 text-balance dark:text-stone-200"
-                                                dangerouslySetInnerHTML={{ __html: post?.summary }}>
+                                            dangerouslySetInnerHTML={{ __html: post?.summary }}>
                                         </p>
                                     </div>
                                     <div className="w-full my-3">
@@ -363,7 +396,7 @@ const Post = () => {
                                             className="h-[35em] mx-auto" />
                                     </div>
                                     <div className="w-[75%] mx-auto">
-                                        <div className="dark:text-white p-3"
+                                        <div className="dark:text-white p-3 text-xl"
                                             dangerouslySetInnerHTML={{ __html: post?.blog_content }}
                                         />
                                     </div>

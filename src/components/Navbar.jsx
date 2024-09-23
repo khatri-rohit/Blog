@@ -4,14 +4,14 @@ import toast, { Toaster } from "react-hot-toast";
 import { BiLogoGithub, BiLogoGoogle, BiSearch } from "react-icons/bi";
 import { CgDarkMode } from "react-icons/cg";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
-import { IoIosArrowDown } from "react-icons/io";
+import { GiBookmarklet } from "react-icons/gi";
 import { HiOutlineLogout } from "react-icons/hi";
+import { IoIosArrowDown } from "react-icons/io";
 import { SlNote } from "react-icons/sl";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
 import useUsers from "../context/User";
 import useTheme from "../context/theme";
-import { GiBookmarklet } from "react-icons/gi";
 import Model from "./Model";
 
 const Navbar = () => {
@@ -28,12 +28,12 @@ const Navbar = () => {
     } = useForm();
 
     const {
-        model,
-        changeModel,
+        // gModel,
+        // changeModel,
         user,
         oAuthStateChange,
-        showNewUser,
-        chnageNewUser,
+        // showNewUser,
+        // chnageNewUser,
         changeSearchResult,
         searchResult,
         changePublish
@@ -52,20 +52,16 @@ const Navbar = () => {
         themeMode === "light" ? setIsDark(false) : setIsDark(true);
     }, []);
 
-    const modalContainerRef = useRef();
-    const modalRef = useRef();
-    const showRef = useRef();
     const navigate = useNavigate();
 
     const [eye, setEye] = useState(false);
     const [search, setSearch] = useState('');
     const [timeoutId, setTimeoutId] = useState();
-    const [profile, setProfile] = useState(false);
+    const [model, setModel] = useState(false);
+    const [login, setLogin] = useState(false);
+    const [reg, setRegister] = useState(false);
 
-    const newUser = () => {
-        changeModel(!model);
-        chnageNewUser();
-    }
+    const modelRef = useRef(null);
 
     const onSubmit = async (data) => {
         try {
@@ -83,7 +79,7 @@ const Navbar = () => {
                     oAuthStateChange({ ...data, name });
                     authUser({ ...data, name });
                     navigate("/");
-                    changeModel(!model);
+                    setModel(prev => !prev);
                 }
             } else if (model) {
                 const { data, error } = await supabase.auth.signInWithPassword({
@@ -128,7 +124,7 @@ const Navbar = () => {
                     redirectTo: 'http://localhost:5173'
                 }
             });
-            changeModel(!model);
+            setModel(prev => !prev);
             showNewUser && chnageNewUser()
         } catch (error) {
             console.log(error);
@@ -139,7 +135,7 @@ const Navbar = () => {
         try {
             await supabase.auth.signOut()
             oAuthStateChange([]);
-            setProfile(false);
+            setModel(false);
             navigate('/');
         } catch (error) {
             console.log("Error While Logout -> ", error);
@@ -154,28 +150,11 @@ const Navbar = () => {
                     redirectTo: 'http://localhost:5173'
                 }
             });
-            changeModel(!model);
+            setModel(prev => !prev);
         } catch (error) {
             console.log(error);
         }
     };
-
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (!modalContainerRef.current.contains(event.target)) {
-                if (!modalRef.current.contains(event.target)) {
-                    changeModel(!model);
-                }
-                if (!showRef.current.contains(event.target)) {
-                    chnageNewUser();
-                }
-            }
-        };
-        document.addEventListener('click', handleClickOutside);
-        return () => {
-            document.removeEventListener('click', handleClickOutside);
-        };
-    }, [modalContainerRef, modalRef, showRef]);
 
     useEffect(() => {
         (async () => {
@@ -197,9 +176,9 @@ const Navbar = () => {
     useEffect(() => {
         if (model)
             document.body.style.overflow = model ? "hidden" : "unset";
-        else
-            document.body.style.overflow = showNewUser ? "hidden" : "unset";
-    }, [model, showNewUser]);
+        // else
+        // document.body.style.overflow = showNewUser ? "hidden" : "unset";
+    }, [model]);
 
     const handleSearch = useCallback((e) => {
         const input = e.target.value;
@@ -219,6 +198,19 @@ const Navbar = () => {
         ));
     };
 
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (!modelRef.current.contains(event.target)) {
+                console.log("Hello Outside Model");
+            }
+        };
+        document.addEventListener('click', handleClickOutside);
+        return () => {
+            document.removeEventListener('click', handleClickOutside);
+        };
+    }, [modelRef]);
+
+
     const handleSearchSubmit = useCallback((e) => {
         e.preventDefault();
         if (search.trim().length <= 0) {
@@ -236,10 +228,9 @@ const Navbar = () => {
 
     return (
         <>
-
-            {showNewUser && (
-                <>
-                    <div ref={showRef} className="absolute top-5 left-1/2 transform -translate-x-1/2 z-10 shadow-sm mx-auto w-[23%] bg-[#E9EFEC]">
+            {reg &&
+                <Model>
+                    <div className="absolute top-5 left-1/2 transform -translate-x-1/2 z-10 shadow-sm mx-auto w-[23%] bg-[#E9EFEC]">
                         {/* <!-- Modal content --> */}
                         <div className="relative bg-white rounded-lg shadow dark:bg-gray-700 p-2">
                             {/* <!-- Modal header --> */}
@@ -248,7 +239,7 @@ const Navbar = () => {
                                     Welcome to <span className="text-gray-600 font-bold">DevDiscuss</span>
                                 </p>
                                 <button type="button" className="end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white outline-none" data-modal-hide="authentication-modal"
-                                    onClick={chnageNewUser} >
+                                    onClick={() => setRegister(false)}>
                                     <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                                         <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
                                     </svg>
@@ -357,7 +348,10 @@ const Navbar = () => {
                                     </button>
                                     <div className="text-sm font-medium text-gray-500 dark:text-gray-300">
                                         Already have a Account? <button className="text-blue-700 hover:underline dark:text-blue-500"
-                                            onClick={newUser}>
+                                            onClick={() => {
+                                                setLogin(true);
+                                                setRegister(false);
+                                            }}>
                                             Login
                                         </button>
                                     </div>
@@ -365,12 +359,12 @@ const Navbar = () => {
                             </div>
                         </div>
                     </div>
-                </>
-            )}
+                </Model>
+            }
 
-            {model && (
-                <>
-                    <div ref={modalRef} className="absolute top-5 left-1/2 transform -translate-x-1/2 z-10 shadow-sm mx-auto w-[23%] bg-[#E9EFEC]">
+            {login &&
+                <Model>
+                    <div className="absolute top-5 left-1/2 transform -translate-x-1/2 z-10 shadow-sm mx-auto w-[23%] bg-[#E9EFEC]">
                         {/* <!-- Modal content --> */}
                         <div className="relative bg-white rounded-lg shadow dark:bg-gray-700 p-2">
                             {/* <!-- Modal header --> */}
@@ -379,7 +373,9 @@ const Navbar = () => {
                                     Welcome Back <span className="text-gray-600">DevDiscuss</span>
                                 </p>
                                 <button type="button" className="end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white outline-none" data-modal-hide="authentication-modal"
-                                    onClick={() => changeModel(!model)} >
+                                    onClick={() => {
+                                        setLogin(false);
+                                    }}>
                                     <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                                         <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
                                     </svg>
@@ -442,7 +438,10 @@ const Navbar = () => {
                                     <div className="text-sm font-medium text-gray-500 dark:text-gray-300">
                                         Not registered?
                                         <button className="text-blue-700 hover:underline dark:text-blue-500 mx-1"
-                                            onClick={newUser}>
+                                            onClick={() => {
+                                                setRegister(true);
+                                                setLogin(false);
+                                            }}>
                                             Create account
                                         </button>
                                     </div>
@@ -450,14 +449,14 @@ const Navbar = () => {
                             </div>
                         </div>
                     </div>
-                </>
-            )}
+                </Model>
+            }
 
             <Toaster
                 position="top-center"
             />
 
-            <nav ref={modalContainerRef} className={`flex items-center justify-between px-2 py-4 border-b-2 ${model || showNewUser ? 'blur ' : ''}`}>
+            <nav className="flex items-center justify-between px-2 py-4 border-b-2">
                 <div className="flex items-center justify-between">
                     <Link to={'/'} className="flex items-center mx-3 outline-none">
                         <img src={themeMode === "light" ? "/blogicon.png" : "/whiteblogicon.png"}
@@ -467,7 +466,7 @@ const Navbar = () => {
                         </p>
                     </Link>
                     <form
-                        className="input-feild flex mx-1 items-center bg-slate-200  rounded-xl"
+                        className="input-feild flex mx-1 items-center bg-slate-200 rounded-xl"
                         onSubmit={handleSearchSubmit}
                     >
                         <div className="mx-1" onSubmit={handleSearchSubmit}>
@@ -501,19 +500,19 @@ const Navbar = () => {
                                 }
                                 <div className="mx-1" >
                                     <div className="flex items-center cursor-pointer"
-                                        onClick={() => setProfile(prev => !prev)}>
+                                        onClick={() => setModel(prev => !prev)}>
                                         <img src={user?.user_metadata.avatar_url || "/blank-avatar.webp"}
                                             className="w-10 rounded-full hover:border-2 border-gray-700 transition-all duration-75 relative"
                                         />
                                         <IoIosArrowDown className="mx-2" />
                                     </div>
-                                    <Model profile={profile} setProfile={setProfile}>
+                                    <Model model={model} setModel={setModel}>
 
-                                        <div className={`absolute z-30 right-7 my-2 bg-slate-100 border-2 border-gray-300 px-2 py-2 w-60 items-start justify-start ${profile || `hidden`}`} >
+                                        <div className={`absolute z-30 right-7 my-2 bg-slate-100 border-2 border-gray-300 px-2 py-2 w-60 items-start justify-start ${model || `hidden`}`} >
                                             <div className="flex gap-2 items-center px-3 py-1 justify-start cursor-pointer">
                                                 <img src={user?.user_metadata.avatar_url} className="rounded-full w-[2rem]" />
                                                 <NavLink to={'/profile'}
-                                                    onClick={() => setProfile(false)}
+                                                    onClick={() => setModel(false)}
                                                     className="text-xl font-medium hover:text-slate-500 text-slate-900 mx-1">
                                                     Profile
                                                 </NavLink>
@@ -547,7 +546,10 @@ const Navbar = () => {
                         </>) : (
                             <>
                                 <button className="bg-slate-300 px-4 p-2 rounded-md text-xl outline-none"
-                                    onClick={() => changeModel(!model)}>
+                                    onClick={() => {
+                                        setRegister(true);
+                                        setModel(true);
+                                    }}>
                                     SignIn
                                 </button>
                             </>

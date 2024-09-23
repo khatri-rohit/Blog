@@ -11,8 +11,8 @@ import './App.css';
 
 const App = () => {
 
-  const [model, setModel] = useState(false);
-  const [showNewUser, setNewUser] = useState(false);
+  // const [gModel, setModel] = useState(false);
+  // const [showNewUser, setNewUser] = useState(false);
   const [user, setUser] = useState({});
   const [searchResult, setSearchResult] = useState('');
   const [getPost, setGetPost] = useState([]);
@@ -23,13 +23,13 @@ const App = () => {
     setUser(data);
   };
 
-  const chnageNewUser = () => {
-    setNewUser(prev => !prev);
-  };
+  // const chnageNewUser = () => {
+  //   setNewUser(prev => !prev);
+  // };
 
-  const changeModel = (value) => {
-    setModel(value);
-  };
+  // const changeModel = (value) => {
+  //   setModel(value);
+  // };
 
   const changeSearchResult = (result) => {
     setSearchResult(result);
@@ -84,12 +84,12 @@ const App = () => {
     <ThemeProvider value={{ darkTheme, lightTheme, themeMode }}>
       <ContextProvider value={
         {
-          model,
-          oAuthStateChange,
-          changeModel,
+          // gModel,
+          // changeModel,
+          // chnageNewUser,
+          // showNewUser,
           user,
-          chnageNewUser,
-          showNewUser,
+          oAuthStateChange,
           searchResult,
           changeSearchResult,
           getPost,

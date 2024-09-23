@@ -20,6 +20,7 @@ const Create = () => {
         placeholder='Title'
         value={title}
         onChange={e => setTitle(e.target.value)}
+        autoFocus
         className='text-4xl outline-none w-full bg-transparent' />
 
       <ReactQuill
@@ -33,41 +34,6 @@ const Create = () => {
         <Preview title={title} blog_content={blog_content} />
       </div>
     </section>
-
-    // <form className="p-4 flex flex-col" 
-    // onSubmit={handleCreatePost}>
-    //   <input
-    //     type="text"
-    //     placeholder="Title"
-    //     className="my-1 border-2 p-2"
-    //     value={blog_title}
-    //     onChange={e => setTitle(e.target.value)} />
-
-    //   <input
-    //     type="text"
-    //     placeholder="Summary"
-    //     className="my-1 border-2 p-2"
-    //     value={summary}
-    //     onChange={e => setSummary(e.target.value)} />
-
-    //   <input type="file"
-    //     accept="image/png, image/jpeg, image/webp"
-    //     onChange={e => uploadImg(e)} />
-
-    //   <ReactQuill
-    //     className="mt-2 h-[36em]"
-    //     value={blog_content}
-    //     onChange={newValue => setContent(newValue)}
-    //     modules={modules}
-    //     formats={formats} />
-
-    //   <button
-    //     className="text-left my-14 bg-slate-500 text-white p-2 w-fit text-2xl"
-    //     onSubmit={handleCreatePost}>
-    //     Publish
-    //   </button>
-
-    // </form>
   )
 };
 
