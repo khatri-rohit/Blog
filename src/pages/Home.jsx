@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import { useEffect, useState } from "react";
 import { FaHeart } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
@@ -18,9 +19,7 @@ const Home = () => {
 
     const navigate = useNavigate();
     const {
-        // model,
         user,
-        // showNewUser,
         searchResult,
         getPosts
     } = useUsers();
@@ -61,7 +60,7 @@ const Home = () => {
 
     useEffect(() => {
         searchResult.trim().length >= 2 ? searchPost(searchResult) : fetchBlogs();
-    }, [searchResult])
+    }, [])
 
     const searchPost = (searchResult) => {
         const results = blogPost?.filter((post) => post?.blog_title?.toLowerCase().includes(searchResult) && post);
@@ -141,7 +140,7 @@ const Home = () => {
                             <p className="flex justify-center">
                                 <PuffLoader speedMultiplier={1} color="#B2B1B9" />
                             </p>
-                            : blogPost?.length === 0 && (<p className="text-3xl font-medium flex justify-center flex-col">Empty Server Cant find Blogs <br /> <span className="text-center">Comeback later</span></p>)
+                            : blogPost?.length === 0 && (<p className="text-3xl font-medium flex justify-center flex-col">Can't find blog</p>)
                     }
                     {
                         blogPost?.map((post, _) => {

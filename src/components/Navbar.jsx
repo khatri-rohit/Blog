@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useForm } from 'react-hook-form';
 import toast, { Toaster } from "react-hot-toast";
 import { BiLogoGithub, BiLogoGoogle, BiSearch } from "react-icons/bi";
@@ -12,11 +12,14 @@ import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
 import useUsers from "../context/User";
 import useTheme from "../context/theme";
-import Model from "./Model";
+import { LoignModel } from "../utils/LoignModel";
+import Model from "../utils/Model";
 
 const Navbar = () => {
 
     const { pathname } = useLocation();
+    const navigate = useNavigate();
+    const { darkTheme, lightTheme, themeMode } = useTheme(); // Theme Context API
 
     // React Hook Form
     const {
@@ -28,19 +31,13 @@ const Navbar = () => {
     } = useForm();
 
     const {
-        // gModel,
-        // changeModel,
         user,
         oAuthStateChange,
-        // showNewUser,
-        // chnageNewUser,
         changeSearchResult,
         searchResult,
         changePublish
     } = useUsers();
 
-    const { darkTheme, lightTheme, themeMode } = useTheme();
-    const [isDark, setIsDark] = useState(false);
 
     const darkMode = () => {
         if (isDark) lightTheme();
@@ -52,7 +49,6 @@ const Navbar = () => {
         themeMode === "light" ? setIsDark(false) : setIsDark(true);
     }, []);
 
-    const navigate = useNavigate();
 
     const [eye, setEye] = useState(false);
     const [search, setSearch] = useState('');
@@ -60,28 +56,28 @@ const Navbar = () => {
     const [model, setModel] = useState(false);
     const [login, setLogin] = useState(false);
     const [reg, setRegister] = useState(false);
-
-    const modelRef = useRef(null);
+    const [isDark, setIsDark] = useState(false);
+    const [cur_user, setCur_user] = useState(false);
 
     const onSubmit = async (data) => {
         try {
             const { email, password, name } = data
             console.log(email, password);
-            if (showNewUser) {
+            if (reg) {
                 const { data } = await supabase.auth.signUp({
                     email: email,
                     password: password,
                 });
-
                 console.log({ ...data, name });
-
                 if (data) {
+                    console.log("Account Created From");
                     oAuthStateChange({ ...data, name });
                     authUser({ ...data, name });
                     navigate("/");
                     setModel(prev => !prev);
+                    setRegister(false);
                 }
-            } else if (model) {
+            } else if (login) {
                 const { data, error } = await supabase.auth.signInWithPassword({
                     email: email,
                     password: password
@@ -90,7 +86,7 @@ const Navbar = () => {
                 console.log(data);
                 console.log(error);
                 oAuthStateChange(data);
-                chnageNewUser();
+                setLogin(false);
             }
             await new Promise((reslove) => setTimeout(reslove, 100));
             reset();
@@ -112,7 +108,7 @@ const Navbar = () => {
                     avatar_url: user.user_metadata.avatar_url
                 });
         } catch (error) {
-            console.log(error);
+            console.log("Error", error);
         }
     }
 
@@ -124,8 +120,8 @@ const Navbar = () => {
                     redirectTo: 'http://localhost:5173'
                 }
             });
-            setModel(prev => !prev);
-            showNewUser && chnageNewUser()
+            setRegister(false);
+            setLogin(false);
         } catch (error) {
             console.log(error);
         }
@@ -150,35 +146,50 @@ const Navbar = () => {
                     redirectTo: 'http://localhost:5173'
                 }
             });
-            setModel(prev => !prev);
+            setRegister(false);
+            setLogin(false)
         } catch (error) {
             console.log(error);
         }
     };
 
+    const loggedInUser = async (id) => {
+        try {
+            const { data } = await supabase
+                .from('users')
+                .select()
+                .eq('id', id);
+            setCur_user(data[0]);
+        } catch (error) {
+            console.log("Error", error);
+        }
+    }
+
     useEffect(() => {
         (async () => {
             try {
                 if (user !== null) {
-                    const data = (await supabase.auth.getSession()).data
-                    oAuthStateChange(data.session.user);
-                    console.log(data.session.user);
-                    authUser(data.session);
+                    try {
+                        const data = (await supabase.auth.getSession()).data
+                        oAuthStateChange(data.session.user);
+                        authUser(data.session);
+                        loggedInUser(data.session.user.id);
+                    } catch (error) {
+                        console.log("Error", error);
+                    }
                 }
             } catch (err) {
-                console.log(err);
+                console.log("Error", err);
             }
         })()
-    }, [])
 
+    }, [])
 
     // Remove Scroll while Login Model is Open
     useEffect(() => {
-        if (model)
-            document.body.style.overflow = model ? "hidden" : "unset";
-        // else
-        // document.body.style.overflow = showNewUser ? "hidden" : "unset";
-    }, [model]);
+        if (model || login || reg)
+            document.body.style.overflow = model || login || reg ? "hidden" : "unset";
+    }, [login, model, reg]);
 
     const handleSearch = useCallback((e) => {
         const input = e.target.value;
@@ -186,7 +197,7 @@ const Navbar = () => {
         setTimeoutId(
             setTimeout(() => {
                 changeSearchResult(input);
-            }, 350)
+            }, 400)
         );
     }, [searchResult])
 
@@ -197,18 +208,6 @@ const Navbar = () => {
             </span>
         ));
     };
-
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (!modelRef.current.contains(event.target)) {
-                console.log("Hello Outside Model");
-            }
-        };
-        document.addEventListener('click', handleClickOutside);
-        return () => {
-            document.removeEventListener('click', handleClickOutside);
-        };
-    }, [modelRef]);
 
 
     const handleSearchSubmit = useCallback((e) => {
@@ -229,7 +228,7 @@ const Navbar = () => {
     return (
         <>
             {reg &&
-                <Model>
+                <LoignModel model={reg}>
                     <div className="absolute top-5 left-1/2 transform -translate-x-1/2 z-10 shadow-sm mx-auto w-[23%] bg-[#E9EFEC]">
                         {/* <!-- Modal content --> */}
                         <div className="relative bg-white rounded-lg shadow dark:bg-gray-700 p-2">
@@ -310,9 +309,9 @@ const Navbar = () => {
                                                 type={eye ? `text` : `password`}
                                                 name="password"
                                                 placeholder="••••••••"
-                                                className="outline-none"
+                                                className="outline-none bg-transparent"
                                             />
-                                            <button className="text-xl" onClick={() => setEye(!eye)}>
+                                            <button className="text-[1rem]" onClick={() => setEye(!eye)}>
                                                 {eye ? <FaRegEyeSlash /> : <FaRegEye />}
                                             </button>
                                         </div>
@@ -359,11 +358,11 @@ const Navbar = () => {
                             </div>
                         </div>
                     </div>
-                </Model>
+                </LoignModel>
             }
 
             {login &&
-                <Model>
+                <LoignModel model={login}>
                     <div className="absolute top-5 left-1/2 transform -translate-x-1/2 z-10 shadow-sm mx-auto w-[23%] bg-[#E9EFEC]">
                         {/* <!-- Modal content --> */}
                         <div className="relative bg-white rounded-lg shadow dark:bg-gray-700 p-2">
@@ -449,7 +448,7 @@ const Navbar = () => {
                             </div>
                         </div>
                     </div>
-                </Model>
+                </LoignModel>
             }
 
             <Toaster
@@ -501,7 +500,7 @@ const Navbar = () => {
                                 <div className="mx-1" >
                                     <div className="flex items-center cursor-pointer"
                                         onClick={() => setModel(prev => !prev)}>
-                                        <img src={user?.user_metadata.avatar_url || "/blank-avatar.webp"}
+                                        <img src={cur_user?.avatar_url || "/blank-avatar.webp"}
                                             className="w-10 rounded-full hover:border-2 border-gray-700 transition-all duration-75 relative"
                                         />
                                         <IoIosArrowDown className="mx-2" />
@@ -510,7 +509,7 @@ const Navbar = () => {
 
                                         <div className={`absolute z-30 right-7 my-2 bg-slate-100 border-2 border-gray-300 px-2 py-2 w-60 items-start justify-start ${model || `hidden`}`} >
                                             <div className="flex gap-2 items-center px-3 py-1 justify-start cursor-pointer">
-                                                <img src={user?.user_metadata.avatar_url} className="rounded-full w-[2rem]" />
+                                                <img src={cur_user?.avatar_url || "/blank-avatar.webp"} className="rounded-full w-[2rem]" />
                                                 <NavLink to={'/profile'}
                                                     onClick={() => setModel(false)}
                                                     className="text-xl font-medium hover:text-slate-500 text-slate-900 mx-1">
@@ -547,7 +546,7 @@ const Navbar = () => {
                             <>
                                 <button className="bg-slate-300 px-4 p-2 rounded-md text-xl outline-none"
                                     onClick={() => {
-                                        setRegister(true);
+                                        setLogin(true);
                                         setModel(true);
                                     }}>
                                     SignIn
