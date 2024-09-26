@@ -15,7 +15,7 @@ const Post = () => {
     const { id } = useParams();
 
     const [post, setPost] = useState([]);
-    const [thatUser, setThatUser] = useState('');
+    const [thatUser, setThatUser] = useState([]);
     const [loading, setLoading] = useState(false);
     // eslint-disable-next-line no-unused-vars
     const [like, setLikes] = useState();
@@ -27,6 +27,7 @@ const Post = () => {
     const [commentText, setCommentText] = useState('');
     const [commentsCount, setCommentsCount] = useState([]);
     const [likeCommet, setLikeComment] = useState(false);
+    const [img, setImg] = useState(null)
 
     const commentRef = useRef();
     const postRef = useRef();
@@ -53,7 +54,6 @@ const Post = () => {
                 if (data) {
                     setPost(data[0]);
                     setLoading(false);
-                    setThatUser(data[0].user_id);
 
                     // Author Details
                     const response = await supabase.
@@ -61,6 +61,8 @@ const Post = () => {
                         .select()
                         .eq('id', data[0].user_id);
                     setThatUser(response.data[0]);
+                    setImg(response.data[0].avatar_url);
+
                 }
             } catch (error) {
                 console.log(error);
@@ -93,10 +95,12 @@ const Post = () => {
             if (data) {
                 setLikes(data[0]);
                 setLikeCount(data[0].like);
-                const usersLike = data[0].liked_users.split('"');
-                var users = usersLike.filter((user) => user.length > 2 && user);
-                setRegister(users);
-                users.find((use) => use === user.id ? setAlter(true) : setAlter(false));
+                if (data[0].liked_user.length > 0) {
+                    const usersLike = data[0].liked_users.split('"');
+                    var users = usersLike.filter((user) => user.length > 2 && user);
+                    setRegister(users);
+                    users.find((use) => use === user.id ? setAlter(true) : setAlter(false));
+                }
             }
         } catch (error) {
             console.log(error);
@@ -331,11 +335,12 @@ const Post = () => {
 
                 </div>
             </aside>
-            <section className="p-5" ref={postRef}>
+            <section className="p-5"
+                ref={postRef}>
                 <div className="my-3 flex items-center justify-between container mx-auto p-4 border-b-2">
                     <div className="flex items-center">
-                        <img src={thatUser?.avatar_url ? thatUser?.avatar_url : "/blank-avatar.webp"}
-                            alt={thatUser?.name}
+                        <img src={img}
+                            // alt="profile-pic"
                             className="w-20 rounded-full" />
                         <div className="mx-4">
                             <p className="text-slate-500 dark:text-white text-2xl font-bold">

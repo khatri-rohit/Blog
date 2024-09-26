@@ -6,7 +6,7 @@ import { PuffLoader } from 'react-spinners';
 import { supabase } from "../../supabaseClient";
 import useTheme from "../context/theme";
 import useUsers from "../context/User";
-import { IoBookmarksOutline } from "react-icons/io5";
+import { IoBookmarksOutline, IoBookmarks } from "react-icons/io5";
 import toast from "react-hot-toast";
 
 
@@ -24,7 +24,7 @@ const Home = () => {
         getPosts
     } = useUsers();
 
-    // Pending Logic
+    // Fetching All Blogs
     const fetchBlogs = async () => {
         try {
             setLoading(true);
@@ -51,12 +51,45 @@ const Home = () => {
                 .order('created_at', { ascending: false });
             setBlogPost(data);
             setLoading(false);
-            console.log(data);
+            console.log("Blogs", data);
 
         } catch (error) {
             console.log("Something Wrong happned while fetching Blog Data\n", error);
         }
     };
+
+    const fetchUsers = async () => {
+        try {
+            const { data } = await supabase
+                .from('users')
+                .select(`
+                        id,
+                        name, 
+                        email
+                    `);
+
+            setUsers(data);
+            console.log("Users", data);
+
+        } catch (error) {
+            console.log("Something Wrong happned While fetching Users\n", error);
+        }
+    }
+
+    const fetchBookmark = async () => {
+        if (user.id) {
+            try {
+                const { data } = await supabase
+                    .from('bookmarks')
+                    .select()
+                    .eq('user_id', user.id)
+                console.log("Bookmark", data);
+
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
 
     useEffect(() => {
         searchResult.trim().length >= 2 ? searchPost(searchResult) : fetchBlogs();
@@ -68,34 +101,17 @@ const Home = () => {
         getPosts(results);
     };
 
-    // Fetching All Blogs
     useEffect(() => {
         fetchBlogs();
-        ; (async () => {
-            try {
-                const { data } = await supabase
-                    .from('users')
-                    .select(`
-                        id,
-                        name, 
-                        email
-                    `);
-
-                setUsers(data);
-                console.log(data);
-
-            } catch (error) {
-                console.log("Something Wrong happned While fetching Users\n", error);
-            }
-        })();
-
+        fetchUsers();
+        fetchBookmark();
     }, []);
 
     const handlePost = (id) => {
         navigate(`/post/${id}`);
     };
 
-    const handleSave = () => {
+    const handleSave = async (post) => {
         toast('Bookmark Saved', {
             duration: 2000,
             position: 'top-right',
@@ -119,6 +135,23 @@ const Home = () => {
                 'aria-live': 'polite',
             },
         });
+
+        try {
+            await supabase
+                .from('bookmarks')
+                .insert([{
+                    user_id: post.user_id,
+                    post_id: post.id,
+                    blog_title: post.blog_title,
+                    summary: post.summary,
+                    image_url: post.image_url
+                }]);
+
+            console.log("Bookmarks Added");
+
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     function calculateReadingTime(text) {
@@ -184,7 +217,7 @@ const Home = () => {
                                                 {user.id && (<div className="mx-2 dark:text-white flex items-center cursor-pointer">
                                                     <IoBookmarksOutline
                                                         className="text-2xl"
-                                                        onClick={handleSave} />
+                                                        onClick={() => handleSave(post)} />
                                                 </div>)}
                                                 <div className="mx-2 flex items-center">
                                                     <FaHeart className="text-xl text-pink-500" />

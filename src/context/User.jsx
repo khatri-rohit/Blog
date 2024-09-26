@@ -3,10 +3,6 @@ import { createContext, useContext } from "react";
 export const UserContext = createContext({
     oAuthStateChange: () => { },
     user: {},
-    // gModel: false,
-    // changeModel: () => { },
-    // showNewUser: false,
-    // chnageNewUser: () => { },
     searchResult: [],
     changeSearchResult: () => { },
     getPost: [],

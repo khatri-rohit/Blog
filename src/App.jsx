@@ -11,8 +11,6 @@ import './App.css';
 
 const App = () => {
 
-  // const [gModel, setModel] = useState(false);
-  // const [showNewUser, setNewUser] = useState(false);
   const [user, setUser] = useState({});
   const [searchResult, setSearchResult] = useState('');
   const [getPost, setGetPost] = useState([]);
@@ -23,13 +21,6 @@ const App = () => {
     setUser(data);
   };
 
-  // const chnageNewUser = () => {
-  //   setNewUser(prev => !prev);
-  // };
-
-  // const changeModel = (value) => {
-  //   setModel(value);
-  // };
 
   const changeSearchResult = (result) => {
     setSearchResult(result);
@@ -61,12 +52,7 @@ const App = () => {
 
   useEffect(() => {
     const localTheme = localStorage.getItem("theme");
-    // if (localTheme === null) {
-    // const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    // setThemeMode(isDarkMode ? 'dark' : 'light');
-    // } else {
     setThemeMode(localTheme);
-    // }
   }, []);
 
   const changePublish = (value) => {
@@ -84,10 +70,6 @@ const App = () => {
     <ThemeProvider value={{ darkTheme, lightTheme, themeMode }}>
       <ContextProvider value={
         {
-          // gModel,
-          // changeModel,
-          // chnageNewUser,
-          // showNewUser,
           user,
           oAuthStateChange,
           searchResult,
@@ -95,7 +77,7 @@ const App = () => {
           getPost,
           getPosts,
           changePublish,
-          publish
+          publish,
         }
       }>
         <BrowserRouter>
@@ -107,7 +89,7 @@ const App = () => {
                   <Route path="/post/:id" Component={lazy(() => import("./pages/Post"))} />
                   <Route path="/search" Component={lazy(() => import("./pages/Search"))} />
                   <Route path="/write" Component={lazy(() => import("./pages/Create"))} />
-                  <Route path="/profile" Component={lazy(() => import("./pages/Profile"))} />
+                  <Route path="/user/:id" Component={lazy(() => import("./pages/Profile"))} />
                   <Route path="/*" Component={lazy(() => import("./pages/Redirect"))} />
                 </Route>
               </Routes>

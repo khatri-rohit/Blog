@@ -54,7 +54,8 @@ const Preview = ({ title, blog_content }) => {
                 .from('likes')
                 .insert([{
                     post_id: id,
-                    like: 0
+                    like: 0,
+                    liked_users: []
                 }]);
 
             await supabase
@@ -92,7 +93,6 @@ const Preview = ({ title, blog_content }) => {
         }
     }
 
-
     useEffect(() => {
         setPreview({ ...preview, _title: title });
     }, [blog_content, title])
@@ -115,7 +115,9 @@ const Preview = ({ title, blog_content }) => {
                             {!preview.imageURL && 'Add Image'}
                         </div>
                         <input
-                            ref={imageRef} type="file"
+                            type="file"
+                            ref={imageRef}
+                            accept="image/png, image/jpeg, image/jpg"
                             onChange={uploadImg}
                             hidden
                         />

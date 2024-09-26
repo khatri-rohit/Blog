@@ -35,9 +35,8 @@ const Navbar = () => {
         oAuthStateChange,
         changeSearchResult,
         searchResult,
-        changePublish
+        changePublish,
     } = useUsers();
-
 
     const darkMode = () => {
         if (isDark) lightTheme();
@@ -82,13 +81,15 @@ const Navbar = () => {
                     email: email,
                     password: password
                 });
-                console.log("Login From");
-                console.log(data);
-                console.log(error);
-                oAuthStateChange(data);
-                setLogin(false);
+                if (data) {
+                    console.log("Login From");
+                    console.log(data);
+                    oAuthStateChange(data);
+                    setLogin(false);
+                } else {
+                    console.log(error);
+                }
             }
-            await new Promise((reslove) => setTimeout(reslove, 100));
             reset();
         } catch (error) {
             console.log(error);
@@ -345,16 +346,16 @@ const Navbar = () => {
                                         className="w-full focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center outline-none bg-slate-500 text-white">
                                         Create Account
                                     </button>
-                                    <div className="text-sm font-medium text-gray-500 dark:text-gray-300">
-                                        Already have a Account? <button className="text-blue-700 hover:underline dark:text-blue-500"
-                                            onClick={() => {
-                                                setLogin(true);
-                                                setRegister(false);
-                                            }}>
-                                            Login
-                                        </button>
-                                    </div>
                                 </form>
+                                <div className="text-sm font-medium text-gray-500 dark:text-gray-300">
+                                    Already have a Account? <button className="text-blue-700 hover:underline dark:text-blue-500"
+                                        onClick={() => {
+                                            setLogin(true);
+                                            setRegister(false);
+                                        }}>
+                                        Login
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -372,9 +373,7 @@ const Navbar = () => {
                                     Welcome Back <span className="text-gray-600">DevDiscuss</span>
                                 </p>
                                 <button type="button" className="end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white outline-none" data-modal-hide="authentication-modal"
-                                    onClick={() => {
-                                        setLogin(false);
-                                    }}>
+                                    onClick={() => setLogin(false)}>
                                     <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                                         <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
                                     </svg>
@@ -384,14 +383,12 @@ const Navbar = () => {
                             {/* <!-- Modal body --> */}
                             <div className="p-4 md:p-5">
                                 <button
-                                    disabled={isSubmitting}
                                     className="my-3 w-full border bg-white hover:bg-slate-300 font-medium rounded-lg text-sm px-5 py-3 text-center dark:bg-gray-500 dark:hover:bg-gray-500 flex items-center justify-center outline-none" onClick={googleSighUp}>
                                     <BiLogoGoogle
                                         className="mx-1 text-2xl text-slate-500" />
                                     Login to your account
                                 </button>
                                 <button
-                                    disabled={isSubmitting}
                                     className="my-3 w-full text-white bg-gray-700 hover:bg-gray-900 font-medium rounded-lg text-sm px-5 py-3 text-center dark:bg-gray-700 dark:hover:bg-gray-900 flex items-center justify-center outline-none" onClick={githubSignIn}>
                                     <BiLogoGithub
                                         className="mx-1 text-2xl" />
@@ -429,22 +426,21 @@ const Navbar = () => {
                                             (<p className="text-red-500 text-sm">{`${errors.password?.message}`}</p>)}
                                     </div>
                                     <button
-                                        disabled={isSubmitting}
-                                        type="submit"
+                                        onClick={handleSubmit(onSubmit)}
                                         className="w-full font-medium rounded-lg text-sm px-5 py-2.5 text-center outline-gray-400 bg-green-500 text-white">
                                         Login to your account
                                     </button>
-                                    <div className="text-sm font-medium text-gray-500 dark:text-gray-300">
-                                        Not registered?
-                                        <button className="text-blue-700 hover:underline dark:text-blue-500 mx-1"
-                                            onClick={() => {
-                                                setRegister(true);
-                                                setLogin(false);
-                                            }}>
-                                            Create account
-                                        </button>
-                                    </div>
                                 </form>
+                                <div className="text-sm font-medium text-gray-500 dark:text-gray-300">
+                                    Not registered?
+                                    <button className="text-blue-700 hover:underline dark:text-blue-500 mx-1"
+                                        onClick={() => {
+                                            setRegister(true);
+                                            setLogin(false);
+                                        }}>
+                                        Create account
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -481,7 +477,7 @@ const Navbar = () => {
                 </div>
                 {
                     Object.keys(user).length !== 0 ?
-                        (<>
+                        (
                             <div className="flex items-center justify-between">
                                 {
                                     pathname === '/write' ? (
@@ -505,12 +501,12 @@ const Navbar = () => {
                                         />
                                         <IoIosArrowDown className="mx-2" />
                                     </div>
-                                    <Model model={model} setModel={setModel}>
 
+                                    <Model model={model} setModel={setModel}>
                                         <div className={`absolute z-30 right-7 my-2 bg-slate-100 border-2 border-gray-300 px-2 py-2 w-60 items-start justify-start ${model || `hidden`}`} >
                                             <div className="flex gap-2 items-center px-3 py-1 justify-start cursor-pointer">
                                                 <img src={cur_user?.avatar_url || "/blank-avatar.webp"} className="rounded-full w-[2rem]" />
-                                                <NavLink to={'/profile'}
+                                                <NavLink to={`/user/${user.id}`}
                                                     onClick={() => setModel(false)}
                                                     className="text-xl font-medium hover:text-slate-500 text-slate-900 mx-1">
                                                     Profile
@@ -542,16 +538,11 @@ const Navbar = () => {
 
                                 </div>
                             </div>
-                        </>) : (
-                            <>
-                                <button className="bg-slate-300 px-4 p-2 rounded-md text-xl outline-none"
-                                    onClick={() => {
-                                        setLogin(true);
-                                        setModel(true);
-                                    }}>
-                                    SignIn
-                                </button>
-                            </>
+                        ) : (
+                            <button className="bg-slate-300 px-4 p-2 rounded-md text-xl outline-none"
+                                onClick={() => setLogin(true)}>
+                                SignIn
+                            </button>
                         )
                 }
             </nav>
