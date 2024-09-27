@@ -2,19 +2,17 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { MdCamera } from "react-icons/md";
 import { supabase } from "../../supabaseClient";
-import {  NavLink, useNavigate, useParams } from "react-router-dom";
+import { NavLink, useNavigate, useParams } from "react-router-dom";
 import { ClimbingBoxLoader, ClipLoader } from "react-spinners";
 import { v4 as uuidv4 } from 'uuid';
 import { FaRegUser } from "react-icons/fa";
 import { IoBookmarksOutline } from "react-icons/io5";
 import useUsers from "../context/User";
 
-
-
 const Profile = () => {
 
   const { user } = useUsers();
-  const mavigate = useNavigate();
+  const navigate = useNavigate();
   const tabs = [
     {
       id: 1,
@@ -24,26 +22,14 @@ const Profile = () => {
     },
     {
       id: 2,
-      barName: "Bookmarks",
+      barName: "Saved Posts",
       icon: <IoBookmarksOutline />,
       card: <Bookmarks />
     }
   ];
   const [navi, setNavi] = useState(1);
 
-  if (!user.id) {
-    return (
-      <div className="p-5 container mx-auto flex flex-col items-center">
-        <p className="text-3xl text-center">You are not logged In</p>
-        <button
-          onClick={() => mavigate('/')}
-          className="my-3 rounded-xl px-3 py-2 bg-gray-400 text-xl text-white">
-          Home Page
-        </button>
-
-      </div>
-    )
-  }
+  if (!user.id) navigate('/');
 
   return (
     <>
@@ -71,8 +57,10 @@ const Profile = () => {
 
           {/*  */}
           <div className="w-[65%] bg-gray-200 p-3" >
-            {tabs.map((tab) => (
-              <>{tab.id == navi && tab.card}</>
+            {tabs.map((tab, _) => (
+              <span key={_}>
+                {tab.id == navi && tab.card}
+              </span>
             ))}
           </div>
         </div>
@@ -84,10 +72,14 @@ const Profile = () => {
 export default Profile;
 
 const Account = () => {
+
   const { id } = useParams();
   console.log(id);
+
   const [changeName, setChangeName] = useState(false);
+  const [changeBio, setChnageBio] = useState(false);
   const [name, setName] = useState('');
+  const [bio, setBio] = useState('');
   const [cur_user, setCur_user] = useState('');
   const [blog, setBlog] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -95,7 +87,7 @@ const Account = () => {
   const [image_url, setImage_url] = useState('');
   const imgRef = useRef(null);
 
-  const handleChange = async (event, method) => {
+  const handleNameChange = async (event, method) => {
     event.preventDefault();
     setChangeName(prev => !prev);
     if (method === "save") {
@@ -105,6 +97,18 @@ const Account = () => {
           name: name
         }).eq("id", id);
       console.log("Name Changed");
+    }
+  }
+
+  const handleChangeBio = async (method) => {
+    setChnageBio(prev => !prev);
+    if (method === "save") {
+      await supabase
+        .from('users')
+        .update({
+          bio: bio
+        }).eq("id", id);
+      console.log("Bio Chnaged");
     }
   }
 
@@ -119,6 +123,7 @@ const Account = () => {
       if (data) {
         setCur_user(data[0]);
         setName(data[0].name);
+        setBio(data[0].bio);
       }
       setProtLoading(false);
     } catch (error) {
@@ -142,9 +147,7 @@ const Account = () => {
     }
   }
 
-
-
-  const profileData = useCallback(fetchProfile, [image_url]);
+  const profileData = useCallback(fetchProfile, [image_url, bio, name]);
 
   useEffect(() => {
     profileData();
@@ -192,7 +195,7 @@ const Account = () => {
           accept="image/png, image/jpeg"
           hidden />
 
-        <form className="flex flex-col items-start mx-3" onSubmit={(event) => handleChange(event, "save")}>
+        <form className="flex flex-col items-start mx-3" onSubmit={(event) => handleNameChange(event, "save")}>
           {
             changeName ?
               <input type="text"
@@ -211,25 +214,51 @@ const Account = () => {
           }
           {changeName ?
             (<button className="text-xs my-1 text-blue-500 font-medium"
-              onClick={() => handleChange("save")}>Save Name</button>) :
+              onClick={() => handleNameChange("save")}>Save</button>) :
             (<button className="text-xs my-1 text-blue-500 font-medium"
-              onClick={() => handleChange("change")}>Change Name</button>)}
+              onClick={() => handleNameChange("change")}>Edit Name</button>)}
         </form>
       </div>
 
-      <div className="my-16 mx-5">
-        <div className="flex items-center">
-          <p className="text-xl font-medium">Email: </p>
-          <p className="text-2xl font-light mx-1">{cur_user?.email}</p>
+      <div className="my-10 mx-5">
+        <div className="flex items-center my-2">
+          <p className="text-2xl font-medium">Email: </p>
+          <p className="text-xl font-light mx-2">{cur_user?.email}</p>
         </div>
 
-        <div className="flex items-center">
-          <p className="text-xl font-medium">Account Created : </p>
-          <p className="text-2xl font-light mx-1">
+        <div className="flex items-center my-2">
+          <p className="text-2xl font-medium">Account Created : </p>
+          <p className="text-xl font-light mx-2">
             {new Date(cur_user?.created_at)?.toLocaleString("en", {
               year: "numeric", month: "short", day: "2-digit"
             })}
           </p>
+        </div>
+
+        <div className="my-2">
+          <p className="text-2xl font-medium">About Me</p>
+          <div className="flex flex-col items-start my-0.5">
+            {
+              changeBio ?
+                <textarea type="text"
+                  className="text-2xl bg-slate-50 w-full"
+                  value={bio}
+                  autoFocus
+                  onChange={e => setBio(e.target.value)} />
+                : (bio ?
+                  <p className="text-2xl">
+                    {bio}
+                  </p> :
+                  <p className="text-gray-400">
+                    Introduce Your self
+                  </p>)
+            }
+            {changeBio ?
+              (<button className="text-xs my-1 text-blue-500 font-medium"
+                onClick={() => handleChangeBio("save")}>Save</button>) :
+              (<button className="text-xs my-1 text-blue-500 font-medium"
+                onClick={() => handleChangeBio("change")}>Edit</button>)}
+          </div>
         </div>
 
         {/* Your Blogs */}
@@ -237,6 +266,7 @@ const Account = () => {
           <p className="text-2xl font-light p-2">
             {'->'} All Blogs
           </p>
+
           <div className="flex overflow-x-scroll scroll-smooth"
             style={{ scrollbarWidth: "none" }}>
             <div className={`flex flex-nowrap ms-0.5 ${loading && 'items-center justify-center'}`}>
@@ -260,11 +290,11 @@ const Account = () => {
                     </div>
                   </NavLink>
                 )))
-                : loading ? '' : (<p className="text-xl">You haven't written any blogs yet</p>)}
+                : loading || (<p className="text-xl">You haven't written any blogs yet</p>)}
 
             </div>
-
           </div>
+
         </div>
       </div>
     </div>
@@ -273,10 +303,70 @@ const Account = () => {
 };
 
 const Bookmarks = () => {
+
+  const { id } = useParams()
+  const [bookMarks, setBookMarks] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      const { data } = await supabase
+        .from('bookmarks')
+        .select()
+        .eq('user_id', id);
+      console.log(data[0]);
+      setLoading(false);
+      setBookMarks(data);
+    })();
+
+  }, [])
+
   return (
-    <>
-      <p className="text-xl">BookMark</p>
-    </>
+    <div className="p-3">
+      <div className="">
+        <p className="text-4xl font-semibold">Saved Posts</p>
+        <div className="my-5 flex">
+          <div className="relative flex overflow-y-scroll scroll-smooth"
+            style={{ scrollbarWidth: "none" }}>
+            {loading && (
+              // Loading
+              <div className="absolute bg-white bg-opacity-60 h-full w-full z-10 flex items-center justify-center">
+                <div className="flex items-center">
+                  <span className="text-3xl mr-4">Loading</span>
+                  <svg className="animate-spin h-5 w-5 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none"
+                    viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                    </path>
+                  </svg>
+                </div>
+              </div>
+            )}
+            {bookMarks?.length !== 0 ?
+              <div className={`flex flex-nowrap ms-0.5`}>
+                {(bookMarks?.map((post, _) => (
+                  <NavLink to={`/post/${post?.id}`} className="border-r p-2 bg-white mr-1 drop-shadow-lg rounded-lg cursor-auto" key={_} >
+                    <div className="w-96 max-w-xs overflow-hidden transition-shadow duration-300 ease-in-out">
+                      <div className="ml-1">
+                        <img src={post?.image_url}
+                          className="object-cover w-full rounded-xl h-[25vh]"
+                          alt={post?.blog_title} />
+                      </div>
+                      <div className="p-2">
+                        <p className="text-pretty">
+                          {post?.blog_title}
+                        </p>
+                      </div>
+                    </div>
+                  </NavLink>
+                )))}
+              </div> : loading || (<p className="text-xl">You haven't Saved any posts</p>)}
+          </div>
+        </div>
+      </div>
+    </div>
   )
 
 }

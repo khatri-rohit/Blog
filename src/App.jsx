@@ -11,7 +11,7 @@ import './App.css';
 
 const App = () => {
 
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState([]);
   const [searchResult, setSearchResult] = useState('');
   const [getPost, setGetPost] = useState([]);
   const [themeMode, setThemeMode] = useState(false);
@@ -19,6 +19,7 @@ const App = () => {
 
   const oAuthStateChange = (data) => {
     setUser(data);
+    console.log(data);
   };
 
 

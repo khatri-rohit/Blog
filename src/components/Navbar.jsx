@@ -57,61 +57,136 @@ const Navbar = () => {
     const [reg, setRegister] = useState(false);
     const [isDark, setIsDark] = useState(false);
     const [cur_user, setCur_user] = useState(false);
+    const [userCre, setUserCre] = useState({
+        username: "",
+        name: "",
+        nameError: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        usernameError: "",
+        emailError: "",
+        passwordError: "",
+        confirmPasswordError: ""
+    });
 
-    const onSubmit = async (data) => {
+    const onSubmit = async () => {
         try {
-            const { email, password, name } = data
-            console.log(email, password);
-            if (reg) {
-                const { data } = await supabase.auth.signUp({
-                    email: email,
-                    password: password,
-                });
-                console.log({ ...data, name });
-                if (data) {
-                    console.log("Account Created From");
-                    oAuthStateChange({ ...data, name });
-                    authUser({ ...data, name });
-                    navigate("/");
-                    setModel(prev => !prev);
-                    setRegister(false);
-                }
-            } else if (login) {
-                const { data, error } = await supabase.auth.signInWithPassword({
-                    email: email,
-                    password: password
-                });
-                if (data) {
-                    console.log("Login From");
-                    console.log(data);
-                    oAuthStateChange(data);
-                    setLogin(false);
+            //     const { email, password, name } = data
+            //     console.log(email, password);
+            //     if (reg) {
+            //         const { data } = await supabase.auth.signUp({
+            //             email: email,
+            //             password: password,
+            //         });
+            //         console.log({ ...data, name });
+            //         if (data) {
+            //             console.log("Account Created From");
+            //             oAuthStateChange({ ...data, name });
+            //             authUser({ ...data, name });
+            //             navigate("/");
+            //             setRegister(false);
+            //             setModel(false);
+            //         }
+            //     } else if (login) {
+            //         const { data, error } = await supabase.auth.signInWithPassword({
+            //             email: email,
+            //             password: password
+            //         });
+            //         if (data) {
+            //             console.log("Login From");
+            //             console.log(data);
+            //             oAuthStateChange(data);
+            //             setLogin(false);
+            //         } else {
+            //             console.log(error);
+            //         }
+            //     }
+            //     reset();
+            if (login) {
+                await supabase.auth.signInWithPassword({
+                    email: userCre.email,
+                    password: userCre.password
+
+                }).then((res) => {
+                    console.log(res);
+                }).catch(err => console.log(err))
+
+            } else {
+                const usernameRegex = /^[a-zA-Z0-9_]{3,16}$/;
+                const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+
+                console.log("Outside SignUp Form");
+
+                if (usernameRegex.test(userCre.username)
+                    && userCre.name.trim().length > 0
+                    // && emailRegex.test(emailRegex)
+                    && userCre.password.length >= 8 &&
+                    userCre.confirmPassword === userCre.password) {
+
+                    const { data } = await supabase.auth.signUp({
+                        email: userCre.email,
+                        password: userCre.password
+                    });
+
+                    console.log("Inside SignUp Form");
+
+                    if (data) {
+                        console.log(data);
+                        try {
+                            await supabase
+                                .from('users')
+                                .insert({
+                                    id: data.user.id,
+                                    username: userCre.username,
+                                    name: userCre.name,
+                                    email: userCre.email,
+                                    created_at: user.created_at,
+                                    avatar_url: null,
+                                    bio: ""
+                                });
+                        } catch (error) {
+                            console.log("Error", error);
+                        }
+                    }
+
                 } else {
-                    console.log(error);
+
+                    if (!usernameRegex.test(userCre.username))
+                        setUserCre({ ...userCre, usernameError: "Not a valid username" })
+                    if (!emailRegex.test(emailRegex))
+                        setUserCre({ ...userCre, emailError: "Enter Valid Email" })
+                    if (userCre.name.trim().length === 0)
+                        setUserCre({ ...userCre, nameError: "Can't submit ampty author name" })
+                    if (userCre.password.length < 8)
+                        setUserCre({ ...userCre, password: "Password is short" })
+                    if (userCre.confirmPassword !== userCre.password)
+                        setUserCre({ ...userCre, confirmPasswordError: "Password Doesn't Match" })
+
                 }
             }
-            reset();
         } catch (error) {
             console.log(error);
         }
-    }
+    };
 
-    const authUser = async (response) => {
-        try {
-            const { user } = response;
-            await supabase
-                .from('users')
-                .insert({
-                    id: user.id,
-                    name: user.user_metadata.full_name,
-                    email: user.email,
-                    created_at: user.created_at,
-                    avatar_url: user.user_metadata.avatar_url
-                });
-        } catch (error) {
-            console.log("Error", error);
-        }
-    }
+    // const authUser = async (response) => {
+    //     try {
+    //         const { user } = response;
+    //         await supabase
+    //             .from('users')
+    //             .insert({
+    //                 id: user.id,
+    //                 name: user.user_metadata.full_name,
+    //                 email: user.email,
+    //                 created_at: user.created_at,
+    //                 avatar_url: user.user_metadata.avatar_url,
+    //                 bio: ""
+    //             });
+    //     } catch (error) {
+    //         console.log("Error", error);
+    //     }
+    // }
 
     const githubSignIn = async () => {
         try {
@@ -169,22 +244,17 @@ const Navbar = () => {
     useEffect(() => {
         (async () => {
             try {
-                if (user !== null) {
-                    try {
-                        const data = (await supabase.auth.getSession()).data
-                        oAuthStateChange(data.session.user);
-                        authUser(data.session);
-                        loggedInUser(data.session.user.id);
-                    } catch (error) {
-                        console.log("Error", error);
-                    }
+                if (user) {
+                    const data = (await supabase.auth.getSession()).data
+                    console.log(data);
+                    oAuthStateChange(data.session.user);
+                    loggedInUser(data.session.user.id);
                 }
             } catch (err) {
                 console.log("Error", err);
             }
         })()
-
-    }, [])
+    }, [user])
 
     // Remove Scroll while Login Model is Open
     useEffect(() => {
@@ -210,6 +280,20 @@ const Navbar = () => {
         ));
     };
 
+    // useEffect(() => {
+    //     const usernameRegex = /^[a-zA-Z0-9_]{3,16}$/;
+    //     const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+    //     if (usernameRegex.test(userCre.username))
+    //         setUserCre({ ...userCre, usernameError: "" })
+    //     if (userCre.confirmPassword === userCre.password)
+    //         setUserCre({ ...userCre, confirmPasswordError: "" })
+    //     if (userCre.password.length >= 8)
+    //         setUserCre({ ...userCre, password: "" })
+    //     if (emailRegex.test(emailRegex))
+    //         setUserCre({ ...userCre, emailError: "" })
+    //     if (userCre.nameError.trim().length == 0)
+    //         setUserCre({ ...userCre, nameError: "" })
+    // }, [userCre])
 
     const handleSearchSubmit = useCallback((e) => {
         e.preventDefault();
@@ -267,78 +351,100 @@ const Navbar = () => {
                                     onSubmit={handleSubmit(onSubmit)}>
                                     <div>
                                         <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                            Author Name
+                                            Username
                                         </label>
-                                        <input {...register("name", {
-                                            required: "Enter Name",
-                                        })}
+                                        <input
                                             type="text"
                                             name="name"
+                                            value={userCre.username}
                                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                                            placeholder="Enter Name" autoFocus />
-                                        {errors.name &&
-                                            (<p className="text-red-500 text-sm">{`${errors.name?.message}`}</p>)}
+                                            placeholder="Enter Name" autoFocus
+                                            onChange={e => setUserCre({ ...userCre, username: e.target.value })} />
+                                        {
+                                            userCre.usernameError.length > 0 &&
+                                            <p className="text-red-500 text-sm">
+                                                {userCre.usernameError}
+                                            </p>
+                                        }
+                                    </div>
+                                    <div>
+                                        <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                            Author Name
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="name"
+                                            value={userCre.name}
+                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                            placeholder="Enter Name" autoFocus
+                                            onChange={e => setUserCre({ ...userCre, name: e.target.value })} />
+                                        {
+                                            userCre.nameError.length > 0 &&
+                                            <p className="text-red-500 text-sm">
+                                                {userCre.nameError}
+                                            </p>
+                                        }
                                     </div>
                                     <div>
                                         <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                             Your email
                                         </label>
-                                        <input {...register("email", {
-                                            required: "Email is required",
-                                        })}
+                                        <input
                                             type="email"
                                             name="email"
                                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                                            placeholder="Email" />
-                                        {errors.email &&
-                                            (<p className="text-red-500 text-sm">
-                                                {`${errors.email?.message}`}
-                                            </p>)}
+                                            placeholder="Email"
+                                            value={userCre.email}
+                                            onChange={e => setUserCre({ ...userCre, email: e.target.value })}
+                                        />
+                                        {
+                                            userCre.emailError.length > 0 &&
+                                            <p className="text-red-500 text-sm">
+                                                {userCre.emailError}
+                                            </p>
+                                        }
                                     </div>
                                     <div>
                                         <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                             Your password
                                         </label>
                                         <div className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white flex items-center justify-between focus:outline-black outline-2">
-                                            <input {...register("password", {
-                                                required: "Password is requried",
-                                                minLength: {
-                                                    value: 8,
-                                                    message: "Password must be at least 8 characters"
-                                                },
-                                            })}
+                                            <input
                                                 type={eye ? `text` : `password`}
                                                 name="password"
                                                 placeholder="••••••••"
                                                 className="outline-none bg-transparent"
+                                                value={userCre.password}
+                                                onChange={e => setUserCre({ ...userCre, password: e.target.value })}
                                             />
                                             <button className="text-[1rem]" onClick={() => setEye(!eye)}>
                                                 {eye ? <FaRegEyeSlash /> : <FaRegEye />}
                                             </button>
                                         </div>
-                                        {errors.password &&
-                                            (<p className="text-red-500 text-sm">
-                                                {`${errors.password?.message}`}
-                                            </p>)}
+                                        {
+                                            userCre.passwordError.length > 0 &&
+                                            <p className="text-red-500 text-sm">
+                                                {userCre.passwordError}
+                                            </p>
+                                        }
                                     </div>
                                     <div>
                                         <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                             Confirm password
                                         </label>
-                                        <input {...register("confirmPassword", {
-                                            required: "Confirm password is required",
-                                            validate: (value) =>
-                                                value === getValues("password") || "Password Must Match"
-
-                                        })}
+                                        <input
                                             type="password"
                                             name="confirmPassword"
                                             placeholder="••••••••"
-                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" />
-                                        {errors.confirmPassword &&
-                                            (<p className="text-red-500 text-sm">
-                                                {`${errors.confirmPassword?.message}`}
-                                            </p>)}
+                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                            value={userCre.confirmPassword}
+                                            onChange={e => setUserCre({ ...userCre, confirmPassword: e.target.value })} />
+                                        {
+                                            userCre.confirmPasswordError.length > 0 &&
+                                            <p className="text-red-500 text-sm">
+                                                {userCre.confirmPasswordError}
+                                            </p>
+                                        }
                                     </div>
                                     <button
                                         disabled={isSubmitting}
@@ -347,7 +453,7 @@ const Navbar = () => {
                                         Create Account
                                     </button>
                                 </form>
-                                <div className="text-sm font-medium text-gray-500 dark:text-gray-300">
+                                <div className="text-sm font-medium text-gray-500 dark:text-gray-300 mt-3">
                                     Already have a Account? <button className="text-blue-700 hover:underline dark:text-blue-500"
                                         onClick={() => {
                                             setLogin(true);
@@ -431,7 +537,7 @@ const Navbar = () => {
                                         Login to your account
                                     </button>
                                 </form>
-                                <div className="text-sm font-medium text-gray-500 dark:text-gray-300">
+                                <div className="text-sm font-medium text-gray-500 dark:text-gray-300 mt-2">
                                     Not registered?
                                     <button className="text-blue-700 hover:underline dark:text-blue-500 mx-1"
                                         onClick={() => {
@@ -464,7 +570,8 @@ const Navbar = () => {
                         className="input-feild flex mx-1 items-center bg-slate-200 rounded-xl"
                         onSubmit={handleSearchSubmit}
                     >
-                        <div className="mx-1" onSubmit={handleSearchSubmit}>
+                        <div className="mx-1"
+                            onSubmit={handleSearchSubmit}>
                             <BiSearch className="text-2xl mx-2" />
                         </div>
                         <input type="text"
