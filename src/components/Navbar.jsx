@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from "react";
-import { useForm } from 'react-hook-form';
 import toast, { Toaster } from "react-hot-toast";
 import { BiLogoGithub, BiLogoGoogle, BiSearch } from "react-icons/bi";
 import { CgDarkMode } from "react-icons/cg";
@@ -20,15 +19,6 @@ const Navbar = () => {
     const { pathname } = useLocation();
     const navigate = useNavigate();
     const { darkTheme, lightTheme, themeMode } = useTheme(); // Theme Context API
-
-    // React Hook Form
-    const {
-        register,
-        handleSubmit,
-        formState: { isSubmitting, errors },
-        reset,
-        getValues
-    } = useForm();
 
     const {
         user,
@@ -70,7 +60,8 @@ const Navbar = () => {
         confirmPasswordError: ""
     });
 
-    const onSubmit = async () => {
+    const onSubmit = async (e) => {
+        e.preventDefault();
         try {
             //     const { email, password, name } = data
             //     console.log(email, password);
@@ -104,13 +95,35 @@ const Navbar = () => {
             //     }
             //     reset();
             if (login) {
-                await supabase.auth.signInWithPassword({
-                    email: userCre.email,
-                    password: userCre.password
+                const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+                console.log("Outside Login Form");
+                if (emailRegex.test(userCre.email) && userCre.password.length >= 8) {
+                    console.log("Inside Login Form");
+                    const { data, error } = await supabase.auth.signInWithPassword({
+                        email: userCre.email,
+                        password: userCre.password
+                    });
+                    if (data.user) {
+                        setCur_user(data.user);
+                        console.log(data);
+                        loggedInUser(data.user.id);
+                        oAuthStateChange(data.user);
+                        setLogin(false);
+                        setUserCre({ ...userCre, confirmPassword: "", email: "", confirmPasswordError: "", emailError: "", name: "", nameError: "", password: "", passwordError: "", username: "", usernameError: "" });
+                    }
 
-                }).then((res) => {
-                    console.log(res);
-                }).catch(err => console.log(err))
+                    if (error.code === "invalid_credentials") {
+                        console.log("Inside Error");
+                        handleTost("Invalid Credentials Try Again");
+                        setUserCre({ ...userCre, confirmPassword: "", email: "", confirmPasswordError: "", emailError: "", name: "", nameError: "", password: "", passwordError: "", username: "", usernameError: "" });
+                        return;
+                    }
+                } else {
+                    if (!emailRegex.test(userCre.email))
+                        setUserCre({ ...userCre, emailError: "InValid Email" })
+                    if (userCre.password.length < 8)
+                        setUserCre({ ...userCre, passwordError: "Password must be 8 characters" })
+                }
 
             } else {
                 const usernameRegex = /^[a-zA-Z0-9_]{3,16}$/;
@@ -120,7 +133,7 @@ const Navbar = () => {
 
                 if (usernameRegex.test(userCre.username)
                     && userCre.name.trim().length > 0
-                    // && emailRegex.test(emailRegex)
+                    && emailRegex.test(userCre.email)
                     && userCre.password.length >= 8 &&
                     userCre.confirmPassword === userCre.password) {
 
@@ -148,18 +161,20 @@ const Navbar = () => {
                         } catch (error) {
                             console.log("Error", error);
                         }
+                        loggedInUser(data.user.id);
+                        oAuthStateChange(data.user);
+                        setRegister(false);
+                        setUserCre({ ...userCre, confirmPassword: "", email: "", confirmPasswordError: "", emailError: "", name: "", nameError: "", password: "", passwordError: "", username: "", usernameError: "" });
                     }
-
                 } else {
-
                     if (!usernameRegex.test(userCre.username))
                         setUserCre({ ...userCre, usernameError: "Not a valid username" })
-                    if (!emailRegex.test(emailRegex))
+                    if (!emailRegex.test(userCre.email))
                         setUserCre({ ...userCre, emailError: "Enter Valid Email" })
                     if (userCre.name.trim().length === 0)
                         setUserCre({ ...userCre, nameError: "Can't submit ampty author name" })
                     if (userCre.password.length < 8)
-                        setUserCre({ ...userCre, password: "Password is short" })
+                        setUserCre({ ...userCre, passwordError: "Password is short" })
                     if (userCre.confirmPassword !== userCre.password)
                         setUserCre({ ...userCre, confirmPasswordError: "Password Doesn't Match" })
 
@@ -169,24 +184,6 @@ const Navbar = () => {
             console.log(error);
         }
     };
-
-    // const authUser = async (response) => {
-    //     try {
-    //         const { user } = response;
-    //         await supabase
-    //             .from('users')
-    //             .insert({
-    //                 id: user.id,
-    //                 name: user.user_metadata.full_name,
-    //                 email: user.email,
-    //                 created_at: user.created_at,
-    //                 avatar_url: user.user_metadata.avatar_url,
-    //                 bio: ""
-    //             });
-    //     } catch (error) {
-    //         console.log("Error", error);
-    //     }
-    // }
 
     const githubSignIn = async () => {
         try {
@@ -242,19 +239,13 @@ const Navbar = () => {
     }
 
     useEffect(() => {
-        (async () => {
-            try {
-                if (user) {
-                    const data = (await supabase.auth.getSession()).data
-                    console.log(data);
-                    oAuthStateChange(data.session.user);
-                    loggedInUser(data.session.user.id);
-                }
-            } catch (err) {
-                console.log("Error", err);
-            }
-        })()
-    }, [user])
+        ; (async () => {
+            const { data } = await supabase.auth.getSession()
+            oAuthStateChange(data.session.user);
+            loggedInUser(data.session.user.id);
+            console.log(data);
+        })();
+    }, [])
 
     // Remove Scroll while Login Model is Open
     useEffect(() => {
@@ -272,33 +263,18 @@ const Navbar = () => {
         );
     }, [searchResult])
 
-    const handleTost = () => {
+    const handleTost = (text) => {
         toast(() => (
             <span className="text-xl">
-                Enter Something
+                {text}
             </span>
         ));
     };
 
-    // useEffect(() => {
-    //     const usernameRegex = /^[a-zA-Z0-9_]{3,16}$/;
-    //     const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
-    //     if (usernameRegex.test(userCre.username))
-    //         setUserCre({ ...userCre, usernameError: "" })
-    //     if (userCre.confirmPassword === userCre.password)
-    //         setUserCre({ ...userCre, confirmPasswordError: "" })
-    //     if (userCre.password.length >= 8)
-    //         setUserCre({ ...userCre, password: "" })
-    //     if (emailRegex.test(emailRegex))
-    //         setUserCre({ ...userCre, emailError: "" })
-    //     if (userCre.nameError.trim().length == 0)
-    //         setUserCre({ ...userCre, nameError: "" })
-    // }, [userCre])
-
     const handleSearchSubmit = useCallback((e) => {
         e.preventDefault();
         if (search.trim().length <= 0) {
-            handleTost();
+            handleTost("Enter Something");
             return
         }
         changeSearchResult(search);
@@ -333,14 +309,12 @@ const Navbar = () => {
                             {/* <!-- Modal body --> */}
                             <div className="p-4 md:p-5">
                                 <button
-                                    disabled={isSubmitting}
                                     className="my-3 w-full border bg-white hover:bg-slate-300 font-medium rounded-lg text-sm px-5 py-3 text-center dark:bg-gray-500 dark:hover:bg-gray-500 flex items-center justify-center outline-none" onClick={googleSighUp}>
                                     <BiLogoGoogle
                                         className="mx-1 text-2xl text-slate-500" />
                                     Create Account with Google
                                 </button>
                                 <button
-                                    disabled={isSubmitting}
                                     className="my-3 w-full text-white bg-gray-700 hover:bg-gray-900 font-medium rounded-lg text-sm px-5 py-3 text-center dark:bg-gray-700 dark:hover:bg-gray-900 flex items-center justify-center outline-none" onClick={githubSignIn}>
                                     <BiLogoGithub
                                         className="mx-1 text-2xl" />
@@ -348,7 +322,7 @@ const Navbar = () => {
                                 </button>
                                 <p className="font-medium text-center my-2">Or</p>
                                 <form className="space-y-4"
-                                    onSubmit={handleSubmit(onSubmit)}>
+                                    onSubmit={onSubmit}>
                                     <div>
                                         <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                             Username
@@ -417,9 +391,9 @@ const Navbar = () => {
                                                 value={userCre.password}
                                                 onChange={e => setUserCre({ ...userCre, password: e.target.value })}
                                             />
-                                            <button className="text-[1rem]" onClick={() => setEye(!eye)}>
+                                            <div className="text-[1rem]" onClick={() => setEye(!eye)}>
                                                 {eye ? <FaRegEyeSlash /> : <FaRegEye />}
-                                            </button>
+                                            </div>
                                         </div>
                                         {
                                             userCre.passwordError.length > 0 &&
@@ -447,7 +421,6 @@ const Navbar = () => {
                                         }
                                     </div>
                                     <button
-                                        disabled={isSubmitting}
                                         type="submit"
                                         className="w-full focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center outline-none bg-slate-500 text-white">
                                         Create Account
@@ -502,37 +475,49 @@ const Navbar = () => {
                                 </button>
                                 <p className="font-medium text-center my-2">Or</p>
                                 <form className="space-y-4"
-                                    onSubmit={handleSubmit(onSubmit)}>
+                                    onSubmit={onSubmit}>
                                     <div>
                                         <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
-                                        <input {...register("email", {
-                                            required: "Email is required",
-                                        })}
+                                        <input
                                             type="email"
                                             name="email"
                                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                                            placeholder="Email" autoFocus />
-                                        {errors.email &&
-                                            (<p className="text-red-500 text-sm">{`${errors.email?.message}`}</p>)}
+                                            placeholder="Email" autoFocus
+                                            value={userCre.email}
+                                            onChange={e => setUserCre({ ...userCre, email: e.target.value })} />
+                                        {
+                                            userCre.emailError.length > 0 &&
+                                            <p className="text-red-500 text-sm">
+                                                {userCre.emailError}
+                                            </p>
+                                        }
                                     </div>
                                     <div>
-                                        <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your password</label>
-                                        <input {...register("password", {
-                                            required: "Password is requried",
-                                            minLength: {
-                                                value: 8,
-                                                message: "Password must be at least 8 characters"
-                                            },
-                                        })}
-                                            type="password"
-                                            name="password"
-                                            placeholder="••••••••"
-                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" />
-                                        {errors.password &&
-                                            (<p className="text-red-500 text-sm">{`${errors.password?.message}`}</p>)}
+                                        <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                            Your password
+                                        </label>
+                                        <div className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white flex items-center justify-between focus:outline-black outline-2">
+                                            <input
+                                                type={eye ? `text` : `password`}
+                                                name="password"
+                                                placeholder="••••••••"
+                                                className="outline-none bg-transparent"
+                                                value={userCre.password}
+                                                onChange={e => setUserCre({ ...userCre, password: e.target.value })}
+                                            />
+                                            <div className="text-[1rem]" onClick={() => setEye(!eye)}>
+                                                {eye ? <FaRegEyeSlash /> : <FaRegEye />}
+                                            </div>
+                                        </div>
+                                        {
+                                            userCre.passwordError.length > 0 &&
+                                            <p className="text-red-500 text-sm">
+                                                {userCre.passwordError}
+                                            </p>
+                                        }
                                     </div>
                                     <button
-                                        onClick={handleSubmit(onSubmit)}
+                                        onClick={onSubmit}
                                         className="w-full font-medium rounded-lg text-sm px-5 py-2.5 text-center outline-gray-400 bg-green-500 text-white">
                                         Login to your account
                                     </button>
@@ -604,7 +589,7 @@ const Navbar = () => {
                                     <div className="flex items-center cursor-pointer"
                                         onClick={() => setModel(prev => !prev)}>
                                         <img src={cur_user?.avatar_url || "/blank-avatar.webp"}
-                                            className="w-10 rounded-full hover:border-2 border-gray-700 transition-all duration-75 relative"
+                                            className="w-10 h-10 object-cover rounded-full hover:scale-75 transition-all duration-75 relative"
                                         />
                                         <IoIosArrowDown className="mx-2" />
                                     </div>
@@ -612,20 +597,19 @@ const Navbar = () => {
                                     <Model model={model} setModel={setModel}>
                                         <div className={`absolute z-30 right-7 my-2 bg-slate-100 border-2 border-gray-300 px-2 py-2 w-60 items-start justify-start ${model || `hidden`}`} >
                                             <div className="flex gap-2 items-center px-3 py-1 justify-start cursor-pointer">
-                                                <img src={cur_user?.avatar_url || "/blank-avatar.webp"} className="rounded-full w-[2rem]" />
-                                                <NavLink to={`/user/${user.id}`}
+                                                <img src={cur_user?.avatar_url || "/blank-avatar.webp"} className="rounded-full w-[2rem] h-[2rem] object-cover" />
+                                                <NavLink to={`/user/${cur_user.username}`}
                                                     onClick={() => setModel(false)}
                                                     className="text-xl font-medium hover:text-slate-500 text-slate-900 mx-1">
                                                     Profile
                                                 </NavLink>
                                             </div>
-                                            <div className="flex gap-2 items-center px-3 py-1 justify-start cursor-pointer"
-                                                onClick={signOut}>
+                                            <NavLink to={`/${cur_user.username}#bookmarks`} className="flex gap-2 items-center px-3 py-1 justify-start cursor-pointer" onClick={() => setModel(false)}>
                                                 <GiBookmarklet className="text-2xl" />
                                                 <p className="text-xl font-medium hover:text-slate-500 text-slate-900 mx-3">
                                                     Saved Posts
                                                 </p>
-                                            </div>
+                                            </NavLink>
                                             <div className="flex gap-2 items-center px-3 py-1 justify-start cursor-pointer"
                                                 onClick={darkMode}>
                                                 <CgDarkMode className="text-2xl" />

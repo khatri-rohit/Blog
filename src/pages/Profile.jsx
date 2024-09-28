@@ -8,6 +8,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { FaRegUser } from "react-icons/fa";
 import { IoBookmarksOutline } from "react-icons/io5";
 import useUsers from "../context/User";
+import toast, { Toaster } from "react-hot-toast";
+
 
 const Profile = () => {
 
@@ -29,6 +31,11 @@ const Profile = () => {
   ];
   const [navi, setNavi] = useState(1);
 
+  useEffect(() => {
+    if (window.location.hash === "#bookmarks")
+      setNavi(2)
+  }, [])
+
   if (!user.id) navigate('/');
 
   return (
@@ -37,11 +44,11 @@ const Profile = () => {
         <div className="w-full h-[80vh] flex justify-center">
 
           {/*  */}
-          <div className="w-[20%] bg-gray-600">
+          <div className="w-[20%] bg-gray-500">
             {
               tabs.map((tab, _) => (
                 <div key={_}
-                  className={`flex items-center p-2 font-medium ${tab.id === navi ? "bg-gray-200" : "bg-white"} my-3 cursor-pointer`}
+                  className={`flex items-center p-2 font-medium ${tab.id === navi ? "bg-gray-200" : "bg-white hover:bg-gray-100"} my-3 cursor-pointer`}
                   onClick={() => setNavi(tab.id)}>
                   <div
                     className="mx-2 w-10 rounded-full" >
@@ -74,7 +81,6 @@ export default Profile;
 const Account = () => {
 
   const { id } = useParams();
-  console.log(id);
 
   const [changeName, setChangeName] = useState(false);
   const [changeBio, setChnageBio] = useState(false);
@@ -95,7 +101,7 @@ const Account = () => {
         .from('users')
         .update({
           name: name
-        }).eq("id", id);
+        }).eq("username", id);
       console.log("Name Changed");
     }
   }
@@ -107,7 +113,7 @@ const Account = () => {
         .from('users')
         .update({
           bio: bio
-        }).eq("id", id);
+        }).eq("username", id);
       console.log("Bio Chnaged");
     }
   }
@@ -118,7 +124,7 @@ const Account = () => {
       const { data } = await supabase
         .from('users')
         .select()
-        .eq("id", id);
+        .eq("username", id);
 
       if (data) {
         setCur_user(data[0]);
@@ -138,7 +144,7 @@ const Account = () => {
       const response = await supabase
         .from('posts')
         .select()
-        .eq('user_id', id);
+        .eq('username', id);
       setBlog(response.data);
       setLoading(false);
     } catch (error) {
@@ -161,17 +167,21 @@ const Account = () => {
         .storage
         .from('img_posts')
         .upload(uuidv4() + "/" + uuidv4(), file);
+      console.log("Profile Changed");
 
       if (data) {
-        console.log(data);
         const url = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/${data.fullPath}`;
         setImage_url(url);
         await supabase
           .from('users')
           .update({
             avatar_url: url
-          }).eq("id", id);
-        console.log("Profile Changed");
+          }).eq("username", id);
+        toast(() => {
+          <span className="text-xl">
+            Profile Pic Updated
+          </span>
+        });
       }
     } catch (error) {
       console.log(error);
@@ -180,13 +190,17 @@ const Account = () => {
 
   return (
     <div className="transition-opacity duration-200">
+      <Toaster
+        position="top-right"
+      />
+
       <div className="flex items-center m-3">
         <div className="relative group hover:opacity-60" onClick={() => imgRef.current.click()}>
           <div className="absolute inset-x-9 inset-y-7">
             <MdCamera className="group-hover:block hidden text-2xl text-white" />
           </div>
           <img src={cur_user?.avatar_url || "/blank-avatar.webp"}
-            className="rounded-full cursor-pointer mx-2 w-20 border-black border"
+            className="rounded-full cursor-pointer mx-2 w-20 h-20 object-cover border-black border"
             alt="profile" />
         </div>
         <input type="file"
@@ -221,6 +235,11 @@ const Account = () => {
       </div>
 
       <div className="my-10 mx-5">
+        <div className="flex items-center my-2">
+          <p className="text-2xl font-medium">Username: </p>
+          <p className="text-xl font-light mx-2">{cur_user?.username}</p>
+        </div>
+
         <div className="flex items-center my-2">
           <p className="text-2xl font-medium">Email: </p>
           <p className="text-xl font-light mx-2">{cur_user?.email}</p>
@@ -314,56 +333,60 @@ const Bookmarks = () => {
       const { data } = await supabase
         .from('bookmarks')
         .select()
-        .eq('user_id', id);
-      console.log(data[0]);
+        .eq('username', id);
       setLoading(false);
-      setBookMarks(data);
+      if (data)
+        setBookMarks(data);
     })();
 
   }, [])
 
   return (
     <div className="p-3">
-      <div className="">
-        <p className="text-4xl font-semibold">Saved Posts</p>
-        <div className="my-5 flex">
-          <div className="relative flex overflow-y-scroll scroll-smooth"
-            style={{ scrollbarWidth: "none" }}>
-            {loading && (
-              // Loading
-              <div className="absolute bg-white bg-opacity-60 h-full w-full z-10 flex items-center justify-center">
-                <div className="flex items-center">
-                  <span className="text-3xl mr-4">Loading</span>
-                  <svg className="animate-spin h-5 w-5 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none"
-                    viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                    </path>
-                  </svg>
-                </div>
+      <p className="text-4xl font-semibold">Saved Posts</p>
+      <div className="my-5 flex  w-full">
+        <div className="relative flex overflow-y-scroll scroll-smooth"
+          style={{ scrollbarWidth: "none" }}>
+          {
+            loading &&
+            // Loading
+            <div className="absolute bg-gray-400 bg-opacity-60 h-52 w-full z-10 flex items-center justify-center">
+              <div className="flex items-center">
+                <span className="text-3xl mr-4">Loading</span>
+                <svg className="animate-spin h-5 w-5 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none"
+                  viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                  </path>
+                </svg>
               </div>
-            )}
-            {bookMarks?.length !== 0 ?
-              <div className={`flex flex-nowrap ms-0.5`}>
-                {(bookMarks?.map((post, _) => (
-                  <NavLink to={`/post/${post?.id}`} className="border-r p-2 bg-white mr-1 drop-shadow-lg rounded-lg cursor-auto" key={_} >
-                    <div className="w-96 max-w-xs overflow-hidden transition-shadow duration-300 ease-in-out">
-                      <div className="ml-1">
-                        <img src={post?.image_url}
-                          className="object-cover w-full rounded-xl h-[25vh]"
-                          alt={post?.blog_title} />
+            </div>
+          }
+          {
+            bookMarks?.length === 0 ?
+              (loading || <p className="text-xl">You haven't Saved any posts</p>)
+              : <div className={`flex flex-nowrap ms-0.5`}>
+                {
+                  (bookMarks?.map((post, _) => (
+                    <NavLink to={`/post/${post?.id}`} className="border-r p-2 bg-white mr-1 drop-shadow-lg rounded-lg cursor-auto" key={_} >
+                      <div className="w-96 max-w-xs overflow-hidden transition-shadow duration-300 ease-in-out">
+                        <div className="ml-1">
+                          <img src={post?.image_url}
+                            className="object-cover w-full rounded-xl h-[25vh]"
+                            alt={post?.blog_title} />
+                        </div>
+                        <div className="p-2">
+                          <p className="text-pretty">
+                            {post?.blog_title}
+                          </p>
+                        </div>
                       </div>
-                      <div className="p-2">
-                        <p className="text-pretty">
-                          {post?.blog_title}
-                        </p>
-                      </div>
-                    </div>
-                  </NavLink>
-                )))}
-              </div> : loading || (<p className="text-xl">You haven't Saved any posts</p>)}
-          </div>
+                    </NavLink>
+                  )))
+                }
+              </div>
+          }
         </div>
       </div>
     </div>
