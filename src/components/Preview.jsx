@@ -11,7 +11,7 @@ import { supabase } from "../../supabaseClient";
 import { useNavigate } from 'react-router-dom';
 
 
-const Preview = ({ title, blog_content }) => {
+const Preview = ({ title, blog_content, usrename }) => {
 
     const imageRef = useRef(null);
     const [tags, setTags] = useState([]);
@@ -42,6 +42,7 @@ const Preview = ({ title, blog_content }) => {
                 .insert([{
                     id: id,
                     user_id: user.id,
+                    username: usrename,
                     blog_title: title,
                     summary,
                     blog_content,

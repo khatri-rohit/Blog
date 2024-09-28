@@ -7,8 +7,9 @@ import { supabase } from "../../supabaseClient";
 import useTheme from "../context/theme";
 import useUsers from "../context/User";
 import { IoBookmarksOutline, IoBookmarks } from "react-icons/io5";
-import toast from "react-hot-toast";
+import toast from "react-hot-toast"; import { BiMessageSquareEdit } from "react-icons/bi";
 
+import { v4 as uuidv4 } from 'uuid';
 
 const Home = () => {
     const [blogPost, setBlogPost] = useState([]);
@@ -135,20 +136,19 @@ const Home = () => {
                 'aria-live': 'polite',
             },
         });
-
         try {
-            await supabase
-                .from('bookmarks')
+            console.log(post);
+            await supabase.
+                from('bookmarks')
                 .insert([{
-                    user_id: post.user_id,
-                    post_id: post.id,
+                    id: uuidv4(),
+                    user_id: cur_user.id,
+                    post_id: id,
+                    username: cur_user.username,
                     blog_title: post.blog_title,
                     summary: post.summary,
-                    image_url: post.image_url
+                    cover_img: post.image_url
                 }]);
-
-            console.log("Bookmarks Added");
-
         } catch (error) {
             console.log(error);
         }
@@ -182,7 +182,8 @@ const Home = () => {
 
                             return (
                                 <div key={_}
-                                    className={`w-full custom-font my-5 flex justify-around ${themeMode && 'shadow-white'} shadow-md bg-white dark:bg-[#100f0fab] dark:text-white rounded-lg duration-300 transition hover:-translate-y-4 origin-center hover:scale-95 `}>
+                                    className={`w-full custom-font my-5 flex justify-around ${themeMode && 'shadow-white'} shadow-md bg-white dark:bg-[#100f0fab] dark:text-white rounded-lg duration-300 transition hover:-translate-y-4 origin-center 
+                                    hover:scale-95`}>
 
                                     <div className="w-[33%] p-1 my-auto cursor-pointer"
                                         onClick={() => handlePost(post?.id)}>
@@ -196,7 +197,7 @@ const Home = () => {
                                         </p>
 
                                         <p onClick={() => handlePost(post?.id)}
-                                            className="text-3xl title hover:subpixel-antialiased cursor-pointer text-black dark:text-white text-pretty" dangerouslySetInnerHTML={{ __html: post?.preview._title }}>
+                                            className="text-3xl title cursor-pointer text-black dark:text-white text-pretty" dangerouslySetInnerHTML={{ __html: post?.preview._title }}>
                                         </p>
 
                                         <p className="text-xl description mb-3 text-slate-500 dark:text-slate-100 text-balance tracking-widest font-light"
@@ -208,7 +209,7 @@ const Home = () => {
                                                 <p className="mx-2 font-normal text-black text-[10px] dark:text-slate-50">
                                                     {post?.formated_time}
                                                 </p>
-                                                <p className="text-gray-500 text-xs">
+                                                <p className="text-gray-400 text-xs">
                                                     {readingtime} min read
                                                 </p>
                                             </div>

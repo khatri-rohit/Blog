@@ -369,18 +369,19 @@ const Bookmarks = () => {
               : <div className={`flex flex-nowrap ms-0.5`}>
                 {
                   (bookMarks?.map((post, _) => (
-                    <NavLink to={`/post/${post?.id}`} className="border-r p-2 bg-white mr-1 drop-shadow-lg rounded-lg cursor-auto" key={_} >
+                    <NavLink to={`/post/${post?.post_id}`} className="border-r p-2 bg-white mr-2 drop-shadow-lg rounded-lg cursor-pointer" key={_} >
                       <div className="w-96 max-w-xs overflow-hidden transition-shadow duration-300 ease-in-out">
                         <div className="ml-1">
-                          <img src={post?.image_url}
+                          <img src={post?.cover_img}
                             className="object-cover w-full rounded-xl h-[25vh]"
                             alt={post?.blog_title} />
                         </div>
-                        <div className="p-2">
-                          <p className="text-pretty">
+                        <div className="pt-2 px-2">
+                          <p className="text-pretty font-semibold text-black">
                             {post?.blog_title}
                           </p>
                         </div>
+                        <div className="px-2" dangerouslySetInnerHTML={{ __html: post?.summary }} />
                       </div>
                     </NavLink>
                   )))

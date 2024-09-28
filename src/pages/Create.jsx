@@ -1,17 +1,34 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ReactQuill from "react-quill";
 import 'react-quill/dist/quill.bubble.css';
 import useUsers from "../context/User";
 import Preview from '../components/Preview';
+import { supabase } from "../../supabaseClient";
+import { useNavigate } from "react-router-dom";
 
 
 const Create = () => {
 
   const [title, setTitle] = useState('');
   const [blog_content, setBlog_content] = useState('');
-
-  // const [user_id, setUserId] = useState('b8f2393b-d896-41e2-83b9-4248da0634b6');
+  const { user } = useUsers();
+  const [usrename, setUsername] = useState('');
   const { publish } = useUsers();
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    ; (async () => {
+      const { data } = await supabase
+        .from('users')
+        .select()
+        .eq("id", user.id);
+      console.log(data[0].username);
+      setUsername(data[0].username);
+    })()
+  }, [])
+
+  if (!user.id) navigate('/');
 
   return (
 
@@ -31,7 +48,7 @@ const Create = () => {
         className='my-5 p-0 create' />
 
       <div className={`${publish ? 'visible opacity-100' : 'invisible opacity-0'} transition-all duration-200`}>
-        <Preview title={title} blog_content={blog_content} />
+        <Preview title={title} usrename={usrename} blog_content={blog_content} />
       </div>
     </section>
   )

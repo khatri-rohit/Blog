@@ -598,7 +598,7 @@ const Navbar = () => {
                                         <div className={`absolute z-30 right-7 my-2 bg-slate-100 border-2 border-gray-300 px-2 py-2 w-60 items-start justify-start ${model || `hidden`}`} >
                                             <div className="flex gap-2 items-center px-3 py-1 justify-start cursor-pointer">
                                                 <img src={cur_user?.avatar_url || "/blank-avatar.webp"} className="rounded-full w-[2rem] h-[2rem] object-cover" />
-                                                <NavLink to={`/user/${cur_user.username}`}
+                                                <NavLink to={`/${cur_user.username}`}
                                                     onClick={() => setModel(false)}
                                                     className="text-xl font-medium hover:text-slate-500 text-slate-900 mx-1">
                                                     Profile
