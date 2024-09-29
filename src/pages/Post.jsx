@@ -62,7 +62,6 @@ const Post = () => {
                     .select()
                     .eq("id", data[0].user_id).then((res) => {
                         setThatUser(res.data[0]);
-                        console.log(res.data[0].avatar_url);
                     });
 
             } catch (error) {
@@ -88,7 +87,6 @@ const Post = () => {
                 .from('comments')
                 .select()
                 .eq('post_id', id);
-            console.log("Comment ", data[0]);
             if (data) {
                 setComments(data[0]);
                 setCommentsCount(data[0].content)
@@ -165,7 +163,6 @@ const Post = () => {
                         content: newComment
                     }
                 ).eq('post_id', id);
-            console.log("Comment Posted");
             setCommentText('');
             setCommentsCount(newComment);
         } catch (error) {
@@ -176,13 +173,8 @@ const Post = () => {
     const likeComment = async (e, changeID) => {
         e.preventDefault();
         const liked_user = comments.user;
-        console.log(liked_user);
         liked_user.find((that) => that === user.id ? setLikeComment(true) : setLikeComment(false));
-        console.log(likeCommet);
-
         const updateComment = comments.content;
-        console.log(updateComment);
-
         const newComment = updateComment.map((changeComment) => (
             changeComment.key === changeID ?
                 {
@@ -192,7 +184,6 @@ const Post = () => {
                 : { ...changeComment }
         ))
 
-        console.log(newComment);
         try {
             await supabase
                 .from('comments')
@@ -202,9 +193,6 @@ const Post = () => {
                         user: likeCommet ? [...liked_user] : [...liked_user, user.id]
                     }
                 ).eq('post_id', id);
-            console.log("Comment Liked");
-            console.log(likeCommet);
-
             setCommentsCount(newComment);
         } catch (error) {
             console.error("Error -> " + error);
@@ -236,7 +224,6 @@ const Post = () => {
             },
         });
         try {
-            console.log(post);
             await supabase.
                 from('bookmarks')
                 .insert([{
@@ -367,28 +354,28 @@ const Post = () => {
                             </p>
                         </div>
                     </div>
-
-                    <div className="flex items-center">
-                        {user.id && (<div className="mx-2 dark:text-white flex items-center cursor-pointer">
-                            <IoBookmarksOutline
-                                className="text-2xl"
-                                onClick={handleSave} />
-                        </div>)}
-                        <div className="mx-2 dark:text-white flex items-center cursor-pointer">
-                            <BiMessageSquareEdit className="text-2xl"
-                                onClick={() => setSildebar(true)} />
-                            <p className="mx-1 flex items-center font-medium text-lg mb-1">
-                                {comments?.content.length}
-                            </p>
-                        </div>
-                        <div className="dark:text-white mx-2 flex items-center cursor-pointer"
-                            onClick={updateLike}>
-                            <FaHeart className="text-[1.2em] text-pink-500 cursor-pointer" />
-                            <p className="mx-1 flex items-center font-medium text-lg mb-1">
-                                {likeCount}
-                            </p>
-                        </div>
-                    </div>
+                    {user.id &&
+                        <div className="flex items-center">
+                            (<div className="mx-2 dark:text-white flex items-center cursor-pointer">
+                                <IoBookmarksOutline
+                                    className="text-2xl"
+                                    onClick={handleSave} />
+                            </div>)
+                            <div className="mx-2 dark:text-white flex items-center cursor-pointer">
+                                <BiMessageSquareEdit className="text-2xl"
+                                    onClick={() => setSildebar(true)} />
+                                <p className="mx-1 flex items-center font-medium text-lg mb-1">
+                                    {comments?.content.length}
+                                </p>
+                            </div>
+                            <div className="dark:text-white mx-2 flex items-center cursor-pointer"
+                                onClick={updateLike}>
+                                <FaHeart className="text-[1.2em] text-pink-500 cursor-pointer" />
+                                <p className="mx-1 flex items-center font-medium text-lg mb-1">
+                                    {likeCount}
+                                </p>
+                            </div>
+                        </div>}
 
                 </div>
                 {
@@ -414,7 +401,7 @@ const Post = () => {
                                     <div className="w-full my-3">
                                         <img src={post?.image_url}
                                             alt={post?.blog_title}
-                                            className="h-[35em] mx-auto" />
+                                            className="h-[35em] mx-auto border-b-2 pb-2 border-black" />
                                     </div>
                                     <div className="w-[75%] mx-auto">
                                         <div className="dark:text-white p-3 text-xl"

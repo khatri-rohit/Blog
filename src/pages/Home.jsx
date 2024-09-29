@@ -1,22 +1,19 @@
 /* eslint-disable react/no-unescaped-entities */
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { FaHeart } from "react-icons/fa6";
+import { IoBookmarksOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import { PuffLoader } from 'react-spinners';
-import { supabase } from "../../supabaseClient";
-import useTheme from "../context/theme";
-import useUsers from "../context/User";
-import { IoBookmarksOutline, IoBookmarks } from "react-icons/io5";
-import toast from "react-hot-toast"; import { BiMessageSquareEdit } from "react-icons/bi";
-
 import { v4 as uuidv4 } from 'uuid';
+import { supabase } from "../../supabaseClient";
+import useUsers from "../context/User";
+import useFetch from "../hooks/User";
 
 const Home = () => {
     const [blogPost, setBlogPost] = useState([]);
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
-
-    const { themeMode } = useTheme();
 
     const navigate = useNavigate();
     const {
@@ -24,6 +21,7 @@ const Home = () => {
         searchResult,
         getPosts
     } = useUsers();
+    const [cur_user] = useFetch(user.id);
 
     // Fetching All Blogs
     const fetchBlogs = async () => {
@@ -52,8 +50,6 @@ const Home = () => {
                 .order('created_at', { ascending: false });
             setBlogPost(data);
             setLoading(false);
-            console.log("Blogs", data);
-
         } catch (error) {
             console.log("Something Wrong happned while fetching Blog Data\n", error);
         }
@@ -70,27 +66,25 @@ const Home = () => {
                     `);
 
             setUsers(data);
-            console.log("Users", data);
-
         } catch (error) {
             console.log("Something Wrong happned While fetching Users\n", error);
         }
     }
 
-    const fetchBookmark = async () => {
-        if (user.id) {
-            try {
-                const { data } = await supabase
-                    .from('bookmarks')
-                    .select()
-                    .eq('user_id', user.id)
-                console.log("Bookmark", data);
+    // const fetchBookmark = async () => {
+    //     if (user.id) {
+    //         try {
+    //             const { data } = await supabase
+    //                 .from('bookmarks')
+    //                 .select()
+    //                 .eq('user_id', user.id)
+    //             console.log("Bookmark", data);
 
-            } catch (error) {
-                console.log(error);
-            }
-        }
-    }
+    //         } catch (error) {
+    //             console.log(error);
+    //         }
+    //     }
+    // }
 
     useEffect(() => {
         searchResult.trim().length >= 2 ? searchPost(searchResult) : fetchBlogs();
@@ -105,16 +99,17 @@ const Home = () => {
     useEffect(() => {
         fetchBlogs();
         fetchUsers();
-        fetchBookmark();
+        // fetchBookmark();
     }, []);
 
     const handlePost = (id) => {
         navigate(`/post/${id}`);
     };
 
+
     const handleSave = async (post) => {
         toast('Bookmark Saved', {
-            duration: 2000,
+            duration: 1000,
             position: 'top-right',
 
             // Styling
@@ -136,14 +131,14 @@ const Home = () => {
                 'aria-live': 'polite',
             },
         });
+
         try {
-            console.log(post);
             await supabase.
                 from('bookmarks')
                 .insert([{
                     id: uuidv4(),
                     user_id: cur_user.id,
-                    post_id: id,
+                    post_id: post.id,
                     username: cur_user.username,
                     blog_title: post.blog_title,
                     summary: post.summary,
@@ -173,7 +168,9 @@ const Home = () => {
                             <p className="flex justify-center">
                                 <PuffLoader speedMultiplier={1} color="#B2B1B9" />
                             </p>
-                            : blogPost?.length === 0 && (<p className="text-3xl font-medium flex justify-center flex-col">Can't find blog</p>)
+                            : blogPost?.length === 0 && (<p className="text-3xl font-medium flex justify-center flex-col">
+                                Can't find blog
+                            </p>)
                     }
                     {
                         blogPost?.map((post, _) => {
@@ -182,8 +179,8 @@ const Home = () => {
 
                             return (
                                 <div key={_}
-                                    className={`w-full custom-font my-5 flex justify-around ${themeMode && 'shadow-white'} shadow-md bg-white dark:bg-[#100f0fab] dark:text-white rounded-lg duration-300 transition hover:-translate-y-4 origin-center 
-                                    hover:scale-95`}>
+                                    className="w-full custom-font my-5 flex justify-around dark:shadow-white shadow-md bg-white dark:bg-[#100f0fab] dark:text-white rounded-lg duration-300 transition hover:-translate-y-4 origin-center 
+                                    hover:scale-95">
 
                                     <div className="w-[33%] p-1 my-auto cursor-pointer"
                                         onClick={() => handlePost(post?.id)}>
@@ -213,20 +210,20 @@ const Home = () => {
                                                     {readingtime} min read
                                                 </p>
                                             </div>
-
-                                            <div className="flex items-center">
-                                                {user.id && (<div className="mx-2 dark:text-white flex items-center cursor-pointer">
-                                                    <IoBookmarksOutline
-                                                        className="text-2xl"
-                                                        onClick={() => handleSave(post)} />
-                                                </div>)}
-                                                <div className="mx-2 flex items-center">
-                                                    <FaHeart className="text-xl text-pink-500" />
-                                                    <p className="mx-1 flex items-center font-medium">
-                                                        {post?.likes?.map((like) => like.like)}
-                                                    </p>
-                                                </div>
-                                            </div>
+                                            {user.id &&
+                                                <div className="flex items-center">
+                                                    <div className="mx-2 dark:text-white flex items-center cursor-pointer">
+                                                        <IoBookmarksOutline
+                                                            className="text-2xl"
+                                                            onClick={() => handleSave(post)} />
+                                                    </div>
+                                                    <div className="mx-2 flex items-center">
+                                                        <FaHeart className="text-xl text-pink-500" />
+                                                        <p className="mx-1 flex items-center font-medium">
+                                                            {post?.likes?.map((like) => like.like)}
+                                                        </p>
+                                                    </div>
+                                                </div>}
 
                                         </div>
                                     </div>

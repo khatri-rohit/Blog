@@ -102,7 +102,6 @@ const Account = () => {
         .update({
           name: name
         }).eq("username", id);
-      console.log("Name Changed");
     }
   }
 
@@ -114,7 +113,6 @@ const Account = () => {
         .update({
           bio: bio
         }).eq("username", id);
-      console.log("Bio Chnaged");
     }
   }
 
@@ -167,7 +165,6 @@ const Account = () => {
         .storage
         .from('img_posts')
         .upload(uuidv4() + "/" + uuidv4(), file);
-      console.log("Profile Changed");
 
       if (data) {
         const url = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/${data.fullPath}`;
@@ -344,50 +341,46 @@ const Bookmarks = () => {
   return (
     <div className="p-3">
       <p className="text-4xl font-semibold">Saved Posts</p>
-      <div className="my-5 flex  w-full">
-        <div className="relative flex overflow-y-scroll scroll-smooth"
+      <div className="my-5 flex w-full">
+        <div className="relative flex overflow-y-scroll scroll-smooth w-full"
           style={{ scrollbarWidth: "none" }}>
           {
             loading &&
             // Loading
-            <div className="absolute bg-gray-400 bg-opacity-60 h-52 w-full z-10 flex items-center justify-center">
-              <div className="flex items-center">
-                <span className="text-3xl mr-4">Loading</span>
-                <svg className="animate-spin h-5 w-5 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none"
-                  viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                  </path>
-                </svg>
-              </div>
+            <div className="absolute bg-gray-400 bg-opacity-60 h-full w-full z-10 flex items-center justify-center">
+              <ClipLoader />
             </div>
           }
-          {
-            bookMarks?.length === 0 ?
-              (loading || <p className="text-xl">You haven't Saved any posts</p>)
-              : <div className={`flex flex-nowrap ms-0.5`}>
-                {
-                  (bookMarks?.map((post, _) => (
-                    <NavLink to={`/post/${post?.post_id}`} className="border-r p-2 bg-white mr-2 drop-shadow-lg rounded-lg cursor-pointer" key={_} >
-                      <div className="w-96 max-w-xs overflow-hidden transition-shadow duration-300 ease-in-out">
-                        <div className="ml-1">
-                          <img src={post?.cover_img}
-                            className="object-cover w-full rounded-xl h-[25vh]"
-                            alt={post?.blog_title} />
+          <div className="">
+            {
+              bookMarks?.length === 0 ?
+                (loading || <p className="text-xl">You haven't Saved any posts</p>)
+                : <div className={`grid grid-cols-2 grid-rows-7 gap-4 ms-0.5 w-full`}>
+                  {/* : <div className={`flex flex-nowrap ms-0.5`}> */}
+                  {
+                    (bookMarks?.map((post, _) => (
+                      <NavLink to={`/post/${post?.post_id}`} key={_}
+                        className="border-r p-2 bg-white mr-2 drop-shadow-lg rounded-lg cursor-pointer w-full">
+                        <div className="w-96 max-w-xs overflow-hidden transition-shadow duration-300 ease-in-out">
+                          <div className="ml-1">
+                            <img src={post?.cover_img}
+                              className="object-cover w-full rounded-xl h-[25vh]"
+                              alt={post?.blog_title} />
+                          </div>
+                          <div className="pt-2 px-2">
+                            <p className="text-pretty font-semibold text-black">
+                              {post?.blog_title}
+                            </p>
+                          </div>
+                          <div className="px-2"
+                            dangerouslySetInnerHTML={{ __html: (post.summary).substring(0, 80) + "..." }} />
                         </div>
-                        <div className="pt-2 px-2">
-                          <p className="text-pretty font-semibold text-black">
-                            {post?.blog_title}
-                          </p>
-                        </div>
-                        <div className="px-2" dangerouslySetInnerHTML={{ __html: post?.summary }} />
-                      </div>
-                    </NavLink>
-                  )))
-                }
-              </div>
-          }
+                      </NavLink>
+                    )))
+                  }
+                </div>
+            }
+          </div>
         </div>
       </div>
     </div>

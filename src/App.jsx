@@ -14,7 +14,7 @@ const App = () => {
   const [user, setUser] = useState([]);
   const [searchResult, setSearchResult] = useState('');
   const [getPost, setGetPost] = useState([]);
-  const [themeMode, setThemeMode] = useState(false);
+  const [themeMode, setThemeMode] = useState('light');
   const [publish, setPublish] = useState(false);
 
   const oAuthStateChange = (data) => {
@@ -61,7 +61,7 @@ const App = () => {
   }
 
   useEffect(() => {
-    document.querySelector('html').classList.remove('dark', 'light');
+    document.querySelector('html').classList.remove('dark');
     document.querySelector('html').classList.add(themeMode);
     if (themeMode === 'dark') document.body.style.backgroundColor = "#181D31";
     else document.body.style.backgroundColor = "#f7f7f7";

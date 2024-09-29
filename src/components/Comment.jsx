@@ -24,11 +24,9 @@ const Comment = ({ setModel, model }) => {
                 .from('comments')
                 .select()
                 .eq('post_id', id);
-            console.log("Comment ", data[0]);
             if (data) {
                 setComments(data[0]);
                 setCommentsCount(data[0].content)
-
             }
         } catch (error) {
             console.log(error);
@@ -38,13 +36,8 @@ const Comment = ({ setModel, model }) => {
     const likeComment = async (e, changeID) => {
         e.preventDefault();
         const liked_user = comments.user;
-        console.log(liked_user);
         liked_user.find((that) => that === user.id ? setLikeComment(true) : setLikeComment(false));
-        console.log(likeCommet);
-
         const updateComment = comments.content;
-        console.log(updateComment);
-
         const newComment = updateComment.map((changeComment) => (
             changeComment.key === changeID ?
                 {
@@ -54,7 +47,6 @@ const Comment = ({ setModel, model }) => {
                 : { ...changeComment }
         ))
 
-        console.log(newComment);
         try {
             await supabase
                 .from('comments')
@@ -64,9 +56,6 @@ const Comment = ({ setModel, model }) => {
                         user: likeCommet ? [...liked_user] : [...liked_user, user.id]
                     }
                 ).eq('post_id', id);
-            console.log("Comment Liked");
-            console.log(likeCommet);
-
             setCommentsCount(newComment);
         } catch (error) {
             console.error("Error -> " + error);
@@ -93,7 +82,6 @@ const Comment = ({ setModel, model }) => {
                         content: newComment
                     }
                 ).eq('post_id', id);
-            console.log("Comment Posted");
             setCommentText('');
             setCommentsCount(newComment);
         } catch (error) {

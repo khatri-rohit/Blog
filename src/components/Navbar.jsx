@@ -19,6 +19,9 @@ const Navbar = () => {
     const { pathname } = useLocation();
     const navigate = useNavigate();
     const { darkTheme, lightTheme, themeMode } = useTheme(); // Theme Context API
+    const [username, setUsername] = useState(false);
+    const [value, setValue] = useState('');
+    const [error, setError] = useState('')
 
     const {
         user,
@@ -63,58 +66,24 @@ const Navbar = () => {
     const onSubmit = async (e) => {
         e.preventDefault();
         try {
-            //     const { email, password, name } = data
-            //     console.log(email, password);
-            //     if (reg) {
-            //         const { data } = await supabase.auth.signUp({
-            //             email: email,
-            //             password: password,
-            //         });
-            //         console.log({ ...data, name });
-            //         if (data) {
-            //             console.log("Account Created From");
-            //             oAuthStateChange({ ...data, name });
-            //             authUser({ ...data, name });
-            //             navigate("/");
-            //             setRegister(false);
-            //             setModel(false);
-            //         }
-            //     } else if (login) {
-            //         const { data, error } = await supabase.auth.signInWithPassword({
-            //             email: email,
-            //             password: password
-            //         });
-            //         if (data) {
-            //             console.log("Login From");
-            //             console.log(data);
-            //             oAuthStateChange(data);
-            //             setLogin(false);
-            //         } else {
-            //             console.log(error);
-            //         }
-            //     }
-            //     reset();
             if (login) {
                 const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
-                console.log("Outside Login Form");
                 if (emailRegex.test(userCre.email) && userCre.password.length >= 8) {
-                    console.log("Inside Login Form");
                     const { data, error } = await supabase.auth.signInWithPassword({
                         email: userCre.email,
                         password: userCre.password
                     });
                     if (data.user) {
                         setCur_user(data.user);
-                        console.log(data);
                         loggedInUser(data.user.id);
                         oAuthStateChange(data.user);
+                        handleTost("✨ Succeffully LoggedIn");
                         setLogin(false);
                         setUserCre({ ...userCre, confirmPassword: "", email: "", confirmPasswordError: "", emailError: "", name: "", nameError: "", password: "", passwordError: "", username: "", usernameError: "" });
                     }
 
                     if (error.code === "invalid_credentials") {
-                        console.log("Inside Error");
-                        handleTost("Invalid Credentials Try Again");
+                        handleTost("❌ Invalid Credentials Try Again");
                         setUserCre({ ...userCre, confirmPassword: "", email: "", confirmPasswordError: "", emailError: "", name: "", nameError: "", password: "", passwordError: "", username: "", usernameError: "" });
                         return;
                     }
@@ -129,43 +98,48 @@ const Navbar = () => {
                 const usernameRegex = /^[a-zA-Z0-9_]{3,16}$/;
                 const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
 
-                console.log("Outside SignUp Form");
-
                 if (usernameRegex.test(userCre.username)
                     && userCre.name.trim().length > 0
                     && emailRegex.test(userCre.email)
                     && userCre.password.length >= 8 &&
                     userCre.confirmPassword === userCre.password) {
 
-                    const { data } = await supabase.auth.signUp({
+                    // const { data } = await supabase.auth.signUp({
+                    //     email: userCre.email,
+                    //     password: userCre.password
+                    // });
+
+                    const { data } = await supabase.auth.signInWithOtp({
                         email: userCre.email,
-                        password: userCre.password
-                    });
+                        options: {
+                            // set this to false if you do not want the user to be automatically signed up
+                            // shouldCreateUser: false,
+                            emailRedirectTo: userCre.email,
+                        },
+                    })
+                    console.log(data);
 
-                    console.log("Inside SignUp Form");
-
-                    if (data) {
-                        console.log(data);
-                        try {
-                            await supabase
-                                .from('users')
-                                .insert({
-                                    id: data.user.id,
-                                    username: userCre.username,
-                                    name: userCre.name,
-                                    email: userCre.email,
-                                    created_at: user.created_at,
-                                    avatar_url: null,
-                                    bio: ""
-                                });
-                        } catch (error) {
-                            console.log("Error", error);
-                        }
-                        loggedInUser(data.user.id);
-                        oAuthStateChange(data.user);
-                        setRegister(false);
-                        setUserCre({ ...userCre, confirmPassword: "", email: "", confirmPasswordError: "", emailError: "", name: "", nameError: "", password: "", passwordError: "", username: "", usernameError: "" });
-                    }
+                    // if (data) {
+                    //     try {
+                    //         await supabase
+                    //             .from('users')
+                    //             .insert({
+                    //                 id: data.user.id,
+                    //                 username: userCre.username,
+                    //                 name: userCre.name,
+                    //                 email: userCre.email,
+                    //                 created_at: user.created_at,
+                    //                 avatar_url: null,
+                    //                 bio: ""
+                    //             });
+                    //     } catch (error) {
+                    //         console.log("Error", error);
+                    //     }
+                    //     loggedInUser(data.user.id);
+                    //     oAuthStateChange(data.user);
+                    //     setRegister(false);
+                    //     setUserCre({ ...userCre, confirmPassword: "", email: "", confirmPasswordError: "", emailError: "", name: "", nameError: "", password: "", passwordError: "", username: "", usernameError: "" });
+                    // }
                 } else {
                     if (!usernameRegex.test(userCre.username))
                         setUserCre({ ...userCre, usernameError: "Not a valid username" })
@@ -184,6 +158,27 @@ const Navbar = () => {
             console.log(error);
         }
     };
+
+    const setUserName = async (e) => {
+        e.preventDefault();
+        const usernameRegex = /^[a-zA-Z0-9_]{3,16}$/;
+        if (usernameRegex.test(value)) {
+            await supabase
+                .from('users')
+                .update({
+                    username: value
+                }).eq("id", cur_user.id)
+            setUsername(false);
+            handleTost("🎉 Registered successfully")
+        } else {
+            if (value.trim().length > 0)
+                setError("only use underscore, charaters, number")
+            else {
+                setError("can't be empty")
+            }
+            setUsername(true);
+        }
+    }
 
     const githubSignIn = async () => {
         try {
@@ -233,6 +228,11 @@ const Navbar = () => {
                 .select()
                 .eq('id', id);
             setCur_user(data[0]);
+            if (data[0].username === null || data[0].username.length === 0) {
+                setUsername(true)
+            } else if (data[0].username) {
+                setUsername(false);
+            }
         } catch (error) {
             console.log("Error", error);
         }
@@ -243,7 +243,6 @@ const Navbar = () => {
             const { data } = await supabase.auth.getSession()
             oAuthStateChange(data.session.user);
             loggedInUser(data.session.user.id);
-            console.log(data);
         })();
     }, [])
 
@@ -278,7 +277,6 @@ const Navbar = () => {
             return
         }
         changeSearchResult(search);
-        console.log(search);
         navigate(`/search?q=${encodeURIComponent(search)}`)
     }, [changeSearchResult, search]);
 
@@ -538,6 +536,34 @@ const Navbar = () => {
                 </LoignModel>
             }
 
+            {username && <LoignModel model={username}>
+                <div className="absolute top-12 left-1/2 transform -translate-x-1/2 z-30 shadow-sm mx-auto w-[20%] bg-slate-100 p-4 rounded-lg">
+                    <form className="space-y-4"
+                        onSubmit={setUserName}>
+                        <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Set User_name </label>
+                        <input
+                            type="text"
+                            name="username"
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                            placeholder="username"
+                            autoFocus
+                            value={value}
+                            onChange={e => setValue(e.target.value)} />
+                        {
+                            error.length > 0 &&
+                            <p className="text-red-500 text-sm">
+                                {error}
+                            </p>
+                        }
+                        <button
+                            onClick={setUserName}
+                            className="w-full font-medium rounded-lg text-sm px-5 py-2.5 text-center outline-gray-400 bg-slate-800 text-white">
+                            Confirm
+                        </button>
+                    </form>
+                </div>
+            </LoignModel>}
+
             <Toaster
                 position="top-center"
             />
@@ -545,8 +571,8 @@ const Navbar = () => {
             <nav className="flex items-center justify-between px-2 py-4 border-b-2">
                 <div className="flex items-center justify-between">
                     <Link to={'/'} className="flex items-center mx-3 outline-none">
-                        <img src={themeMode === "light" ? "/blogicon.png" : "/whiteblogicon.png"}
-                            className="w-10" />
+                        {themeMode ? <img src={themeMode === "light" ? "/blogicon.png" : "/whiteblogicon.png"}
+                            className="w-10" /> : <img src="/blogicon.png" className="w-10" />}
                         <p className="mx-2 font-semibold text-2xl dark:text-white">
                             DevDiscuss
                         </p>
