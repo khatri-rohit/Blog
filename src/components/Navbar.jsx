@@ -104,42 +104,32 @@ const Navbar = () => {
                     && userCre.password.length >= 8 &&
                     userCre.confirmPassword === userCre.password) {
 
-                    // const { data } = await supabase.auth.signUp({
-                    //     email: userCre.email,
-                    //     password: userCre.password
-                    // });
-
-                    const { data } = await supabase.auth.signInWithOtp({
+                    const { data } = await supabase.auth.signUp({
                         email: userCre.email,
-                        options: {
-                            // set this to false if you do not want the user to be automatically signed up
-                            // shouldCreateUser: false,
-                            emailRedirectTo: userCre.email,
-                        },
-                    })
-                    console.log(data);
+                        password: userCre.password
+                    });
 
-                    // if (data) {
-                    //     try {
-                    //         await supabase
-                    //             .from('users')
-                    //             .insert({
-                    //                 id: data.user.id,
-                    //                 username: userCre.username,
-                    //                 name: userCre.name,
-                    //                 email: userCre.email,
-                    //                 created_at: user.created_at,
-                    //                 avatar_url: null,
-                    //                 bio: ""
-                    //             });
-                    //     } catch (error) {
-                    //         console.log("Error", error);
-                    //     }
-                    //     loggedInUser(data.user.id);
-                    //     oAuthStateChange(data.user);
-                    //     setRegister(false);
-                    //     setUserCre({ ...userCre, confirmPassword: "", email: "", confirmPasswordError: "", emailError: "", name: "", nameError: "", password: "", passwordError: "", username: "", usernameError: "" });
-                    // }
+                    if (data) {
+                        try {
+                            await supabase
+                                .from('users')
+                                .insert({
+                                    id: data.user.id,
+                                    username: userCre.username,
+                                    name: userCre.name,
+                                    email: userCre.email,
+                                    created_at: user.created_at,
+                                    avatar_url: null,
+                                    bio: ""
+                                });
+                        } catch (error) {
+                            console.log("Error", error);
+                        }
+                        loggedInUser(data.user.id);
+                        oAuthStateChange(data.user);
+                        setRegister(false);
+                        setUserCre({ ...userCre, confirmPassword: "", email: "", confirmPasswordError: "", emailError: "", name: "", nameError: "", password: "", passwordError: "", username: "", usernameError: "" });
+                    }
                 } else {
                     if (!usernameRegex.test(userCre.username))
                         setUserCre({ ...userCre, usernameError: "Not a valid username" })
@@ -630,7 +620,7 @@ const Navbar = () => {
                                                     Profile
                                                 </NavLink>
                                             </div>
-                                            <NavLink to={`/${cur_user?.username}#bookmarks`} className="flex gap-2 items-center px-3 py-1 justify-start cursor-pointer" onClick={() => setModel(false)}>
+                                            <NavLink to={`/${cur_user.username}#bookmarks`} className="flex gap-2 items-center px-3 py-1 justify-start cursor-pointer" onClick={() => setModel(false)}>
                                                 <GiBookmarklet className="text-2xl" />
                                                 <p className="text-xl font-medium hover:text-slate-500 text-slate-900 mx-3">
                                                     Saved Posts
