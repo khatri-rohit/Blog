@@ -630,7 +630,7 @@ const Navbar = () => {
                                                     Profile
                                                 </NavLink>
                                             </div>
-                                            <NavLink to={`/${cur_user.username}#bookmarks`} className="flex gap-2 items-center px-3 py-1 justify-start cursor-pointer" onClick={() => setModel(false)}>
+                                            <NavLink to={`/${cur_user?.username}#bookmarks`} className="flex gap-2 items-center px-3 py-1 justify-start cursor-pointer" onClick={() => setModel(false)}>
                                                 <GiBookmarklet className="text-2xl" />
                                                 <p className="text-xl font-medium hover:text-slate-500 text-slate-900 mx-3">
                                                     Saved Posts
