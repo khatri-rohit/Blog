@@ -160,6 +160,8 @@ const Navbar = () => {
                 }).eq("id", cur_user.id)
             setUsername(false);
             handleTost("🎉 Registered successfully")
+            console.log(cur_user);
+            loggedInUser(cur_user);
         } else {
             if (value.trim().length > 0)
                 setError("only use underscore, charaters, number")
@@ -211,17 +213,41 @@ const Navbar = () => {
         }
     };
 
-    const loggedInUser = async (id) => {
+    const loggedInUser = async (user) => {
+        console.log(user);
         try {
             const { data } = await supabase
                 .from('users')
                 .select()
-                .eq('id', id);
-            setCur_user(data[0]);
-            if (data[0].username === null || data[0].username.length === 0) {
-                setUsername(true)
-            } else if (data[0].username) {
-                setUsername(false);
+                .eq('id', user.id);
+
+            console.log(data.length);
+            if (data.length === 0) {
+                await supabase
+                    .from('users')
+                    .insert([{
+                        id: user.id,
+                        username: "",
+                        name: user.user_metadata.full_name,
+                        email: user.user_metadata.email,
+                        avatar_url: user.user_metadata.avatar_url,
+                        bio: ""
+                    }]);
+                console.log("Successfully Registered");
+            }
+            const resp = await supabase
+                .from('users')
+                .select()
+                .eq('id', user.id);
+            if (resp.data) {
+                setCur_user(resp.data[0]);
+                console.log(resp.data[0]);
+
+                if (resp.data[0].username.length <= 0) {
+                    setUsername(true)
+                } else {
+                    setUsername(false);
+                }
             }
         } catch (error) {
             console.log("Error", error);
@@ -231,8 +257,14 @@ const Navbar = () => {
     useEffect(() => {
         ; (async () => {
             const { data } = await supabase.auth.getSession()
-            oAuthStateChange(data.session.user);
-            loggedInUser(data.session.user.id);
+            if (data.session !== null) {
+                console.log("Session Created");
+                console.log(data.session);
+                oAuthStateChange(data.session.user);
+                loggedInUser(data.session.user);
+            } else {
+                console.log("No Session");
+            }
         })();
     }, [])
 
@@ -614,13 +646,13 @@ const Navbar = () => {
                                         <div className={`absolute z-30 right-7 my-2 bg-slate-100 border-2 border-gray-300 px-2 py-2 w-60 items-start justify-start ${model || `hidden`}`} >
                                             <div className="flex gap-2 items-center px-3 py-1 justify-start cursor-pointer">
                                                 <img src={cur_user?.avatar_url || "/blank-avatar.webp"} className="rounded-full w-[2rem] h-[2rem] object-cover" />
-                                                <NavLink to={`/${cur_user.username}`}
+                                                <NavLink to={`/${cur_user?.username}`}
                                                     onClick={() => setModel(false)}
                                                     className="text-xl font-medium hover:text-slate-500 text-slate-900 mx-1">
                                                     Profile
                                                 </NavLink>
                                             </div>
-                                            <NavLink to={`/${cur_user.username}#bookmarks`} className="flex gap-2 items-center px-3 py-1 justify-start cursor-pointer" onClick={() => setModel(false)}>
+                                            <NavLink to={`/${cur_user?.username}#bookmarks`} className="flex gap-2 items-center px-3 py-1 justify-start cursor-pointer" onClick={() => setModel(false)}>
                                                 <GiBookmarklet className="text-2xl" />
                                                 <p className="text-xl font-medium hover:text-slate-500 text-slate-900 mx-3">
                                                     Saved Posts
@@ -646,10 +678,18 @@ const Navbar = () => {
                                 </div>
                             </div>
                         ) : (
-                            <button className="bg-slate-300 px-4 p-2 rounded-md text-xl outline-none"
-                                onClick={() => setLogin(true)}>
-                                SignIn
-                            </button>
+                            <>
+                                <div className="flex">
+                                    <div className="flex mx-3 gap-2 items-center px-3 py-1 justify-start cursor-pointer"
+                                        onClick={darkMode}>
+                                        <CgDarkMode className="text-2xl dark:text-white" />
+                                    </div>
+                                    <button className="bg-slate-300 px-4 p-2 rounded-md text-xl outline-none"
+                                        onClick={() => setLogin(true)}>
+                                        SignIn
+                                    </button>
+                                </div>
+                            </>
                         )
                 }
             </nav>

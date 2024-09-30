@@ -128,6 +128,7 @@ const Account = () => {
         setCur_user(data[0]);
         setName(data[0].name);
         setBio(data[0].bio);
+        console.log(data[0]);
       }
       setProtLoading(false);
     } catch (error) {
@@ -139,11 +140,14 @@ const Account = () => {
   const fetchposts = async () => {
     try {
       setLoading(true);
-      const response = await supabase
+      const { data } = await supabase
         .from('posts')
         .select()
         .eq('username', id);
-      setBlog(response.data);
+      if (data) {
+        setBlog(data);
+        console.log(data);
+      }
       setLoading(false);
     } catch (error) {
       console.log(error);
@@ -225,9 +229,9 @@ const Account = () => {
           }
           {changeName ?
             (<button className="text-xs my-1 text-blue-500 font-medium"
-              onClick={() => handleNameChange("save")}>Save</button>) :
+              onClick={(event) => handleNameChange(event,"save")}>Save</button>) :
             (<button className="text-xs my-1 text-blue-500 font-medium"
-              onClick={() => handleNameChange("change")}>Edit Name</button>)}
+              onClick={(event) => handleNameChange(event,"change")}>Edit Name</button>)}
         </form>
       </div>
 

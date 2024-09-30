@@ -21,6 +21,7 @@ const Home = () => {
         searchResult,
         getPosts
     } = useUsers();
+
     const [cur_user] = useFetch(user.id);
 
     // Fetching All Blogs
