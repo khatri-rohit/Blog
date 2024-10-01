@@ -50,6 +50,7 @@ const Navbar = () => {
     const [reg, setRegister] = useState(false);
     const [isDark, setIsDark] = useState(false);
     const [cur_user, setCur_user] = useState(false);
+
     const [userCre, setUserCre] = useState({
         username: "",
         name: "",
@@ -75,7 +76,7 @@ const Navbar = () => {
                     });
                     if (data.user) {
                         setCur_user(data.user);
-                        loggedInUser(data.user.id);
+                        loggedInUser(data.user);
                         oAuthStateChange(data.user);
                         handleTost("✨ Succeffully LoggedIn");
                         setLogin(false);
@@ -125,7 +126,7 @@ const Navbar = () => {
                         } catch (error) {
                             console.log("Error", error);
                         }
-                        loggedInUser(data.user.id);
+                        loggedInUser(data.user);
                         oAuthStateChange(data.user);
                         setRegister(false);
                         setUserCre({ ...userCre, confirmPassword: "", email: "", confirmPasswordError: "", emailError: "", name: "", nameError: "", password: "", passwordError: "", username: "", usernameError: "" });
@@ -160,8 +161,8 @@ const Navbar = () => {
                 }).eq("id", cur_user.id)
             setUsername(false);
             handleTost("🎉 Registered successfully")
-            console.log(cur_user);
             loggedInUser(cur_user);
+            console.log(cur_user);
         } else {
             if (value.trim().length > 0)
                 setError("only use underscore, charaters, number")

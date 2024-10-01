@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { BiMessageSquareEdit } from "react-icons/bi";
+import { BiDotsHorizontalRounded, BiMessageSquareEdit } from "react-icons/bi";
 import { FaHeart } from "react-icons/fa";
 import { ImCross } from "react-icons/im";
 import { IoBookmarksOutline } from "react-icons/io5";
@@ -10,6 +10,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { supabase } from "../../supabaseClient";
 import useUsers from "../context/User";
 import Model from "../utils/Model";
+import useFetch from "../hooks/User";
+import DropDown from "../utils/DropDown";
 
 
 const Post = () => {
@@ -19,8 +21,7 @@ const Post = () => {
     const [post, setPost] = useState([]);
     const [thatUser, setThatUser] = useState([]);
     const [loading, setLoading] = useState(false);
-    // eslint-disable-next-line no-unused-vars
-    const [like, setLikes] = useState();
+    // const [like, setLikes] = useState();
     const [comments, setComments] = useState();
     const [likeCount, setLikeCount] = useState(0);
     const [registered, setRegister] = useState([]);
@@ -28,10 +29,12 @@ const Post = () => {
     const [slidebar, setSildebar] = useState(false);
     const [commentText, setCommentText] = useState('');
     const [commentsCount, setCommentsCount] = useState([]);
-    const [likeCommet, setLikeComment] = useState(false);
-    const [cur_user, setCur_user] = useState([]);
+    const [drop, setDrop] = useState(false);
+    const [editComment, setEditComment] = useState('');
+    const [changeComment, setChangeComment] = useState(false);
 
     const { user } = useUsers();
+    const [cur_user] = useFetch(user.id);
 
     useEffect(() => {
         ; (async () => {
@@ -58,9 +61,8 @@ const Post = () => {
 
                 // Author Details
                 await supabase.
-                    from('users')
-                    .select()
-                    .eq("id", data[0].user_id).then((res) => {
+                    from('users').select().eq("id", data[0].user_id)
+                    .then((res) => {
                         setThatUser(res.data[0]);
                     });
 
@@ -68,17 +70,6 @@ const Post = () => {
                 console.log(error);
             }
         })();
-        ; (async () => {
-            try {
-                const { data } = await supabase
-                    .from('users')
-                    .select()
-                    .eq('id', user.id);
-                setCur_user(data[0]);
-            } catch (error) {
-                console.log("Error", error);
-            }
-        })()
     }, [])
 
     const comment = async () => {
@@ -103,9 +94,8 @@ const Post = () => {
                 .select()
                 .eq('post_id', id);
             if (data) {
-                setLikes(data[0]);
                 setLikeCount(data[0].like);
-                if (data[0].liked_user.length > 0) {
+                if (data[0].liked_users.length > 0) {
                     const usersLike = data[0].liked_users.split('"');
                     var users = usersLike.filter((user) => user.length > 2 && user);
                     setRegister(users);
@@ -148,7 +138,7 @@ const Post = () => {
         const updateComment = comments.content;
         const created_date = new Date().getTime();
         const newComment = [...updateComment, {
-            key: uuidv4(),
+            key: cur_user.id,
             like: 0,
             content: commentText,
             name: cur_user.name,
@@ -170,34 +160,34 @@ const Post = () => {
         }
     }
 
-    const likeComment = async (e, changeID) => {
-        e.preventDefault();
-        const liked_user = comments.user;
-        liked_user.find((that) => that === user.id ? setLikeComment(true) : setLikeComment(false));
-        const updateComment = comments.content;
-        const newComment = updateComment.map((changeComment) => (
-            changeComment.key === changeID ?
-                {
-                    ...changeComment, like: likeCommet ? changeComment.like - 1
-                        : changeComment.like + 1
-                }
-                : { ...changeComment }
-        ))
+    // const likeComment = async (e, changeID) => {
+    //     e.preventDefault();
+    //     const liked_user = comments.user;
+    //     liked_user.find((that) => that === user.id ? setLikeComment(true) : setLikeComment(false));
+    //     const updateComment = comments.content;
+    //     const newComment = updateComment.map((changeComment) => (
+    //         changeComment.key === changeID ?
+    //             {
+    //                 ...changeComment, like: likeCommet ? changeComment.like - 1
+    //                     : changeComment.like + 1
+    //             }
+    //             : { ...changeComment }
+    //     ))
 
-        try {
-            await supabase
-                .from('comments')
-                .update(
-                    {
-                        content: newComment,
-                        user: likeCommet ? [...liked_user] : [...liked_user, user.id]
-                    }
-                ).eq('post_id', id);
-            setCommentsCount(newComment);
-        } catch (error) {
-            console.error("Error -> " + error);
-        }
-    }
+    //     try {
+    //         await supabase
+    //             .from('comments')
+    //             .update(
+    //                 {
+    //                     content: newComment,
+    //                     user: likeCommet ? [...liked_user] : [...liked_user, user.id]
+    //                 }
+    //             ).eq('post_id', id);
+    //         setCommentsCount(newComment);
+    //     } catch (error) {
+    //         console.error("Error -> " + error);
+    //     }
+    // }
 
     const handleSave = async () => {
         toast('Bookmark Saved', {
@@ -252,6 +242,68 @@ const Post = () => {
         }
     }
 
+    const deleteComment = async (key) => {
+        const updateComment = commentsCount.filter((comment) => comment.key !== key);
+        try {
+            await supabase
+                .from('comments')
+                .update({
+                    content: updateComment
+                })
+                .eq('post_id', id);
+
+            toast('Comment Deleted', {
+                duration: 2000,
+                position: 'top-right',
+
+                // Styling
+                style: { padding: '1rem 1.5rem' },
+                className: 'font-bold',
+
+                // Custom Icon
+                icon: '✅',
+
+                // Change colors of success/error/loading icon
+                iconTheme: {
+                    primary: '#000',
+                    secondary: '#fff',
+                },
+
+                // Aria
+                ariaProps: {
+                    role: 'alert',
+                    'aria-live': 'polite',
+                },
+            });
+            comment();
+        } catch (error) {
+            console.log(error);
+        }
+
+    }
+
+    const handleChangeComment = (e, text) => {
+        if (editComment.length === 0) {
+            setEditComment(text);
+        } else {
+            setEditComment(e.target.value);
+        }
+    }
+    const handleEditComment = async (key) => {
+        console.log(editComment, key);
+        var getComment = commentsCount.filter((comment) => comment.key === key);
+        console.log(getComment);
+        getComment[0].content = editComment;
+        var updateComment = commentsCount.filter((comment) => comment.key !== key ? comment : comment.content = editComment)
+        console.log(updateComment);
+
+        await supabase.from('comments').update({
+            content: updateComment
+        }).eq('post_id', id);
+        setChangeComment(false);
+        comment();
+    }
+
     return (
         <div className="relative">
             {/* Sidebar */}
@@ -279,10 +331,11 @@ const Post = () => {
                                 </div>
                                 <form className="mx-3 my-2">
                                     <textarea name="comment"
-                                        className="w-full h-40 outline-none text-slate-800 text-lg font-medium resize-none bg-slate-100 p-2 rounded-md placeholder:dark:text-black text-pretty placeholder:opacity-85 border"
+                                        className="w-full h-40 outline-none text-slate-800 text-lg font-medium resize-none bg-slate-100 p-2 rounded-md placeholder:dark:text-gray-500 text-pretty placeholder:opacity-85 border"
                                         value={commentText}
                                         onChange={e => setCommentText(e.target.value)}
-                                        placeholder="Your Thoughts on This ..." autoFocus autoCorrect ></textarea>
+                                        placeholder="Your Thoughts on This ..."
+                                        autoFocus ></textarea>
                                     <button className="bg-slate-600 my-2 px-4 py-1 rounded-xl text-white"
                                         onClick={postComment}>
                                         Post
@@ -302,34 +355,73 @@ const Post = () => {
                                         const created_time = rlt.format(-Math.abs(convertMinutes(timeSpended)[0]), `${convertMinutes(timeSpended)[1]}`);
 
                                         return (
-                                            <>
-                                                <div className="bg-white my-4 p-3 py-5 flex items-center justify-between rounded-lg"
-                                                    key={_}>
-                                                    <div className="mx-1 flex items-center">
-                                                        <img src={response?.img ? response?.img : `"/blank-avatar.webp"`}
-                                                            alt="profile_pic"
-                                                            className="w-10 rounded-full" />
-                                                        <div className="mx-3 leading-none">
-                                                            <p className="font-medium">
-                                                                {response?.name}
+                                            <div className="bg-white my-3 p-3 py-5 flex items-start justify-between rounded-lg"
+                                                key={_}>
+                                                <div className="mx-1 flex items-start">
+                                                    <img src={response?.img || "https://kvgueljvvnnrbfjsohnf.supabase.co/storage/v1/object/public/img_posts/blank-avatar.webp"}
+                                                        alt="profile_pic"
+                                                        className="w-10 rounded-full" />
+                                                    <div className="mx-3 leading-none">
+                                                        <div className="mb-1.5">
+                                                            <p className="font-medium text-[0.8rem] m-0">
+                                                                {response?.name} {cur_user.id === response.key && "(You)"}
                                                             </p>
-                                                            <p className="text-2xl text-balance font-light">
-                                                                {response?.content}
-                                                            </p>
-                                                            <p className="text-xs font-sans">
+                                                            <p className="text-[10px] mt-.5 font-sans m-0">
                                                                 {created_time === "this minute" ? "just now" : created_time}
                                                             </p>
                                                         </div>
-                                                    </div>
-                                                    <div className="me-3 flex items-center">
-                                                        <FaHeart className="text-pink-300 cursor-pointer active:text-pink-500"
-                                                            onClick={() => likeComment(event, response?.key)} />
-                                                        <span className="mx-1 font-semibold">
-                                                            {response?.like <= 0 ? "" : response?.like}
-                                                        </span>
+                                                        {
+                                                            changeComment && cur_user.id === response.key ?
+                                                                (
+                                                                    <div className="flex flex-col items-start">
+                                                                        <textarea rows="4"
+                                                                            className="my-1 text-slate-800 font-medium resize-none bg-slate-100 placeholder:dark:text-gray-500  placeholder:opacity-85 border"
+                                                                            value={editComment}
+                                                                            onChange={(e) => handleChangeComment(e, response.content)}
+                                                                        >
+                                                                        </textarea>
+                                                                        <button className="text-xs"
+                                                                            onClick={() => handleEditComment(response.key)}>
+                                                                            Save
+                                                                        </button>
+                                                                    </div>
+                                                                ) :
+                                                                <p className="text-[1rem] font-light leading-none">
+                                                                    {response?.content}
+                                                                </p>
+                                                        }
                                                     </div>
                                                 </div>
-                                            </>
+                                                <div className="relative">
+                                                    {
+                                                        cur_user.id === response.key &&
+                                                        <button
+                                                            className="absolute right-0"
+                                                            onClick={() => setDrop(true)}>
+                                                            <BiDotsHorizontalRounded />
+                                                            {
+                                                                drop && <DropDown setShowDrop={setDrop} showDrop={drop} size={"w-[8rem]"}>
+                                                                    <button className="border-b" onClick={() => {
+                                                                        setChangeComment(true);
+                                                                        setEditComment(response.content);
+                                                                        setDrop(false);
+                                                                    }}>
+                                                                        Edit Response
+                                                                    </button>
+                                                                    <button className=""
+                                                                        onClick={() => {
+                                                                            deleteComment(response.key);
+                                                                            setDrop(false);
+                                                                        }
+                                                                        }>
+                                                                        Delete
+                                                                    </button>
+                                                                </DropDown>
+                                                            }
+                                                        </button>
+                                                    }
+                                                </div>
+                                            </div>
                                         )
                                     })
                                 }
@@ -356,11 +448,11 @@ const Post = () => {
                     </div>
                     {user.id &&
                         <div className="flex items-center">
-                            (<div className="mx-2 dark:text-white flex items-center cursor-pointer">
+                            <div className="mx-2 dark:text-white flex items-center cursor-pointer">
                                 <IoBookmarksOutline
                                     className="text-2xl"
                                     onClick={handleSave} />
-                            </div>)
+                            </div>
                             <div className="mx-2 dark:text-white flex items-center cursor-pointer">
                                 <BiMessageSquareEdit className="text-2xl"
                                     onClick={() => setSildebar(true)} />
