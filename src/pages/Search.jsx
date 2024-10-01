@@ -1,6 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
 import { useEffect, useState } from "react";
-import toast, { Toaster } from "react-hot-toast";
 import { FaHeart } from "react-icons/fa6";
 import { MdOutlineMessage } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
@@ -15,18 +14,11 @@ const Search = () => {
     const q = queryParams.get('q');
 
     const navigate = useNavigate();
+
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    const { getPost, user, getPosts, searchResult } = useUsers();
-
-    const handleTost = () => {
-        toast(() => (
-            <span className="text-xl">
-                Login To Read
-            </span>
-        ));
-    };
+    const { getPost, getPosts, searchResult } = useUsers();
 
     const fetchBlogs = async () => {
         try {
@@ -52,9 +44,8 @@ const Search = () => {
                     `).or(`blog_title.ilike.%${searchResult.trim().length >= 2 ? searchResult : q}%`)
                 .order('created_at', { ascending: false });
 
-            setLoading(false);
             getPosts(data);
-            console.log(data);
+            setLoading(false);
         } catch (error) {
             console.log("Something Wrong happned while fetching Searched Blog\n", error);
             setLoading(false);
@@ -66,11 +57,10 @@ const Search = () => {
             const { data } = await supabase
                 .from('users')
                 .select(`
-                        id,
-                        name, 
-                        email
-                    `);
-
+                id,
+                name, 
+                email
+            `);
             setUsers(data);
         } catch (error) {
             console.log("Something Wrong happned While fetching Users\n", error);
@@ -82,7 +72,7 @@ const Search = () => {
             fetchBlogs();
             fetchUsers();
         }
-    }, [searchResult.trim().length >= 2, q]);
+    }, [searchResult.trim().length >= 2]);
 
     const handlePost = (id) => {
         navigate(`/post/${id}`);
@@ -90,33 +80,23 @@ const Search = () => {
 
     return (
         <>
-            <Toaster
-                position="top-center"
-            />
-
-            {
-
-            }
-
             <div className="container mx-auto w-3/4">
                 {getPost.length > 0 ?
                     getPost?.map((post, _) => {
                         const persons = users?.find((person) => person.id === post.user_id);
                         const summary = post?.summary.substring(0, 230) + '...';
                         return (
-                            <div key={_} className="relative my-5 flex bg-white rounded-lg shadow-white shadow-md dark:bg-[#100f0fab] dark:text-white">
+                            <div key={_} className="my-5 flex bg-white rounded-lg shadow-white shadow-md dark:bg-[#100f0fab] dark:text-white">
                                 <div className="w-1/3 mx-1 p-1 my-auto cursor-pointer"
-                                    onClick={() => Object.keys(user).length > 0 ? handlePost(post?.id) : handleTost()}>
+                                    onClick={() => handlePost(post?.id)}>
                                     <img src={post?.image_url}
                                         className="object-contain h-72 w-full" />
                                 </div>
                                 <div className="mx-2 w-3/4 p-2 flex flex-col justify-evenly">
-                                    <p className="my-2 tracking-wider absolute top-0 right-1 p-2">
+                                    <p className="my-2 tracking-wider p-2">
                                         ✨ {persons?.name}
                                     </p>
-                                    <p onClick={() => Object.keys(user).length > 0 ? handlePost(post?.id) :
-                                        handleTost()
-                                    }
+                                    <p onClick={() => handlePost(post?.id)}
                                         className="text-3xl font-medium cursor-pointer text-pretty">
                                         {post?.blog_title}
                                     </p>

@@ -9,6 +9,8 @@ import { FaRegUser } from "react-icons/fa";
 import { IoBookmarksOutline } from "react-icons/io5";
 import useUsers from "../context/User";
 import toast, { Toaster } from "react-hot-toast";
+import { BiDotsHorizontalRounded } from "react-icons/bi";
+import DropDown from "../utils/DropDown";
 
 
 const Profile = () => {
@@ -91,6 +93,8 @@ const Account = () => {
   const [loading, setLoading] = useState(false);
   const [proLoading, setProtLoading] = useState(false);
   const [image_url, setImage_url] = useState('');
+  const [drop, setDrop] = useState(false);
+
   const imgRef = useRef(null);
 
   const handleNameChange = async (event, method) => {
@@ -179,11 +183,46 @@ const Account = () => {
             avatar_url: url
           }).eq("username", id);
         toast(() => {
-          <span className="text-xl">
+          return <span className="text-xl">
             Profile Pic Updated
           </span>
         });
       }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const deletePost = async (postId) => {
+    try {
+      await supabase
+        .from('posts')
+        .delete()
+        .eq('id', postId);
+      toast('Post Deleted', {
+        duration: 100,
+        position: 'top-right',
+
+        // Styling
+        style: { padding: '1rem 1.5rem' },
+        className: 'font-bold',
+
+        // Custom Icon
+        icon: '✅',
+
+        // Change colors of success/error/loading icon
+        iconTheme: {
+          primary: '#000',
+          secondary: '#fff',
+        },
+
+        // Aria
+        ariaProps: {
+          role: 'alert',
+          'aria-live': 'polite',
+        },
+      });
+      fetchposts();
     } catch (error) {
       console.log(error);
     }
@@ -229,9 +268,9 @@ const Account = () => {
           }
           {changeName ?
             (<button className="text-xs my-1 text-blue-500 font-medium"
-              onClick={(event) => handleNameChange(event,"save")}>Save</button>) :
+              onClick={(event) => handleNameChange(event, "save")}>Save</button>) :
             (<button className="text-xs my-1 text-blue-500 font-medium"
-              onClick={(event) => handleNameChange(event,"change")}>Edit Name</button>)}
+              onClick={(event) => handleNameChange(event, "change")}>Edit Name</button>)}
         </form>
       </div>
 
@@ -295,20 +334,39 @@ const Account = () => {
               </p>)}
               {blog?.length !== 0 ?
                 (blog?.map((post, _) => (
-                  <NavLink to={`/post/${post?.id}`} className="border-r p-2 bg-white mr-1 drop-shadow-lg rounded-lg cursor-auto" key={_} >
+                  <div className="border-r p-2 bg-white mr-1 drop-shadow-lg rounded-lg cursor-auto" key={_} >
                     <div className="w-96 max-w-xs overflow-hidden transition-shadow duration-300 ease-in-out">
-                      <div className="ml-1">
+                      <NavLink to={`/post/${post?.id}`} className="">
                         <img src={post?.image_url}
                           className="object-cover w-full rounded-xl h-[25vh]"
                           alt={post?.blog_title} />
-                      </div>
-                      <div className="p-2">
+                      </NavLink>
+                      <div className="p-2 flex justify-between">
                         <p className="text-pretty">
                           {post?.blog_title}
                         </p>
+                        <div className="relative ms-3">
+                          <button
+                            className="absolute right-0"
+                            onClick={() => setDrop(true)}>
+                            <BiDotsHorizontalRounded className="text-3xl" />
+                            {
+                              drop && <DropDown setShowDrop={setDrop} showDrop={drop} size={"w-[8rem]"}>
+                                <button className=""
+                                  onClick={() => {
+                                    deletePost(post.id);
+                                    setDrop(false);
+                                  }
+                                  }>
+                                  Delete
+                                </button>
+                              </DropDown>
+                            }
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </NavLink>
+                  </div>
                 )))
                 : loading || (<p className="text-xl">You haven't written any blogs yet</p>)}
 

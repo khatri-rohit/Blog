@@ -89,7 +89,7 @@ const Home = () => {
 
     useEffect(() => {
         searchResult.trim().length >= 2 ? searchPost(searchResult) : fetchBlogs();
-    }, [])
+    }, [searchResult])
 
     const searchPost = (searchResult) => {
         const results = blogPost?.filter((post) => post?.blog_title?.toLowerCase().includes(searchResult) && post);

@@ -9,6 +9,7 @@ import useUsers from "../context/User";
 import { v4 as uuidv4 } from 'uuid';
 import { supabase } from "../../supabaseClient";
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 
 const Preview = ({ title, blog_content, usrename }) => {
@@ -48,7 +49,8 @@ const Preview = ({ title, blog_content, usrename }) => {
                     blog_content,
                     formated_time,
                     image_url,
-                    preview
+                    preview,
+                    tags
                 }]);
 
             await supabase
@@ -68,8 +70,29 @@ const Preview = ({ title, blog_content, usrename }) => {
                 }]);
 
             navigate('/');
-            console.log(tags);
+            toast('Blog Created', {
+                duration: 1000,
+                position: 'top-center',
 
+                // Styling
+                style: { padding: '1rem 1.5rem' },
+                className: 'font-bold',
+
+                // Custom Icon
+                icon: '🎊',
+
+                // Change colors of success/error/loading icon
+                iconTheme: {
+                    primary: '#000',
+                    secondary: '#fff',
+                },
+
+                // Aria
+                ariaProps: {
+                    role: 'alert',
+                    'aria-live': 'polite',
+                },
+            });
         } catch (error) {
             console.log("Can't Create Post\n", error);
         }

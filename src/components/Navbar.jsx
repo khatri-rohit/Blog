@@ -78,13 +78,13 @@ const Navbar = () => {
                         setCur_user(data.user);
                         loggedInUser(data.user);
                         oAuthStateChange(data.user);
-                        handleTost("✨ Succeffully LoggedIn");
+                        handleTost("Successfully LoggedIn ✨");
                         setLogin(false);
                         setUserCre({ ...userCre, confirmPassword: "", email: "", confirmPasswordError: "", emailError: "", name: "", nameError: "", password: "", passwordError: "", username: "", usernameError: "" });
                     }
 
                     if (error.code === "invalid_credentials") {
-                        handleTost("❌ Invalid Credentials Try Again");
+                        handleTost("Invalid Credentials Try Again ❌");
                         setUserCre({ ...userCre, confirmPassword: "", email: "", confirmPasswordError: "", emailError: "", name: "", nameError: "", password: "", passwordError: "", username: "", usernameError: "" });
                         return;
                     }
@@ -275,28 +275,65 @@ const Navbar = () => {
             document.body.style.overflow = model || login || reg ? "hidden" : "unset";
     }, [login, model, reg]);
 
+    const handleTost = (text) => {
+        toast(text, {
+            duration: 1500,
+            position: 'top-right',
+
+            // Styling
+            style: { padding: '1rem 1.5rem' },
+            className: 'font-bold',
+
+            // Custom Icon
+            icon: '🎉',
+
+            // Change colors of success/error/loading icon
+            iconTheme: {
+                primary: '#000',
+                secondary: '#fff',
+            },
+
+            // Aria
+            ariaProps: {
+                role: 'alert',
+                'aria-live': 'polite',
+            },
+        });
+    };
+
     const handleSearch = useCallback((e) => {
         const input = e.target.value;
         setSearch(input);
         setTimeoutId(
             setTimeout(() => {
                 changeSearchResult(input);
-            }, 400)
+            }, 500)
         );
     }, [searchResult])
 
-    const handleTost = (text) => {
-        toast(() => (
-            <span className="text-xl">
-                {text}
-            </span>
-        ));
-    };
-
     const handleSearchSubmit = useCallback((e) => {
         e.preventDefault();
-        if (search.trim().length <= 0) {
-            handleTost("Enter Something");
+        if (search.trim().length === 0) {
+            toast("Enter Something", {
+                duration: 800,
+                position: 'top-center',
+
+                // Styling
+                style: { padding: '1rem 1.5rem' },
+                // className: 'font-light',
+
+                // Change colors of success/error/loading icon
+                iconTheme: {
+                    primary: '#000',
+                    secondary: '#fff',
+                },
+
+                // Aria
+                ariaProps: {
+                    role: 'alert',
+                    'aria-live': 'polite',
+                },
+            });
             return
         }
         changeSearchResult(search);
@@ -640,27 +677,30 @@ const Navbar = () => {
                                         <img src={cur_user?.avatar_url || "/blank-avatar.webp"}
                                             className="w-10 h-10 object-cover rounded-full hover:scale-75 transition-all duration-75 relative"
                                         />
-                                        <IoIosArrowDown className="mx-2" />
+                                        <IoIosArrowDown className="mx-2 dark:text-white" />
                                     </div>
 
                                     <Model model={model} setModel={setModel}>
                                         <div className={`absolute z-30 right-7 my-2 bg-slate-100 border-2 border-gray-300 px-2 py-2 w-60 items-start justify-start ${model || `hidden`}`} >
                                             <div className="flex gap-2 items-center px-3 py-1 justify-start cursor-pointer">
                                                 <img src={cur_user?.avatar_url || "/blank-avatar.webp"} className="rounded-full w-[2rem] h-[2rem] object-cover" />
-                                                <NavLink to={`/${cur_user?.username}`}
+                                                <NavLink to={`/user/${cur_user?.username}`}
                                                     onClick={() => setModel(false)}
                                                     className="text-xl font-medium hover:text-slate-500 text-slate-900 mx-1">
                                                     Profile
                                                 </NavLink>
                                             </div>
-                                            <NavLink to={`/${cur_user?.username}#bookmarks`} className="flex gap-2 items-center px-3 py-1 justify-start cursor-pointer" onClick={() => setModel(false)}>
+                                            <NavLink to={`/user/${cur_user?.username}#bookmarks`} className="flex gap-2 items-center px-3 py-1 justify-start cursor-pointer" onClick={() => setModel(false)}>
                                                 <GiBookmarklet className="text-2xl" />
                                                 <p className="text-xl font-medium hover:text-slate-500 text-slate-900 mx-3">
                                                     Saved Posts
                                                 </p>
                                             </NavLink>
                                             <div className="flex gap-2 items-center px-3 py-1 justify-start cursor-pointer"
-                                                onClick={darkMode}>
+                                                onClick={() => {
+                                                    darkMode();
+                                                    setModel(false);
+                                                }}>
                                                 <CgDarkMode className="text-2xl" />
                                                 <p className="text-xl font-medium hover:text-slate-500 text-slate-900 mx-3">
                                                     Dark / Light

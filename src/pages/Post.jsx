@@ -4,7 +4,7 @@ import { BiDotsHorizontalRounded, BiMessageSquareEdit } from "react-icons/bi";
 import { FaHeart } from "react-icons/fa";
 import { ImCross } from "react-icons/im";
 import { IoBookmarksOutline } from "react-icons/io5";
-import { useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { BeatLoader } from 'react-spinners';
 import { v4 as uuidv4 } from 'uuid';
 import { supabase } from "../../supabaseClient";
@@ -12,6 +12,7 @@ import useUsers from "../context/User";
 import Model from "../utils/Model";
 import useFetch from "../hooks/User";
 import DropDown from "../utils/DropDown";
+import SharePost from "../components/SharePost";
 
 
 const Post = () => {
@@ -35,6 +36,7 @@ const Post = () => {
 
     const { user } = useUsers();
     const [cur_user] = useFetch(user.id);
+    const navigate = useNavigate();
 
     useEffect(() => {
         ; (async () => {
@@ -155,6 +157,29 @@ const Post = () => {
                 ).eq('post_id', id);
             setCommentText('');
             setCommentsCount(newComment);
+            toast('Response Posted', {
+                duration: 500,
+                position: 'top-right',
+
+                // Styling
+                style: { padding: '1rem 1.5rem' },
+                className: 'font-bold',
+
+                // Custom Icon
+                icon: '✅',
+
+                // Change colors of success/error/loading icon
+                iconTheme: {
+                    primary: '#000',
+                    secondary: '#fff',
+                },
+
+                // Aria
+                ariaProps: {
+                    role: 'alert',
+                    'aria-live': 'polite',
+                },
+            });
         } catch (error) {
             console.error("Error -> " + error);
         }
@@ -253,7 +278,7 @@ const Post = () => {
                 .eq('post_id', id);
 
             toast('Comment Deleted', {
-                duration: 2000,
+                duration: 100,
                 position: 'top-right',
 
                 // Styling
@@ -282,6 +307,42 @@ const Post = () => {
 
     }
 
+    const deletePost = async (postId) => {
+        try {
+            await supabase
+                .from('posts')
+                .delete()
+                .eq('id', postId);
+
+            toast('Post Deleted', {
+                duration: 100,
+                position: 'top-right',
+
+                // Styling
+                style: { padding: '1rem 1.5rem' },
+                className: 'font-bold',
+
+                // Custom Icon
+                icon: '✅',
+
+                // Change colors of success/error/loading icon
+                iconTheme: {
+                    primary: '#000',
+                    secondary: '#fff',
+                },
+
+                // Aria
+                ariaProps: {
+                    role: 'alert',
+                    'aria-live': 'polite',
+                },
+            });
+            navigate('/');
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     const handleChangeComment = (e, text) => {
         if (editComment.length === 0) {
             setEditComment(text);
@@ -290,16 +351,36 @@ const Post = () => {
         }
     }
     const handleEditComment = async (key) => {
-        console.log(editComment, key);
         var getComment = commentsCount.filter((comment) => comment.key === key);
-        console.log(getComment);
         getComment[0].content = editComment;
         var updateComment = commentsCount.filter((comment) => comment.key !== key ? comment : comment.content = editComment)
-        console.log(updateComment);
 
         await supabase.from('comments').update({
             content: updateComment
         }).eq('post_id', id);
+        toast('Response Changed', {
+            duration: 500,
+            position: 'top-right',
+
+            // Styling
+            style: { padding: '1rem 1.5rem' },
+            className: 'font-bold',
+
+            // Custom Icon
+            icon: '✅',
+
+            // Change colors of success/error/loading icon
+            iconTheme: {
+                primary: '#000',
+                secondary: '#fff',
+            },
+
+            // Aria
+            ariaProps: {
+                role: 'alert',
+                'aria-live': 'polite',
+            },
+        });
         setChangeComment(false);
         comment();
     }
@@ -370,6 +451,7 @@ const Post = () => {
                                                                 {created_time === "this minute" ? "just now" : created_time}
                                                             </p>
                                                         </div>
+                                                        {/* You Can't Multiple Comments */}
                                                         {
                                                             changeComment && cur_user.id === response.key ?
                                                                 (
@@ -404,7 +486,7 @@ const Post = () => {
                                                                     <button className="border-b" onClick={() => {
                                                                         setChangeComment(true);
                                                                         setEditComment(response.content);
-                                                                        setDrop(false);
+                                                                        // setDrop(false);
                                                                     }}>
                                                                         Edit Response
                                                                     </button>
@@ -439,35 +521,65 @@ const Post = () => {
                             className="w-20 rounded-full" />
                         <div className="mx-4">
                             <p className="text-slate-500 dark:text-white text-2xl font-bold">
-                                {thatUser?.name}
+                                {thatUser?.name} {cur_user.id === user.id && (<p className="text-lg m-0 inline-flex">(You)</p>)}
                             </p>
-                            <p className="text-black text-xs font-medium dark:text-white">
+                            <p className="text-black text-[0.9rem] font-medium dark:text-white">
                                 {post?.formated_time}
                             </p>
                         </div>
                     </div>
-                    {user.id &&
+                    {
+                        user.id &&
                         <div className="flex items-center">
-                            <div className="mx-2 dark:text-white flex items-center cursor-pointer">
-                                <IoBookmarksOutline
-                                    className="text-2xl"
-                                    onClick={handleSave} />
+                            <div className="flex items-start me-4">
+
+                                <div className="mx-2 cursor-pointer mt-1">
+                                    <SharePost />
+                                </div>
+                                <div className="mx-2 mt-1 dark:text-white flex items-center cursor-pointer">
+                                    <IoBookmarksOutline
+                                        className="text-2xl"
+                                        onClick={handleSave} />
+                                </div>
+                                <div className="mx-2 dark:text-white flex items-center cursor-pointer">
+                                    <BiMessageSquareEdit className="text-2xl"
+                                        onClick={() => setSildebar(true)} />
+                                    <p className="mx-1 flex items-center font-medium text-lg mb-1">
+                                        {comments?.content.length}
+                                    </p>
+                                </div>
+                                <div className="dark:text-white mx-2 flex items-center cursor-pointer"
+                                    onClick={updateLike}>
+                                    <FaHeart className="text-[1.2em] text-pink-500 cursor-pointer" />
+                                    <p className="mx-1 flex items-center font-medium text-lg mb-1">
+                                        {likeCount}
+                                    </p>
+                                </div>
                             </div>
-                            <div className="mx-2 dark:text-white flex items-center cursor-pointer">
-                                <BiMessageSquareEdit className="text-2xl"
-                                    onClick={() => setSildebar(true)} />
-                                <p className="mx-1 flex items-center font-medium text-lg mb-1">
-                                    {comments?.content.length}
-                                </p>
+                            <div className="relative mb-7 mx-3">
+                                {
+                                    cur_user.id === post.user_id &&
+                                    <button
+                                        className="absolute right-0"
+                                        onClick={() => setDrop(true)}>
+                                        <BiDotsHorizontalRounded className="text-3xl" />
+                                        {
+                                            drop && <DropDown setShowDrop={setDrop} showDrop={drop} size={"w-[8rem]"}>
+                                                <button className=""
+                                                    onClick={() => {
+                                                        deletePost(id);
+                                                        setDrop(false);
+                                                    }
+                                                    }>
+                                                    Delete
+                                                </button>
+                                            </DropDown>
+                                        }
+                                    </button>
+                                }
                             </div>
-                            <div className="dark:text-white mx-2 flex items-center cursor-pointer"
-                                onClick={updateLike}>
-                                <FaHeart className="text-[1.2em] text-pink-500 cursor-pointer" />
-                                <p className="mx-1 flex items-center font-medium text-lg mb-1">
-                                    {likeCount}
-                                </p>
-                            </div>
-                        </div>}
+                        </div>
+                    }
 
                 </div>
                 {
