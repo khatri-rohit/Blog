@@ -63,7 +63,7 @@ const App = () => {
   useEffect(() => {
     document.querySelector('html').classList.remove('dark');
     document.querySelector('html').classList.add(themeMode);
-    if (themeMode === 'dark') document.body.style.backgroundColor = "#181D31";
+    if (themeMode === 'dark') document.body.style.backgroundColor = "#222831";
     else document.body.style.backgroundColor = "#f7f7f7";
   }, [themeMode])
 

@@ -36,7 +36,6 @@ const Preview = ({ title, blog_content, usrename }) => {
             const now = new Date();
             const formated_time = date.format(now, 'ddd, MMM DD');
             const id = uuidv4();
-            console.log(id);
 
             await supabase
                 .from('posts')
@@ -125,7 +124,7 @@ const Preview = ({ title, blog_content, usrename }) => {
         <section className="absolute inset-0 bg-white z-10">
             <div className="my-8 size">
                 <span className="absolute right-4 md:right-20 top-12 text-2xl cursor-pointer"
-                    onClick={changePublish}>
+                    onClick={() => changePublish(false)}>
                     <LiaTimesSolid />
                 </span>
 

@@ -36,7 +36,7 @@ const SharePost = () => {
     <>
       <div className="relative">
         <button onClick={() => setShowDrop(!showDrop)}>
-          <CiShare1 className="text-2xl" />
+          <CiShare1 className="text-2xl dark:text-white" />
         </button>
         <DropDown showDrop={showDrop} setShowDrop={setShowDrop} size="w-[12rem]">
           <Button click={copyLink} title="Copy Link" icon={<BiLink />} />

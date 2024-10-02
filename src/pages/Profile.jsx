@@ -10,7 +10,6 @@ import { IoBookmarksOutline } from "react-icons/io5";
 import useUsers from "../context/User";
 import toast, { Toaster } from "react-hot-toast";
 import { BiDotsHorizontalRounded } from "react-icons/bi";
-import DropDown from "../utils/DropDown";
 import PostDropDown from "../utils/PostDropDown";
 
 
@@ -94,7 +93,7 @@ const Account = () => {
   const [loading, setLoading] = useState(false);
   const [proLoading, setProtLoading] = useState(false);
   const [image_url, setImage_url] = useState('');
-  const [drop, setDrop] = useState(false);
+  const [curDrop, setCurDrop] = useState('');
 
   const imgRef = useRef(null);
 
@@ -349,19 +348,19 @@ const Account = () => {
                         <div className="relative ms-3">
                           <button
                             className="absolute right-0"
-                            onClick={() => setDrop(true)}>
+                            onClick={() => setCurDrop(post.id)}>
                             <BiDotsHorizontalRounded className="text-3xl" />
                             {
-                              drop && <DropDown setShowDrop={setDrop} showDrop={drop} size={"w-[8rem]"}>
-                                <button className=""
-                                  onClick={() => {
-                                    deletePost(post.id);
-                                    setDrop(false);
-                                  }
-                                  }>
+                              curDrop === post.id && <PostDropDown curPost={curDrop}
+                                postid={post?.id} setCurPost={setCurDrop} size={"w-[8rem]"}>
+                                <button onClick={() => {
+                                  deletePost(post.id);
+                                  setCurDrop('');
+                                }
+                                }>
                                   Delete
                                 </button>
-                              </DropDown>
+                              </PostDropDown>
                             }
                           </button>
                         </div>

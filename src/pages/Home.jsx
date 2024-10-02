@@ -180,7 +180,7 @@ const Home = () => {
 
                             return (
                                 <div key={_}
-                                    className="w-full custom-font my-5 flex justify-around dark:shadow-white shadow-md bg-white dark:bg-[#100f0fab] dark:text-white rounded-lg duration-300 transition hover:-translate-y-4 origin-center 
+                                    className="w-full custom-font my-5 flex justify-around dark:shadow-slate-300 shadow-sm  bg-white dark:bg-gray-800 dark:text-white rounded-lg duration-300 transition hover:-translate-y-4 origin-center 
                                     hover:scale-95">
 
                                     <div className="w-[33%] p-1 my-auto cursor-pointer"

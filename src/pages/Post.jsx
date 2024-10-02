@@ -13,6 +13,7 @@ import Model from "../utils/Model";
 import useFetch from "../hooks/User";
 import DropDown from "../utils/DropDown";
 import SharePost from "../components/SharePost";
+import PostDropDown from "../utils/PostDropDown";
 
 
 const Post = () => {
@@ -33,6 +34,7 @@ const Post = () => {
     const [drop, setDrop] = useState(false);
     const [editComment, setEditComment] = useState('');
     const [changeComment, setChangeComment] = useState(false);
+    const [curDrop, setCurDrop] = useState('');
 
     const { user } = useUsers();
     const [cur_user] = useFetch(user.id);
@@ -45,20 +47,13 @@ const Post = () => {
                 // Selected Blog
                 const { data } = await supabase
                     .from('posts')
-                    .select(`
-                        id,
-                        user_id,
-                        blog_title,
-                        summary,
-                        blog_content,
-                        formated_time,
-                        image_url
-                    `)
+                    .select()
                     .eq("id", id);
 
                 if (data) {
                     setPost(data[0]);
                     setLoading(false);
+                    comment();
                 }
 
                 // Author Details
@@ -84,6 +79,7 @@ const Post = () => {
                 setComments(data[0]);
                 setCommentsCount(data[0].content)
             }
+            likes();
         } catch (error) {
             console.log(error);
         }
@@ -100,8 +96,10 @@ const Post = () => {
                 if (data[0].liked_users.length > 0) {
                     const usersLike = data[0].liked_users.split('"');
                     var users = usersLike.filter((user) => user.length > 2 && user);
+                    console.log(users, cur_user.id);
+
                     setRegister(users);
-                    users.find((use) => use === user.id ? setAlter(true) : setAlter(false));
+                    users.find((use) => use === cur_user.id ? setAlter(true) : setAlter(false));
                 }
             }
         } catch (error) {
@@ -113,13 +111,13 @@ const Post = () => {
     const updateLike = async () => {
         try {
             var updateLikes = (likeCount - 1 <= 0) ? 0 : likeCount - 1;
-            var updateLikedUser = registered.filter((reg) => reg != user.id);
-            setRegister(alter ? updateLikedUser : [...registered, user.id]);
+            var updateLikedUser = registered.filter((reg) => reg != cur_user.id);
+            setRegister(alter ? updateLikedUser : [...registered, cur_user.id]);
             await supabase
                 .from('likes')
                 .update({
                     like: alter ? updateLikes : likeCount + 1,
-                    liked_users: alter ? updateLikedUser : [...registered, user.id]
+                    liked_users: alter ? updateLikedUser : [...registered, cur_user.id]
                 })
                 .eq('post_id', id);
             setLikeCount(alter ? updateLikes : likeCount + 1);
@@ -130,18 +128,12 @@ const Post = () => {
         }
     }
 
-    useEffect(() => {
-        likes();
-        comment();
-    }, [commentText.length === 0]);
-
     const postComment = async (e) => {
         e.preventDefault();
         const updateComment = comments.content;
         const created_date = new Date().getTime();
         const newComment = [...updateComment, {
             key: cur_user.id,
-            like: 0,
             content: commentText,
             name: cur_user.name,
             img: cur_user.avatar_url,
@@ -180,6 +172,7 @@ const Post = () => {
                     'aria-live': 'polite',
                 },
             });
+            comment();
         } catch (error) {
             console.error("Error -> " + error);
         }
@@ -188,7 +181,7 @@ const Post = () => {
     // const likeComment = async (e, changeID) => {
     //     e.preventDefault();
     //     const liked_user = comments.user;
-    //     liked_user.find((that) => that === user.id ? setLikeComment(true) : setLikeComment(false));
+    //     liked_user.find((that) => that === cur_user.id ? setLikeComment(true) : setLikeComment(false));
     //     const updateComment = comments.content;
     //     const newComment = updateComment.map((changeComment) => (
     //         changeComment.key === changeID ?
@@ -205,7 +198,7 @@ const Post = () => {
     //             .update(
     //                 {
     //                     content: newComment,
-    //                     user: likeCommet ? [...liked_user] : [...liked_user, user.id]
+    //                     user: likeCommet ? [...liked_user] : [...liked_user, cur_user.id]
     //                 }
     //             ).eq('post_id', id);
     //         setCommentsCount(newComment);
@@ -359,7 +352,7 @@ const Post = () => {
             content: updateComment
         }).eq('post_id', id);
         toast('Response Changed', {
-            duration: 500,
+            duration: 1000,
             position: 'top-right',
 
             // Styling
@@ -387,7 +380,7 @@ const Post = () => {
 
     return (
         <div className="relative">
-            {/* Sidebar */}
+            {/* Comment Sidebar */}
 
             {slidebar &&
                 <Model model={slidebar} setModel={setSildebar}>
@@ -476,29 +469,28 @@ const Post = () => {
                                                 </div>
                                                 <div className="relative">
                                                     {
-                                                        cur_user.id === response.key &&
+                                                        (cur_user.id === response.key && !changeComment) &&
                                                         <button
                                                             className="absolute right-0"
-                                                            onClick={() => setDrop(true)}>
-                                                            <BiDotsHorizontalRounded />
+                                                            onClick={() => setCurDrop((response.key))}>
+                                                            <BiDotsHorizontalRounded className="text-3xl" />
                                                             {
-                                                                drop && <DropDown setShowDrop={setDrop} showDrop={drop} size={"w-[8rem]"}>
+                                                                curDrop === response.key && <PostDropDown curPost={curDrop}
+                                                                    postid={response.key} setCurPost={setCurDrop} size={"w-[8rem]"}>
                                                                     <button className="border-b" onClick={() => {
                                                                         setChangeComment(true);
                                                                         setEditComment(response.content);
-                                                                        // setDrop(false);
                                                                     }}>
                                                                         Edit Response
                                                                     </button>
-                                                                    <button className=""
-                                                                        onClick={() => {
-                                                                            deleteComment(response.key);
-                                                                            setDrop(false);
-                                                                        }
-                                                                        }>
+                                                                    <button onClick={() => {
+                                                                        deleteComment(response.key);
+                                                                        setCurDrop('');
+                                                                    }
+                                                                    }>
                                                                         Delete
                                                                     </button>
-                                                                </DropDown>
+                                                                </PostDropDown>
                                                             }
                                                         </button>
                                                     }
@@ -521,7 +513,7 @@ const Post = () => {
                             className="w-20 rounded-full" />
                         <div className="mx-4">
                             <p className="text-slate-500 dark:text-white text-2xl font-bold">
-                                {thatUser?.name} {cur_user.id === user.id && (<p className="text-lg m-0 inline-flex">(You)</p>)}
+                                {thatUser?.name} {cur_user.id === cur_user.id && (<p className="text-lg m-0 inline-flex">(You)</p>)}
                             </p>
                             <p className="text-black text-[0.9rem] font-medium dark:text-white">
                                 {post?.formated_time}
@@ -529,7 +521,7 @@ const Post = () => {
                         </div>
                     </div>
                     {
-                        user.id &&
+                        cur_user.id &&
                         <div className="flex items-center">
                             <div className="flex items-start me-4">
 
@@ -562,7 +554,7 @@ const Post = () => {
                                     <button
                                         className="absolute right-0"
                                         onClick={() => setDrop(true)}>
-                                        <BiDotsHorizontalRounded className="text-3xl" />
+                                        <BiDotsHorizontalRounded className="text-3xl dark:text-white" />
                                         {
                                             drop && <DropDown setShowDrop={setDrop} showDrop={drop} size={"w-[8rem]"}>
                                                 <button className=""
