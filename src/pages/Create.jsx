@@ -32,15 +32,13 @@ const Create = () => {
   if (!user.id) navigate('/');
 
   const handleChange = e => {
-    const input = e.target.value;
-    if (title.trim().length < 100) {
+    var input = e.target.value;
+    if (title.trim().length <= 100) {
       setTitle(input);
     } else {
-      if (e.target.value === ' ') {
-        setTitle(input);
-      }
+      setTitle(input.substring(0, 101));
       toast('Title Should Be Less than 100 Words', {
-        duration: 1000,
+        duration: 800,
         position: 'top-right',
 
         // Styling
@@ -62,6 +60,7 @@ const Create = () => {
           'aria-live': 'polite',
         },
       });
+      e.target.autoFocus = true;
     }
   }
 
