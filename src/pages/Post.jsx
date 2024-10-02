@@ -4,7 +4,7 @@ import { BiDotsHorizontalRounded, BiMessageSquareEdit } from "react-icons/bi";
 import { FaHeart } from "react-icons/fa";
 import { ImCross } from "react-icons/im";
 import { IoBookmarksOutline } from "react-icons/io5";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { BeatLoader } from 'react-spinners';
 import { v4 as uuidv4 } from 'uuid';
 import { supabase } from "../../supabaseClient";
@@ -47,13 +47,20 @@ const Post = () => {
                 // Selected Blog
                 const { data } = await supabase
                     .from('posts')
-                    .select()
+                    .select(`
+                        id,
+                        user_id,
+                        blog_title,
+                        summary,
+                        blog_content,
+                        formated_time,
+                        image_url
+                    `)
                     .eq("id", id);
 
                 if (data) {
                     setPost(data[0]);
                     setLoading(false);
-                    comment();
                 }
 
                 // Author Details
@@ -96,10 +103,10 @@ const Post = () => {
                 if (data[0].liked_users.length > 0) {
                     const usersLike = data[0].liked_users.split('"');
                     var users = usersLike.filter((user) => user.length > 2 && user);
-                    console.log(users, cur_user.id);
+                    console.log(users, user.id);
 
                     setRegister(users);
-                    users.find((use) => use === cur_user.id ? setAlter(true) : setAlter(false));
+                    users.find((use) => use === user.id ? setAlter(true) : setAlter(false));
                 }
             }
         } catch (error) {
@@ -111,13 +118,13 @@ const Post = () => {
     const updateLike = async () => {
         try {
             var updateLikes = (likeCount - 1 <= 0) ? 0 : likeCount - 1;
-            var updateLikedUser = registered.filter((reg) => reg != cur_user.id);
-            setRegister(alter ? updateLikedUser : [...registered, cur_user.id]);
+            var updateLikedUser = registered.filter((reg) => reg != user.id);
+            setRegister(alter ? updateLikedUser : [...registered, user.id]);
             await supabase
                 .from('likes')
                 .update({
                     like: alter ? updateLikes : likeCount + 1,
-                    liked_users: alter ? updateLikedUser : [...registered, cur_user.id]
+                    liked_users: alter ? updateLikedUser : [...registered, user.id]
                 })
                 .eq('post_id', id);
             setLikeCount(alter ? updateLikes : likeCount + 1);
@@ -127,6 +134,10 @@ const Post = () => {
             console.log(error);
         }
     }
+
+    useEffect(() => {
+        comment();
+    }, [commentText.length === 0]);
 
     const postComment = async (e) => {
         e.preventDefault();
@@ -139,110 +150,167 @@ const Post = () => {
             img: cur_user.avatar_url,
             created_date
         }];
+        var count = 0;
+        updateComment.map((comm) => comm.key === cur_user.id && count++)
+        console.log(count);
+
         try {
-            await supabase
-                .from('comments')
-                .update(
-                    {
-                        content: newComment
-                    }
-                ).eq('post_id', id);
-            setCommentText('');
-            setCommentsCount(newComment);
-            toast('Response Posted', {
-                duration: 500,
-                position: 'top-right',
+            if (count < 2) {
+                await supabase
+                    .from('comments')
+                    .update(
+                        {
+                            content: newComment
+                        }
+                    ).eq('post_id', id);
+                setCommentText('');
+                setCommentsCount(newComment);
+                toast('Response Posted', {
+                    duration: 500,
+                    position: 'top-right',
 
-                // Styling
-                style: { padding: '1rem 1.5rem' },
-                className: 'font-bold',
+                    // Styling
+                    style: { padding: '1rem 1.5rem' },
+                    className: 'font-bold',
 
-                // Custom Icon
-                icon: '✅',
+                    // Custom Icon
+                    icon: '✅',
 
-                // Change colors of success/error/loading icon
-                iconTheme: {
-                    primary: '#000',
-                    secondary: '#fff',
-                },
+                    // Change colors of success/error/loading icon
+                    iconTheme: {
+                        primary: '#000',
+                        secondary: '#fff',
+                    },
 
-                // Aria
-                ariaProps: {
-                    role: 'alert',
-                    'aria-live': 'polite',
-                },
-            });
-            comment();
+                    // Aria
+                    ariaProps: {
+                        role: 'alert',
+                        'aria-live': 'polite',
+                    },
+                });
+            } else {
+                toast("You Can't Spam Multiple Comments", {
+                    duration: 1200,
+                    position: 'top-right',
+
+                    // Styling
+                    style: { padding: '1rem 1.5rem' },
+                    className: 'font-bold',
+
+                    // Custom Icon
+                    icon: '❌',
+
+                    // Change colors of success/error/loading icon
+                    iconTheme: {
+                        primary: '#000',
+                        secondary: '#fff',
+                    },
+
+                    // Aria
+                    ariaProps: {
+                        role: 'alert',
+                        'aria-live': 'polite',
+                    },
+                });
+            }
         } catch (error) {
             console.error("Error -> " + error);
         }
     }
 
-    // const likeComment = async (e, changeID) => {
-    //     e.preventDefault();
-    //     const liked_user = comments.user;
-    //     liked_user.find((that) => that === cur_user.id ? setLikeComment(true) : setLikeComment(false));
-    //     const updateComment = comments.content;
-    //     const newComment = updateComment.map((changeComment) => (
-    //         changeComment.key === changeID ?
-    //             {
-    //                 ...changeComment, like: likeCommet ? changeComment.like - 1
-    //                     : changeComment.like + 1
-    //             }
-    //             : { ...changeComment }
-    //     ))
-
-    //     try {
-    //         await supabase
-    //             .from('comments')
-    //             .update(
-    //                 {
-    //                     content: newComment,
-    //                     user: likeCommet ? [...liked_user] : [...liked_user, cur_user.id]
-    //                 }
-    //             ).eq('post_id', id);
-    //         setCommentsCount(newComment);
-    //     } catch (error) {
-    //         console.error("Error -> " + error);
-    //     }
-    // }
-
     const handleSave = async () => {
-        toast('Bookmark Saved', {
-            duration: 2000,
-            position: 'top-right',
-
-            // Styling
-            style: { padding: '1rem 1.5rem' },
-            className: 'font-bold',
-
-            // Custom Icon
-            icon: '✅',
-
-            // Change colors of success/error/loading icon
-            iconTheme: {
-                primary: '#000',
-                secondary: '#fff',
-            },
-
-            // Aria
-            ariaProps: {
-                role: 'alert',
-                'aria-live': 'polite',
-            },
-        });
         try {
-            await supabase.
-                from('bookmarks')
-                .insert([{
-                    id: uuidv4(),
-                    user_id: cur_user.id,
-                    post_id: id,
-                    username: cur_user.username,
-                    blog_title: post.blog_title,
-                    summary: post.summary,
-                    cover_img: post.image_url
-                }]);
+            const { data } = await supabase
+                .from('bookmarks')
+                .select()
+                .eq('post_id', id);
+            if (data.length === 0) {
+                await supabase.
+                    from('bookmarks')
+                    .insert([{
+                        id: uuidv4(),
+                        user_id: cur_user.id,
+                        post_id: id,
+                        username: cur_user.username,
+                        blog_title: post.blog_title,
+                        summary: post.summary,
+                        cover_img: post.image_url
+                    }]);
+                toast('Bookmark Saved', {
+                    duration: 2000,
+                    position: 'top-right',
+
+                    // Styling
+                    style: { padding: '1rem 1.5rem' },
+                    className: 'font-bold',
+
+                    // Custom Icon
+                    icon: '✅',
+
+                    // Change colors of success/error/loading icon
+                    iconTheme: {
+                        primary: '#000',
+                        secondary: '#fff',
+                    },
+
+                    // Aria
+                    ariaProps: {
+                        role: 'alert',
+                        'aria-live': 'polite',
+                    },
+                });
+            } else {
+                await supabase.
+                    from('bookmarks')
+                    .delete()
+                    .eq('post_id', post.id);
+                toast('Bookmark Removed', {
+                    duration: 2000,
+                    position: 'top-right',
+
+                    // Styling
+                    style: { padding: '1rem 1.5rem' },
+                    className: 'font-bold',
+
+                    // Custom Icon
+                    icon: '⚠️',
+
+                    // Change colors of success/error/loading icon
+                    iconTheme: {
+                        primary: '#000',
+                        secondary: '#fff',
+                    },
+
+                    // Aria
+                    ariaProps: {
+                        role: 'alert',
+                        'aria-live': 'polite',
+                    },
+                });
+                toast('Bookmark Removed', {
+                    duration: 2000,
+                    position: 'top-right',
+
+                    // Styling
+                    style: { padding: '1rem 1.5rem' },
+                    className: 'font-bold',
+
+                    // Custom Icon
+                    icon: '⚠️',
+
+                    // Change colors of success/error/loading icon
+                    iconTheme: {
+                        primary: '#000',
+                        secondary: '#fff',
+                    },
+
+                    // Aria
+                    ariaProps: {
+                        role: 'alert',
+                        'aria-live': 'polite',
+                    },
+                });
+            }
         } catch (error) {
             console.log(error);
         }
@@ -297,7 +365,6 @@ const Post = () => {
         } catch (error) {
             console.log(error);
         }
-
     }
 
     const deletePost = async (postId) => {
@@ -513,7 +580,7 @@ const Post = () => {
                             className="w-20 rounded-full" />
                         <div className="mx-4">
                             <p className="text-slate-500 dark:text-white text-2xl font-bold">
-                                {thatUser?.name} {cur_user.id === cur_user.id && (<p className="text-lg m-0 inline-flex">(You)</p>)}
+                                {thatUser?.name} {cur_user.id === user.id && (<p className="text-lg m-0 inline-flex">(You)</p>)}
                             </p>
                             <p className="text-black text-[0.9rem] font-medium dark:text-white">
                                 {post?.formated_time}
@@ -521,7 +588,7 @@ const Post = () => {
                         </div>
                     </div>
                     {
-                        cur_user.id &&
+                        user.id &&
                         <div className="flex items-center">
                             <div className="flex items-start me-4">
 

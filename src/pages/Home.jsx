@@ -109,42 +109,76 @@ const Home = () => {
 
 
     const handleSave = async (post) => {
-        toast('Bookmark Saved', {
-            duration: 1000,
-            position: 'top-right',
-
-            // Styling
-            style: { padding: '1rem 1.5rem' },
-            className: 'font-bold',
-
-            // Custom Icon
-            icon: '✅',
-
-            // Change colors of success/error/loading icon
-            iconTheme: {
-                primary: '#000',
-                secondary: '#fff',
-            },
-
-            // Aria
-            ariaProps: {
-                role: 'alert',
-                'aria-live': 'polite',
-            },
-        });
-
         try {
-            await supabase.
-                from('bookmarks')
-                .insert([{
-                    id: uuidv4(),
-                    user_id: cur_user.id,
-                    post_id: post.id,
-                    username: cur_user.username,
-                    blog_title: post.blog_title,
-                    summary: post.summary,
-                    cover_img: post.image_url
-                }]);
+            const { data } = await supabase
+                .from('bookmarks')
+                .select()
+                .eq('post_id', post.id);
+
+            if (data.length === 0) {
+                await supabase.
+                    from('bookmarks')
+                    .insert([{
+                        id: uuidv4(),
+                        user_id: cur_user.id,
+                        post_id: post.id,
+                        username: cur_user.username,
+                        blog_title: post.blog_title,
+                        summary: post.summary,
+                        cover_img: post.image_url
+                    }]);
+                toast('Bookmark Saved', {
+                    duration: 1000,
+                    position: 'top-right',
+
+                    // Styling
+                    style: { padding: '1rem 1.5rem' },
+                    className: 'font-bold',
+
+                    // Custom Icon
+                    icon: '✅',
+
+                    // Change colors of success/error/loading icon
+                    iconTheme: {
+                        primary: '#000',
+                        secondary: '#fff',
+                    },
+
+                    // Aria
+                    ariaProps: {
+                        role: 'alert',
+                        'aria-live': 'polite',
+                    },
+                });
+            } else {
+                await supabase.
+                    from('bookmarks')
+                    .delete()
+                    .eq('post_id', post.id);
+                toast('Bookmark Removed', {
+                    duration: 2000,
+                    position: 'top-right',
+
+                    // Styling
+                    style: { padding: '1rem 1.5rem' },
+                    className: 'font-bold',
+
+                    // Custom Icon
+                    icon: '⚠️',
+
+                    // Change colors of success/error/loading icon
+                    iconTheme: {
+                        primary: '#000',
+                        secondary: '#fff',
+                    },
+
+                    // Aria
+                    ariaProps: {
+                        role: 'alert',
+                        'aria-live': 'polite',
+                    },
+                });
+            }
         } catch (error) {
             console.log(error);
         }
