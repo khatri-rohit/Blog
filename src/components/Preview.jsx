@@ -13,6 +13,7 @@ import toast from 'react-hot-toast';
 import Confetti from 'react-confetti'
 import { useWindowSize } from 'react-use'
 import { ClipLoader } from 'react-spinners';
+import useFetch from '../hooks/User';
 
 
 const Preview = ({ title, blog_content, usrename }) => {
@@ -30,6 +31,8 @@ const Preview = ({ title, blog_content, usrename }) => {
     const { width, height } = useWindowSize();
 
     const { user, changePublish } = useUsers();
+    const [cur_user] = useFetch(user.id);
+
 
     const handleClick = () => {
         imageRef.current.click();
@@ -38,6 +41,8 @@ const Preview = ({ title, blog_content, usrename }) => {
     const navigate = useNavigate();
 
     const handleCreatePost = async () => {
+        console.log("Creating Post....");
+
         try {
             const now = new Date();
             const formated_time = date.format(now, 'ddd, MMM DD');
@@ -206,26 +211,11 @@ const Preview = ({ title, blog_content, usrename }) => {
                         },
                     });
                 } else if (tags.length === 0) {
-                    toast('Enter Related Tags For Recommendations', {
-                        duration: 2000,
-                        position: 'top-center',
-
-                        // Styling
-                        style: { padding: '1rem 1.5rem' },
-                        className: 'font-bold',
-
-                        // Change colors of success/error/loading icon
-                        iconTheme: {
-                            primary: '#000',
-                            secondary: '#fff',
-                        },
-
-                        // Aria
-                        ariaProps: {
-                            role: 'alert',
-                            'aria-live': 'polite',
-                        },
-                    });
+                    toast(() => {
+                        return <span className='text-[1rem]'>
+                            Enter Related Tags For Recommendation
+                        </span>
+                    })
                 }
             }
         } catch (error) {
@@ -257,26 +247,27 @@ const Preview = ({ title, blog_content, usrename }) => {
     }, [blog_content, title])
 
     return (
-        <section className="absolute inset-0 bg-white z-10">
+        <section className="absolute inset-0 bg-white dark:bg-[#222831] z-10">
             {showConfetti && <Confetti width={width} height={height} />}
             {showConfetti && (
-                <div className="absolute left-[50%] top-[20%] z-20 bg-white/50">
-                    <ClipLoader />
+                <div className="absolute left-[50%] top-[20%] z-20 dark:text-white">
+                    <ClipLoader className='!dark:text-white' />
                 </div>
             )}
             <div className="my-8 size">
                 <span className="absolute right-4 md:right-20 top-12 text-2xl cursor-pointer"
                     onClick={() => changePublish(false)}>
-                    <LiaTimesSolid />
+                    <LiaTimesSolid className='dark:text-white' />
                 </span>
 
                 <div className="mt-32 flex flex-col md:flex-row">
                     <div className="flex-[1] p-7">
-                        <p className="text-xl my-2">Story Preview</p>
+                        <p className="text-xl my-2 dark:text-white">Story Preview</p>
                         <div
                             style={{ backgroundImage: `url(${preview.imageURL})` }}
                             onClick={handleClick}
-                            className="w-[90%] mx-auto grid place-items-center h-72 bg-gray-100 object-cover cursor-pointer bg-cover bg-no-repeat my-7">
+                            className="w-[90%] mx-auto grid place-items-center h-72 dark:text-white bg-gray-100
+                            dark:bg-slate-500 object-cover cursor-pointer bg-cover bg-no-repeat my-7">
                             {!preview.imageURL && 'Add Image'}
                         </div>
                         <input
@@ -290,14 +281,14 @@ const Preview = ({ title, blog_content, usrename }) => {
                             placeholder='Preview Title...'
                             value={preview._title}
                             onChange={e => setPreview({ ...preview, _title: e.target.value })}
-                            className='outline-none w-full bg-transparent text-xl border-b py-2' />
+                            className='outline-none w-full bg-transparent text-xl border-b py-2  dark:text-white' />
 
                         <ReactQuill
                             theme='bubble'
                             value={summary}
                             onChange={setSummary}
                             placeholder='Preview Text...'
-                            className='my-2 border-b pb-2' />
+                            className='my-2 border-b pb-2  dark:text-white' />
 
                         <div className="my-5 flex items-center text-gray-500 text-sm">
                             <span className="font-bold">Note: </span>
@@ -306,10 +297,10 @@ const Preview = ({ title, blog_content, usrename }) => {
 
                     </div>
                     <div className="flex-[1] p-7 flex flex-col gap-4 mb-5">
-                        <p className="text-3xl">
-                            Publishing to: <span className="font-medium">{user?.user_metadata?.full_name}</span>
+                        <p className="text-3xl dark:text-white">
+                            Publishing to: <span className="font-medium">{cur_user?.name}</span>
                         </p>
-                        <p>Add or change topics up to 5 so readers know what your story is about</p>
+                        <p className='dark:text-white'>Add or change topics up to 5 so readers know what your story is about</p>
                         <TagsInput
                             value={tags}
                             onChange={setTags} />
@@ -321,7 +312,6 @@ const Preview = ({ title, blog_content, usrename }) => {
                         </button>
                     </div>
                 </div>
-
             </div>
         </section>
     )

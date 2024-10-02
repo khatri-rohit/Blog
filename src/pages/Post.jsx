@@ -14,6 +14,7 @@ import useFetch from "../hooks/User";
 import DropDown from "../utils/DropDown";
 import SharePost from "../components/SharePost";
 import PostDropDown from "../utils/PostDropDown";
+import RecommendPosts from "../components/RecommendPosts";
 
 
 const Post = () => {
@@ -48,20 +49,14 @@ const Post = () => {
                 // Selected Blog
                 const { data } = await supabase
                     .from('posts')
-                    .select(`
-                        id,
-                        user_id,
-                        blog_title,
-                        summary,
-                        blog_content,
-                        formated_time,
-                        image_url
-                    `)
+                    .select()
                     .eq("id", id);
 
                 if (data) {
                     setPost(data[0]);
                     setLoading(false);
+                    console.log(data[0].tags);
+
                 }
 
                 // Author Details
@@ -102,18 +97,14 @@ const Post = () => {
             if (data) {
                 setLikeCount(data[0].like);
                 setLikedUsers(data[0]);
-                if (data[0].liked_users.length > 0) {
-                    const usersLike = data[0].liked_users.split('"');
-                    var users = usersLike.filter((user) => user.length > 2 && user);
-                    console.log(users, user.id);
-
-                    setRegister(users);
-                    users.find((use) => {
-                        console.log(use === user.id);
-                        use === user.id ? setAlter(true) : setAlter(false)
-                    });
-
-                }
+                // if (data[0].liked_users.length > 0) {
+                //     const usersLike = data[0].liked_users.split('"');
+                //     var users = usersLike.filter((user) => user.length > 2 && user);
+                //     setRegister(users);
+                //     users.find((use) => {
+                //         use === user.id ? setAlter(true) : setAlter(false)
+                //     });
+                // }
             }
         } catch (error) {
             console.log(error);
@@ -124,18 +115,17 @@ const Post = () => {
     const updateLike = async () => {
         try {
             if (likedUsers.liked_users.length > 0) {
+
                 const usersLike = likedUsers.liked_users.split('"');
                 var users = usersLike.filter((user) => user.length > 2 && user);
-                console.log(users, user.id);
+
                 setRegister(users);
                 users.find((use) => {
-                    console.log(use === user.id);
                     use === user.id ? setAlter(true) : setAlter(false)
                 });
+
                 var updateLikes = (likeCount - 1 <= 0) ? 0 : likeCount - 1;
                 var updateLikedUser = registered.filter((reg) => reg !== user.id);
-                console.log(updateLikedUser);
-                console.log([...registered, user.id]);
                 setRegister(alter ? updateLikedUser : [...registered, user.id]);
                 await supabase
                     .from('likes')
@@ -145,7 +135,6 @@ const Post = () => {
                     })
                     .eq('post_id', id);
                 setLikeCount(alter ? updateLikes : likeCount + 1);
-                console.log(alter ? updateLikes : likeCount + 1);
                 setAlter(prev => !prev);
             } else {
                 // 
@@ -394,7 +383,7 @@ const Post = () => {
                 .eq('id', postId);
 
             toast('Post Deleted', {
-                duration: 100,
+                duration: 1000,
                 position: 'top-right',
 
                 // Styling
@@ -466,7 +455,7 @@ const Post = () => {
     }
 
     return (
-        <div className="relative">
+        <div className="relative container mx-auto">
             {/* Comment Sidebar */}
 
             {slidebar &&
@@ -697,7 +686,8 @@ const Post = () => {
                     )
                 }
             </section>
-        </div >
+            <RecommendPosts post={post} />
+        </div>
     )
 };
 

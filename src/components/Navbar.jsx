@@ -215,14 +215,12 @@ const Navbar = () => {
     };
 
     const loggedInUser = async (user) => {
-        console.log(user);
         try {
             const { data } = await supabase
                 .from('users')
                 .select()
                 .eq('id', user.id);
 
-            console.log(data.length);
             if (data.length === 0) {
                 await supabase
                     .from('users')
@@ -242,7 +240,6 @@ const Navbar = () => {
                 .eq('id', user.id);
             if (resp.data) {
                 setCur_user(resp.data[0]);
-                console.log(resp.data[0]);
 
                 if (resp.data[0].username.length <= 0) {
                     setUsername(true)
@@ -260,7 +257,6 @@ const Navbar = () => {
             const { data } = await supabase.auth.getSession()
             if (data.session !== null) {
                 console.log("Session Created");
-                console.log(data.session);
                 oAuthStateChange(data.session.user);
                 loggedInUser(data.session.user);
             } else {
