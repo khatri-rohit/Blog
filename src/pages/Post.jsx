@@ -106,7 +106,11 @@ const Post = () => {
                     console.log(users, user.id);
 
                     setRegister(users);
-                    users.find((use) => use === user.id ? setAlter(true) : setAlter(false));
+                    users.find((use) => {
+                        console.log(use === user.id);
+                        use === user.id ? setAlter(true) : setAlter(false)
+                    });
+
                 }
             }
         } catch (error) {
@@ -118,7 +122,9 @@ const Post = () => {
     const updateLike = async () => {
         try {
             var updateLikes = (likeCount - 1 <= 0) ? 0 : likeCount - 1;
-            var updateLikedUser = registered.filter((reg) => reg != user.id);
+            var updateLikedUser = registered.filter((reg) => reg !== user.id);
+            console.log(updateLikedUser);
+            console.log([...registered, user.id]);
             setRegister(alter ? updateLikedUser : [...registered, user.id]);
             await supabase
                 .from('likes')
@@ -128,6 +134,7 @@ const Post = () => {
                 })
                 .eq('post_id', id);
             setLikeCount(alter ? updateLikes : likeCount + 1);
+            console.log(alter ? updateLikes : likeCount + 1);
             setAlter(prev => !prev);
 
         } catch (error) {
@@ -579,7 +586,7 @@ const Post = () => {
                             className="w-20 rounded-full" />
                         <div className="mx-4">
                             <p className="text-slate-500 dark:text-white text-2xl font-bold">
-                                {thatUser?.name} {cur_user.id === user.id && (<p className="text-lg m-0 inline-flex">(You)</p>)}
+                                {thatUser?.name} {cur_user.id === post.user_id && (<p className="text-lg m-0 inline-flex">(You)</p>)}
                             </p>
                             <p className="text-black text-[0.9rem] font-medium dark:text-white">
                                 {post?.formated_time}
