@@ -26,6 +26,7 @@ const Post = () => {
     // const [like, setLikes] = useState();
     const [comments, setComments] = useState();
     const [likeCount, setLikeCount] = useState(0);
+    const [likedUsers, setLikedUsers] = useState([])
     const [registered, setRegister] = useState([]);
     const [alter, setAlter] = useState(false);
     const [slidebar, setSildebar] = useState(false);
@@ -100,6 +101,7 @@ const Post = () => {
                 .eq('post_id', id);
             if (data) {
                 setLikeCount(data[0].like);
+                setLikedUsers(data[0]);
                 if (data[0].liked_users.length > 0) {
                     const usersLike = data[0].liked_users.split('"');
                     var users = usersLike.filter((user) => user.length > 2 && user);
@@ -121,22 +123,33 @@ const Post = () => {
     // Like Article
     const updateLike = async () => {
         try {
-            var updateLikes = (likeCount - 1 <= 0) ? 0 : likeCount - 1;
-            var updateLikedUser = registered.filter((reg) => reg !== user.id);
-            console.log(updateLikedUser);
-            console.log([...registered, user.id]);
-            setRegister(alter ? updateLikedUser : [...registered, user.id]);
-            await supabase
-                .from('likes')
-                .update({
-                    like: alter ? updateLikes : likeCount + 1,
-                    liked_users: alter ? updateLikedUser : [...registered, user.id]
-                })
-                .eq('post_id', id);
-            setLikeCount(alter ? updateLikes : likeCount + 1);
-            console.log(alter ? updateLikes : likeCount + 1);
-            setAlter(prev => !prev);
-
+            if (likedUsers.liked_users.length > 0) {
+                const usersLike = likedUsers.liked_users.split('"');
+                var users = usersLike.filter((user) => user.length > 2 && user);
+                console.log(users, user.id);
+                setRegister(users);
+                users.find((use) => {
+                    console.log(use === user.id);
+                    use === user.id ? setAlter(true) : setAlter(false)
+                });
+                var updateLikes = (likeCount - 1 <= 0) ? 0 : likeCount - 1;
+                var updateLikedUser = registered.filter((reg) => reg !== user.id);
+                console.log(updateLikedUser);
+                console.log([...registered, user.id]);
+                setRegister(alter ? updateLikedUser : [...registered, user.id]);
+                await supabase
+                    .from('likes')
+                    .update({
+                        like: alter ? updateLikes : likeCount + 1,
+                        liked_users: alter ? updateLikedUser : [...registered, user.id]
+                    })
+                    .eq('post_id', id);
+                setLikeCount(alter ? updateLikes : likeCount + 1);
+                console.log(alter ? updateLikes : likeCount + 1);
+                setAlter(prev => !prev);
+            } else {
+                // 
+            }
         } catch (error) {
             console.log(error);
         }
@@ -416,6 +429,7 @@ const Post = () => {
             setEditComment(e.target.value);
         }
     }
+
     const handleEditComment = async (key) => {
         var getComment = commentsCount.filter((comment) => comment.key === key);
         getComment[0].content = editComment;
