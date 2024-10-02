@@ -660,14 +660,16 @@ const Navbar = () => {
                                 {
                                     pathname === '/write' ? (
                                         <button
-                                            className="px-5 py-1 bg-[#2D3250] rounded-full text-white mx-3 text-xl" onClick={() => changePublish(true)}>
+                                            className="px-5 py-1 bg-[#1E3E62] hover:bg-[#1E3E62]/50 rounded-full text-white mx-3 text-xl" onClick={() => changePublish(true)}>
                                             Post
                                         </button>
                                     )
                                         : <Link to={"/write"} className="flex items-center mx-1">
                                             <div className="mx-3 flex items-center hover:text-slate-500 cursor-pointer">
                                                 <SlNote className="dark:text-white text-xl" />
-                                                <p className="mx-1 font-normal dark:text-white">Write</p>
+                                                <p className="mx-1 font-normal dark:text-white">
+                                                    Write
+                                                </p>
                                             </div>
                                         </Link>
                                 }

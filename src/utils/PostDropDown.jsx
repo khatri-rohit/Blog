@@ -15,13 +15,13 @@ const PostDropDown = ({ children, size, curPost, setCurPost, postid }) => {
 
     return (
         <>
-            {curPost === postid && (
-                <div
-                    ref={dropRef}
-                    className={`shadows flex flex-col items-start absolute -right-2 top-[1.5rem] px-3 py-1 bg-gray-200 ${size}`}>
-                    {children}
-                </div>
-            )}
+            {/* {curPost === postid && ( */}
+            <div
+                ref={dropRef}
+                className={`shadows flex flex-col items-start absolute -right-2 top-[1.5rem] px-3 py-1 bg-gray-200 ${size}`}>
+                {children}
+            </div>
+            {/* )} */}
         </>
     );
 };

@@ -19,7 +19,8 @@ const Home = () => {
     const {
         user,
         searchResult,
-        getPosts
+        getPosts,
+        changePublish
     } = useUsers();
 
     const [cur_user] = useFetch(user.id);
@@ -72,21 +73,6 @@ const Home = () => {
         }
     }
 
-    // const fetchBookmark = async () => {
-    //     if (user.id) {
-    //         try {
-    //             const { data } = await supabase
-    //                 .from('bookmarks')
-    //                 .select()
-    //                 .eq('user_id', user.id)
-    //             console.log("Bookmark", data);
-
-    //         } catch (error) {
-    //             console.log(error);
-    //         }
-    //     }
-    // }
-
     useEffect(() => {
         searchResult.trim().length >= 2 ? searchPost(searchResult) : fetchBlogs();
     }, [searchResult])
@@ -100,21 +86,22 @@ const Home = () => {
     useEffect(() => {
         fetchBlogs();
         fetchUsers();
-        // fetchBookmark();
+        changePublish(false);
     }, []);
 
     const handlePost = (id) => {
         navigate(`/post/${id}`);
     };
 
-
     const handleSave = async (post) => {
+        console.log(post);
+        
         try {
             const { data } = await supabase
                 .from('bookmarks')
                 .select()
                 .eq('post_id', post.id);
-
+            console.log(data);
             if (data.length === 0) {
                 await supabase.
                     from('bookmarks')

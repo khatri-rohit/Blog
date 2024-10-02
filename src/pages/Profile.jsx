@@ -200,7 +200,7 @@ const Account = () => {
         .delete()
         .eq('id', postId);
       toast('Post Deleted', {
-        duration: 100,
+        duration: 1000,
         position: 'top-right',
 
         // Styling
@@ -230,9 +230,6 @@ const Account = () => {
 
   return (
     <div className="transition-opacity duration-200">
-      <Toaster
-        position="top-right"
-      />
 
       <div className="flex items-center m-3">
         <div className="relative group hover:opacity-60" onClick={() => imgRef.current.click()}>
@@ -300,7 +297,7 @@ const Account = () => {
             {
               changeBio ?
                 <textarea type="text"
-                  className="text-2xl bg-slate-50 w-full"
+                  className="text-2xl bg-transparent w-full outline-none border-b resize-none"
                   value={bio}
                   autoFocus
                   onChange={e => setBio(e.target.value)} />
@@ -352,12 +349,12 @@ const Account = () => {
                             <BiDotsHorizontalRounded className="text-3xl" />
                             {
                               curDrop === post.id && <PostDropDown curPost={curDrop}
-                                postid={post?.id} setCurPost={setCurDrop} size={"w-[8rem]"}>
+                                postid={post.id}
+                                setCurPost={setCurDrop} size={"w-[10rem]"}>
                                 <button onClick={() => {
                                   deletePost(post.id);
                                   setCurDrop('');
-                                }
-                                }>
+                                }}>
                                   Delete
                                 </button>
                               </PostDropDown>

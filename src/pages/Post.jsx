@@ -185,7 +185,7 @@ const Post = () => {
                 setCommentText('');
                 setCommentsCount(newComment);
                 toast('Response Posted', {
-                    duration: 500,
+                    duration: 1000,
                     position: 'top-right',
 
                     // Styling
@@ -567,6 +567,7 @@ const Post = () => {
                                                                     <button className="border-b" onClick={() => {
                                                                         setChangeComment(true);
                                                                         setEditComment(response.content);
+                                                                        setCurDrop('');
                                                                     }}>
                                                                         Edit Response
                                                                     </button>
@@ -648,8 +649,7 @@ const Post = () => {
                                                     onClick={() => {
                                                         deletePost(id);
                                                         setDrop(false);
-                                                    }
-                                                    }>
+                                                    }}>
                                                     Delete
                                                 </button>
                                             </DropDown>

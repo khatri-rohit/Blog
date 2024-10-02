@@ -10,6 +10,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { supabase } from "../../supabaseClient";
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import Confetti from 'react-confetti'
+import { useWindowSize } from 'react-use'
+import { ClipLoader } from 'react-spinners';
 
 
 const Preview = ({ title, blog_content, usrename }) => {
@@ -22,6 +25,9 @@ const Preview = ({ title, blog_content, usrename }) => {
         _title: "",
         imageURL: ""
     });
+
+    const [showConfetti, setShowConfetti] = useState(false);
+    const { width, height } = useWindowSize();
 
     const { user, changePublish } = useUsers();
 
@@ -37,61 +43,191 @@ const Preview = ({ title, blog_content, usrename }) => {
             const formated_time = date.format(now, 'ddd, MMM DD');
             const id = uuidv4();
 
-            await supabase
-                .from('posts')
-                .insert([{
-                    id: id,
-                    user_id: user.id,
-                    username: usrename,
-                    blog_title: title,
-                    summary,
-                    blog_content,
-                    formated_time,
-                    image_url,
-                    preview,
-                    tags
-                }]);
+            if (title.trim().length !== 0 && image_url.length !== 0
+                && summary.length !== 0 && tags.length !== 0) {
 
-            await supabase
-                .from('likes')
-                .insert([{
-                    post_id: id,
-                    like: 0,
-                    liked_users: []
-                }]);
+                await supabase
+                    .from('posts')
+                    .insert([{
+                        id: id,
+                        user_id: user.id,
+                        username: usrename,
+                        blog_title: title,
+                        summary,
+                        blog_content,
+                        formated_time,
+                        image_url,
+                        preview,
+                        tags
+                    }]);
 
-            await supabase
-                .from('comments')
-                .insert([{
-                    post_id: id,
-                    content: [],
-                    user: []
-                }]);
+                await supabase
+                    .from('likes')
+                    .insert([{
+                        post_id: id,
+                        like: 0,
+                        liked_users: []
+                    }]);
 
-            navigate('/');
-            toast('Blog Created', {
-                duration: 1000,
-                position: 'top-center',
+                await supabase
+                    .from('comments')
+                    .insert([{
+                        post_id: id,
+                        content: [],
+                        user: []
+                    }]);
 
-                // Styling
-                style: { padding: '1rem 1.5rem' },
-                className: 'font-bold',
+                setShowConfetti(true);
+                setTimeout(() => {
+                    console.log("Fire Confetti");
+                    setShowConfetti(false);
+                    navigate('/');
+                    toast('Blog Created', {
+                        duration: 1000,
+                        position: 'top-center',
 
-                // Custom Icon
-                icon: '🎊',
+                        // Styling
+                        style: { padding: '1rem 1.5rem' },
+                        className: 'font-bold',
 
-                // Change colors of success/error/loading icon
-                iconTheme: {
-                    primary: '#000',
-                    secondary: '#fff',
-                },
+                        // Custom Icon
+                        icon: '🎊',
 
-                // Aria
-                ariaProps: {
-                    role: 'alert',
-                    'aria-live': 'polite',
-                },
-            });
+                        // Change colors of success/error/loading icon
+                        iconTheme: {
+                            primary: '#000',
+                            secondary: '#fff',
+                        },
+
+                        // Aria
+                        ariaProps: {
+                            role: 'alert',
+                            'aria-live': 'polite',
+                        },
+                    });
+                }, 3500);
+            } else {
+                if (title.trim().length === 0) {
+                    toast('Enter Title', {
+                        duration: 1500,
+                        position: 'top-center',
+
+                        // Styling
+                        style: { padding: '1rem 1.5rem' },
+                        className: 'font-bold',
+
+                        // Custom Icon
+                        icon: '⚠️',
+
+                        // Change colors of success/error/loading icon
+                        iconTheme: {
+                            primary: '#000',
+                            secondary: '#fff',
+                        },
+
+                        // Aria
+                        ariaProps: {
+                            role: 'alert',
+                            'aria-live': 'polite',
+                        },
+                    });
+                    changePublish(false);
+                } else if (blog_content.trim().length === 0) {
+                    toast("Can't Post Empty Blog", {
+                        duration: 1500,
+                        position: 'top-center',
+
+                        // Styling
+                        style: { padding: '1rem 1.5rem' },
+                        className: 'font-bold',
+
+                        // Custom Icon
+                        icon: '⚠️',
+
+                        // Change colors of success/error/loading icon
+                        iconTheme: {
+                            primary: '#000',
+                            secondary: '#fff',
+                        },
+
+                        // Aria
+                        ariaProps: {
+                            role: 'alert',
+                            'aria-live': 'polite',
+                        },
+                    });
+                    changePublish(false);
+                } else if (image_url.length === 0) {
+                    toast('Cover Image is Compalsary', {
+                        duration: 1000,
+                        position: 'top-center',
+
+                        // Styling
+                        style: { padding: '1rem 1.5rem' },
+                        className: 'font-bold',
+
+                        // Custom Icon
+                        icon: '⚠️',
+
+                        // Change colors of success/error/loading icon
+                        iconTheme: {
+                            primary: '#000',
+                            secondary: '#fff',
+                        },
+
+                        // Aria
+                        ariaProps: {
+                            role: 'alert',
+                            'aria-live': 'polite',
+                        },
+                    });
+                } else if (summary.trim().length === 0) {
+                    toast('Preview Summary is Important', {
+                        duration: 1000,
+                        position: 'top-center',
+
+                        // Styling
+                        style: { padding: '1rem 1.5rem' },
+                        className: 'font-bold',
+
+                        // Custom Icon
+                        icon: '⚠️',
+
+                        // Change colors of success/error/loading icon
+                        iconTheme: {
+                            primary: '#000',
+                            secondary: '#fff',
+                        },
+
+                        // Aria
+                        ariaProps: {
+                            role: 'alert',
+                            'aria-live': 'polite',
+                        },
+                    });
+                } else if (tags.length === 0) {
+                    toast('Enter Related Tags For Recommendations', {
+                        duration: 2000,
+                        position: 'top-center',
+
+                        // Styling
+                        style: { padding: '1rem 1.5rem' },
+                        className: 'font-bold',
+
+                        // Change colors of success/error/loading icon
+                        iconTheme: {
+                            primary: '#000',
+                            secondary: '#fff',
+                        },
+
+                        // Aria
+                        ariaProps: {
+                            role: 'alert',
+                            'aria-live': 'polite',
+                        },
+                    });
+                }
+            }
         } catch (error) {
             console.log("Can't Create Post\n", error);
         }
@@ -122,6 +258,12 @@ const Preview = ({ title, blog_content, usrename }) => {
 
     return (
         <section className="absolute inset-0 bg-white z-10">
+            {showConfetti && <Confetti width={width} height={height} />}
+            {showConfetti && (
+                <div className="absolute left-[50%] top-[20%] z-20 bg-white/50">
+                    <ClipLoader />
+                </div>
+            )}
             <div className="my-8 size">
                 <span className="absolute right-4 md:right-20 top-12 text-2xl cursor-pointer"
                     onClick={() => changePublish(false)}>
@@ -173,7 +315,8 @@ const Preview = ({ title, blog_content, usrename }) => {
                             onChange={setTags} />
                         <button
                             onClick={handleCreatePost}
-                            className="px-5 w-fit py-1 bg-[#2c2f44] rounded-full text-white mx-3 text-xl">
+                            disabled={showConfetti}
+                            className={`px-5 w-fit py-1 bg-[#1E3E62] hover:bg-[#1E3E62]/80 duration-500 transition-all rounded-full text-white mx-3 text-xl ${showConfetti && 'bg-slate-200 text-gray-500'}`}>
                             Post Blog
                         </button>
                     </div>

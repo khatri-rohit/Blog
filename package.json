@@ -15,6 +15,7 @@
     "dotenv": "^16.4.5",
     "javascript-time-ago": "^2.5.11",
     "react": "^18.3.1",
+    "react-confetti": "^6.1.0",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.53.0",
     "react-hot-toast": "^2.4.1",
@@ -24,6 +25,7 @@
     "react-share": "^5.1.0",
     "react-spinners": "^0.14.1",
     "react-tagsinput": "^3.20.3",
+    "react-use": "^17.5.1",
     "uuid": "^10.0.0"
   },
   "devDependencies": {
