@@ -5,6 +5,7 @@ import useUsers from "../context/User";
 import Preview from '../components/Preview';
 import { supabase } from "../../supabaseClient";
 import { useNavigate } from "react-router-dom";
+import toast, { Toaster } from "react-hot-toast";
 
 
 const Create = () => {
@@ -30,13 +31,51 @@ const Create = () => {
 
   if (!user.id) navigate('/');
 
+  const handleChange = e => {
+    const input = e.target.value;
+    if (title.trim().length < 100) {
+      setTitle(input);
+    } else {
+      if (e.target.value === ' ') {
+        setTitle(input);
+      }
+      toast('Title Should Be Less than 100 Words', {
+        duration: 1000,
+        position: 'top-right',
+
+        // Styling
+        style: { padding: '1rem 1.5rem' },
+        className: 'font-bold',
+
+        // Custom Icon
+        icon: '🤚🏻',
+
+        // Change colors of success/error/loading icon
+        iconTheme: {
+          primary: '#000',
+          secondary: '#fff',
+        },
+
+        // Aria
+        ariaProps: {
+          role: 'alert',
+          'aria-live': 'polite',
+        },
+      });
+    }
+  }
+
+
   return (
 
     <section className='w-[90%] md:w-[80%] lg:w-[60%] mx-auto py-14'>
+      <Toaster
+        position="top-right"
+      />
       <input type="text"
         placeholder='Title'
         value={title}
-        onChange={e => setTitle(e.target.value)}
+        onChange={handleChange}
         autoFocus
         className='text-4xl outline-none w-full bg-transparent' />
 

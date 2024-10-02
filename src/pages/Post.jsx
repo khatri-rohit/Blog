@@ -152,7 +152,6 @@ const Post = () => {
         }];
         var count = 0;
         updateComment.map((comm) => comm.key === cur_user.id && count++)
-        console.log(count);
 
         try {
             if (count < 2) {
