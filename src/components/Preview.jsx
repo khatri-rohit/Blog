@@ -12,7 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import Confetti from 'react-confetti'
 import { useWindowSize } from 'react-use'
-import { ClipLoader } from 'react-spinners';
+import { ClipLoader, FadeLoader } from 'react-spinners';
 import useFetch from '../hooks/User';
 
 
@@ -29,6 +29,7 @@ const Preview = ({ title, blog_content, usrename }) => {
 
     const [showConfetti, setShowConfetti] = useState(false);
     const { width, height } = useWindowSize();
+    const [imgLoading, setImgLoading] = useState(false);
 
     const { user, changePublish } = useUsers();
     const [cur_user] = useFetch(user.id);
@@ -225,7 +226,14 @@ const Preview = ({ title, blog_content, usrename }) => {
 
     const uploadImg = async (e) => {
         try {
+            setImgLoading(true);
+            const maxSize = 5 * 1024 * 1024; // 10MB
             const file = e.target.files[0];
+            if (file.size > maxSize) {
+                alert('File size exceeds the maximum allowed limit');
+                setImgLoading(false);
+                return;
+            }
             const { data } = await supabase
                 .storage
                 .from('img_posts')
@@ -235,8 +243,9 @@ const Preview = ({ title, blog_content, usrename }) => {
                 console.log(data);
                 console.log("Image Uploaded");
                 setImageURL(`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/${data.fullPath}`);
+                setPreview({ ...preview, imageURL: URL.createObjectURL(e.target.files[0]) });
+                setImgLoading(false);
             }
-            setPreview({ ...preview, imageURL: URL.createObjectURL(e.target.files[0]) });
         } catch (error) {
             console.log(error);
         }
@@ -267,8 +276,13 @@ const Preview = ({ title, blog_content, usrename }) => {
                             style={{ backgroundImage: `url(${preview.imageURL})` }}
                             onClick={handleClick}
                             className="w-[90%] mx-auto grid place-items-center h-72 dark:text-white bg-gray-100
-                            dark:bg-slate-500 object-cover cursor-pointer bg-cover bg-no-repeat my-7">
-                            {!preview.imageURL && 'Add Image'}
+                            dark:bg-slate-500 object-cover cursor-pointer bg-cover bg-no-repeat my-7 relative">
+                            {!preview.imageURL && !imgLoading && 'Add Image'}
+                            {imgLoading && <FadeLoader
+                                color="gray"
+                                height={15}
+                                width={1}
+                            />}
                         </div>
                         <input
                             type="file"

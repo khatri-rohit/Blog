@@ -46,6 +46,10 @@ const Post = () => {
         ; (async () => {
             try {
                 setLoading(true);
+
+                document.body.scrollTop = 0; // For Safari
+                document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+
                 // Selected Blog
                 const { data } = await supabase
                     .from('posts')
@@ -70,7 +74,7 @@ const Post = () => {
                 console.log(error);
             }
         })();
-    }, [])
+    }, [id])
 
     const comment = async () => {
         try {
@@ -97,14 +101,6 @@ const Post = () => {
             if (data) {
                 setLikeCount(data[0].like);
                 setLikedUsers(data[0]);
-                // if (data[0].liked_users.length > 0) {
-                //     const usersLike = data[0].liked_users.split('"');
-                //     var users = usersLike.filter((user) => user.length > 2 && user);
-                //     setRegister(users);
-                //     users.find((use) => {
-                //         use === user.id ? setAlter(true) : setAlter(false)
-                //     });
-                // }
             }
         } catch (error) {
             console.log(error);
@@ -455,7 +451,7 @@ const Post = () => {
     }
 
     return (
-        <div className="relative container mx-auto">
+        <div className="relative">
             {/* Comment Sidebar */}
 
             {slidebar &&
@@ -582,17 +578,17 @@ const Post = () => {
                 </Model>
             }
 
-            <section className="p-5">
+            <section className="md:p-2 lg:p-5">
                 <div className="my-3 flex items-center justify-between container mx-auto p-4 border-b-2">
                     <div className="flex items-center">
                         <img src={thatUser ? thatUser?.avatar_url : '/blank-avatar.webp'}
                             alt="profile-pic"
-                            className="w-20 rounded-full" />
+                            className="md:w-20 w-12 rounded-full" />
                         <div className="mx-4">
-                            <p className="text-slate-500 dark:text-white text-2xl font-bold">
-                                {thatUser?.name} {cur_user.id === post.user_id && (<p className="text-lg m-0 inline-flex">(You)</p>)}
+                            <p className="text-slate-500 dark:text-white md:text-2xl font-bold text-[0.6em]">
+                                {thatUser?.name} {cur_user.id === post.user_id && (<p className="md:text-lg text-[0.6em] m-0 inline-flex">(You)</p>)}
                             </p>
-                            <p className="text-black text-[0.9rem] font-medium dark:text-white">
+                            <p className="text-black md:text-[0.9rem] text-[0.6em] font-medium dark:text-white">
                                 {post?.formated_time}
                             </p>
                         </div>
@@ -600,27 +596,27 @@ const Post = () => {
                     {
                         user.id &&
                         <div className="flex items-center">
-                            <div className="flex items-start me-4">
+                            <div className="flex items-center md:me-4">
 
-                                <div className="mx-2 cursor-pointer mt-1">
+                                <div className="mx-2 cursor-pointer ">
                                     <SharePost />
                                 </div>
-                                <div className="mx-2 mt-1 dark:text-white flex items-center cursor-pointer">
+                                <div className="mx-2  dark:text-white flex items-center cursor-pointer">
                                     <IoBookmarksOutline
-                                        className="text-2xl"
+                                        className="md:text-2xl text-[1.2em]"
                                         onClick={handleSave} />
                                 </div>
-                                <div className="mx-2 dark:text-white flex items-center cursor-pointer">
-                                    <BiMessageSquareEdit className="text-2xl"
+                                <div className="md:mx-2 dark:text-white flex items-center cursor-pointer">
+                                    <BiMessageSquareEdit className="md:text-2xl text-[1.2em]"
                                         onClick={() => setSildebar(true)} />
-                                    <p className="mx-1 flex items-center font-medium text-lg mb-1">
+                                    <p className="mx-1 flex items-center font-medium md:text-lg md:mb-1 text-[1em]">
                                         {comments?.content.length}
                                     </p>
                                 </div>
                                 <div className="dark:text-white mx-2 flex items-center cursor-pointer"
                                     onClick={updateLike}>
-                                    <FaHeart className="text-[1.2em] text-pink-500 cursor-pointer" />
-                                    <p className="mx-1 flex items-center font-medium text-lg mb-1">
+                                    <FaHeart className="md:text-[1.2em] text-[1em] text-pink-500 cursor-pointer" />
+                                    <p className="mx-1 flex items-center font-medium md:text-lg md:mb-1 text-[1em]">
                                         {likeCount}
                                     </p>
                                 </div>
@@ -660,23 +656,23 @@ const Post = () => {
                     post &&
                     (
                         <>
-                            <div className="p-3 container mx-auto w-3/4">
-                                <div className="mt-10">
-                                    <div className="w-3/4 mx-auto">
-                                        <p className="text-5xl text-center font-extrabold mb-7 dark:text-white text-balance">
+                            <div className="md:p-3 p-1">
+                                <div className="md:mt-10">
+                                    <div className="md:w-10/12 mx-auto">
+                                        <p className="md:text-3xl lg:text-5xl text-[1.5em] text-center font-extrabold md:mb-7 dark:text-white md:text-pretty">
                                             {post?.blog_title}
                                         </p>
-                                        <p className="text-xl text-center text-gray-400 mt-3 mb-5 text-balance dark:text-stone-200"
+                                        <p className="md:text-xl text-[1.2em] text-center text-gray-400 md:mt-3 md:mb-5 my-3 text-pretty dark:text-stone-200"
                                             dangerouslySetInnerHTML={{ __html: post?.summary }}>
                                         </p>
                                     </div>
                                     <div className="w-full my-3">
                                         <img src={post?.image_url}
                                             alt={post?.blog_title}
-                                            className="h-[35em] mx-auto border-b-2 pb-2 border-black" />
+                                            className="md:h-[35em] mx-auto pb-2 border-gray-400 border-b-2" />
                                     </div>
-                                    <div className="w-[75%] mx-auto">
-                                        <div className="dark:text-white p-3 text-xl"
+                                    <div className="md:w-[85%] lg:w-[75%] mx-auto">
+                                        <div className="dark:text-white p-3 text-xl w-full"
                                             dangerouslySetInnerHTML={{ __html: post?.blog_content }}
                                         />
                                     </div>

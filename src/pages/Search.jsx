@@ -1,7 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 import { useEffect, useState } from "react";
 import { FaHeart } from "react-icons/fa6";
-import { MdOutlineMessage } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { BeatLoader } from 'react-spinners';
 import { supabase } from "../../supabaseClient";
@@ -18,7 +17,7 @@ const Search = () => {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    const { getPost, getPosts, searchResult } = useUsers();
+    const { getPost, user, getPosts, searchResult } = useUsers();
 
     const fetchBlogs = async () => {
         try {
@@ -72,55 +71,72 @@ const Search = () => {
             fetchBlogs();
             fetchUsers();
         }
-    }, [searchResult.trim().length >= 2]);
+    }, []);
 
     const handlePost = (id) => {
         navigate(`/post/${id}`);
     };
 
+    function calculateReadingTime(text) {
+        const parser = new DOMParser();
+        const desc = parser.parseFromString(text, "text/html");
+        const plainText = desc.body.textContent;
+        const wordsPerMinute = 200;
+        const wordCount = plainText.split(/\s+/).length;
+        const readingTime = Math.ceil(wordCount / wordsPerMinute);
+        return readingTime;
+    }
     return (
         <>
-            <div className="container mx-auto w-3/4">
+            <div className="container mx-auto md:w-3/4 p-2">
                 {getPost.length > 0 ?
                     getPost?.map((post, _) => {
                         const persons = users?.find((person) => person.id === post.user_id);
                         const summary = post?.summary.substring(0, 230) + '...';
+                        const readingtime = calculateReadingTime(post.blog_content);
                         return (
-                            <div key={_} className="my-5 flex bg-white rounded-lg shadow-white shadow-md dark:bg-[#100f0fab] dark:text-white">
-                                <div className="w-1/3 mx-1 p-1 my-auto cursor-pointer"
+                            <div key={_}
+                                className="w-full custom-font my-5 md:flex justify-around dark:shadow-slate-300 shadow-sm  bg-white dark:bg-gray-800 dark:text-white rounded-lg duration-300 transition hover:-translate-y-4 origin-center 
+                                    hover:scale-95">
+
+                                <div className="md:w-[45%] lg:w-[38%] p-1 my-auto cursor-pointer"
                                     onClick={() => handlePost(post?.id)}>
                                     <img src={post?.image_url}
-                                        className="object-contain h-72 w-full" />
+                                        className="object-cover w-full rounded-xl h-[27vh]" />
                                 </div>
-                                <div className="mx-2 w-3/4 p-2 flex flex-col justify-evenly">
-                                    <p className="my-2 tracking-wider p-2">
-                                        ✨ {persons?.name}
+
+                                <div className="md:w-[52%] lg:w-[62%] p-2 flex flex-col justify-evenly">
+                                    <p className="tracking-wider my-2 md:m-0">
+                                        ✨ {persons?.name} {user.id == post.user_id && "(You)"}
                                     </p>
+
                                     <p onClick={() => handlePost(post?.id)}
-                                        className="text-3xl font-medium cursor-pointer text-pretty">
+                                        className="md:text-2xl lg:text-3xl text-[1.2em] title cursor-pointer mb-1 md:m-0 text-black dark:text-white text-pretty">
                                         {post?.blog_title}
                                     </p>
-                                    <p className="text-xl mb-3 text-slate-500 dark:text-slate-100 text-balance">
-                                        {summary}
+
+                                    <p className="text-xl description mb-2 md:mb-3 text-slate-500 dark:text-slate-100 text-balance tracking-widest font-light"
+                                        dangerouslySetInnerHTML={{ __html: summary }}>
                                     </p>
+
                                     <div className="flex items-center justify-between">
-                                        <p className="font-light dark:text-white text-black text-sm mt-2">
-                                            {post?.formated_time}
-                                        </p>
                                         <div className="flex items-center">
-                                            <div className="mx-2 flex items-center">
-                                                <MdOutlineMessage className="text-2xl" />
-                                                <p className="mx-1 flex items-center font-medium text-lg mb-1">
-                                                    {post?.comments?.map((comment) => (comment.content).length)}
-                                                </p>
-                                            </div>
-                                            <div className="mx-2 flex items-center">
-                                                <FaHeart className="text-2xl text-pink-500" />
-                                                <p className="mx-1 flex items-center font-medium text-lg mb-1">
-                                                    {post?.likes?.map((like) => like.like)}
-                                                </p>
-                                            </div>
+                                            <p className="mr-2 font-normal text-black text-[0.8em] dark:text-slate-50">
+                                                {post?.formated_time}
+                                            </p>
+                                            <p className="text-[0.7em] text-gray-400 md:text-[.71em]">
+                                                {readingtime} min read
+                                            </p>
                                         </div>
+                                        {user.id &&
+                                            <div className="flex items-center">
+                                                <div className="mx-2 flex items-center">
+                                                    <FaHeart className="md:text-2xl text-xl text-pink-500" />
+                                                    <p className="mx-1 flex items-center font-medium">
+                                                        {post?.likes?.map((like) => like.like)}
+                                                    </p>
+                                                </div>
+                                            </div>}
                                     </div>
                                 </div>
                             </div>

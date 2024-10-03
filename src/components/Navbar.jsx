@@ -177,9 +177,9 @@ const Navbar = () => {
         try {
             await supabase.auth.signInWithOAuth({
                 provider: "github",
-                // options: {
-                //     redirectTo: 'http://localhost:5173'
-                // }
+                options: {
+                    redirectTo: 'http://localhost:5173'
+                }
             });
             setRegister(false);
             setLogin(false);
@@ -203,9 +203,9 @@ const Navbar = () => {
         try {
             await supabase.auth.signInWithOAuth({
                 provider: 'google',
-                // options: {
-                //     redirectTo: 'http://localhost:5173'
-                // }
+                options: {
+                    redirectTo: 'http://localhost:5173'
+                }
             });
             setRegister(false);
             setLogin(false)
@@ -344,12 +344,12 @@ const Navbar = () => {
         <>
             {reg &&
                 <LoignModel model={reg}>
-                    <div className="absolute top-5 left-1/2 transform -translate-x-1/2 z-10 shadow-sm mx-auto w-[23%] bg-[#E9EFEC]">
+                    <div className="absolute top-5 left-1/2 transform -translate-x-1/2 z-10 shadow-sm mx-auto lg:w-[30%] md:w-[40%] w-[80%] bg-[#E9EFEC]">
                         {/* <!-- Modal content --> */}
                         <div className="relative bg-white rounded-lg shadow dark:bg-gray-700 p-2">
                             {/* <!-- Modal header --> */}
                             <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-                                <p className="text-xl font-semibold text-gray-900 dark:text-white">
+                                <p className="md:text-xl text-[1em] font-semibold text-gray-900 dark:text-white">
                                     Welcome to <span className="text-gray-600 font-bold">DevDiscuss</span>
                                 </p>
                                 <button type="button" className="end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white outline-none" data-modal-hide="authentication-modal"
@@ -397,7 +397,7 @@ const Navbar = () => {
                                     </div>
                                     <div>
                                         <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                            Author Name
+                                            Your Name
                                         </label>
                                         <input
                                             type="text"
@@ -497,15 +497,16 @@ const Navbar = () => {
 
             {login &&
                 <LoignModel model={login}>
-                    <div className="absolute top-5 left-1/2 transform -translate-x-1/2 z-10 shadow-sm mx-auto w-[23%] bg-[#E9EFEC]">
+                    <div className="absolute top-5 left-1/2 transform -translate-x-1/2 z-10 shadow-sm mx-auto lg:w-[30%] md:w-[40%] w-[80%] bg-[#E9EFEC]">
                         {/* <!-- Modal content --> */}
                         <div className="relative bg-white rounded-lg shadow dark:bg-gray-700 p-2">
                             {/* <!-- Modal header --> */}
                             <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-                                <p className="text-xl font-semibold text-gray-900 dark:text-white">
+                                <p className="md:text-xl text-[1em] font-semibold text-gray-900 dark:text-white">
                                     Welcome Back <span className="text-gray-600">DevDiscuss</span>
                                 </p>
-                                <button type="button" className="end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white outline-none" data-modal-hide="authentication-modal"
+                                <button type="button"
+                                    className="end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white outline-none" data-modal-hide="authentication-modal"
                                     onClick={() => setLogin(false)}>
                                     <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                                         <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
@@ -624,17 +625,17 @@ const Navbar = () => {
                 position="top-center"
             />
 
-            <nav className="flex items-center justify-between px-2 py-4 border-b-2">
+            <nav className="flex items-center justify-between md:px-2 py-4 border-b-2">
                 <div className="flex items-center justify-between">
                     <Link to={'/'} className="flex items-center mx-3 outline-none">
-                        {themeMode ? <img src={themeMode === "light" ? "/blogicon.png" : "/whiteblogicon.png"}
-                            className="w-10" /> : <img src="/blogicon.png" className="w-10" />}
-                        <p className="mx-2 font-semibold text-2xl dark:text-white">
+                        {themeMode ? <img src="/whiteblogicon.png"
+                            className="min-w-10 w-10" /> : <img src="/blogicon.png" className="min-w-10 w-10 m-0" />}
+                        <p className="mx-2 hidden md:block font-semibold text-2xl dark:text-white">
                             DevDiscuss
                         </p>
                     </Link>
                     <form
-                        className="input-feild flex mx-1 items-center bg-slate-200 rounded-xl"
+                        className="input-feild flex mx-1 items-center bg-slate-200 rounded-xl w-full"
                         onSubmit={handleSearchSubmit}
                     >
                         <div className="mx-1"
@@ -642,7 +643,7 @@ const Navbar = () => {
                             <BiSearch className="text-2xl mx-2" />
                         </div>
                         <input type="text"
-                            className="bg-slate-200 p-2 rounded-xl outline-none placeholder:dark:text-black"
+                            className="p-2 bg-transparent rounded-xl outline-none placeholder:dark:text-black w-[80%] md:w-full"
                             placeholder="Search"
                             value={search}
                             onChange={e => handleSearch(e)}
@@ -673,9 +674,9 @@ const Navbar = () => {
                                     <div className="flex items-center cursor-pointer"
                                         onClick={() => setModel(prev => !prev)}>
                                         <img src={cur_user?.avatar_url || "/blank-avatar.webp"}
-                                            className="w-10 h-10 object-cover rounded-full hover:scale-75 transition-all duration-75 relative"
+                                            className="w-[5.5em] h-[2.75em] md:w-[3.2em] md:h-[2.8em] object-cover rounded-full hover:scale-75 transition-all duration-75 relative"
                                         />
-                                        <IoIosArrowDown className="mx-2 dark:text-white" />
+                                        <IoIosArrowDown className="mx-2 hidden md:block dark:text-white" />
                                     </div>
 
                                     <Model model={model} setModel={setModel}>
@@ -719,11 +720,11 @@ const Navbar = () => {
                         ) : (
                             <>
                                 <div className="flex">
-                                    <div className="flex mx-3 gap-2 items-center px-3 py-1 justify-start cursor-pointer"
+                                    <div className="flex md:mx-3 items-center px-3 py-1 justify-start cursor-pointer"
                                         onClick={darkMode}>
                                         <CgDarkMode className="text-2xl dark:text-white" />
                                     </div>
-                                    <button className="bg-slate-300 px-4 p-2 rounded-md text-xl outline-none"
+                                    <button className="bg-slate-300 md:px-4 p-2 rounded-md text-[1em] outline-none"
                                         onClick={() => setLogin(true)}>
                                         SignIn
                                     </button>

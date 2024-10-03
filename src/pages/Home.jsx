@@ -95,7 +95,7 @@ const Home = () => {
 
     const handleSave = async (post) => {
         console.log(post);
-        
+
         try {
             const { data } = await supabase
                 .from('bookmarks')
@@ -184,7 +184,7 @@ const Home = () => {
     return (
         <>
             <main className="md:p-8">
-                <div className="container mx-auto w-3/4 flex flex-col items-center justify-center transition-all">
+                <div className="container mx-auto md:w-3/4 p-3 flex flex-col items-center justify-center transition-all">
                     {
                         loading ?
                             <p className="flex justify-center">
@@ -201,34 +201,34 @@ const Home = () => {
 
                             return (
                                 <div key={_}
-                                    className="w-full custom-font my-5 flex justify-around dark:shadow-slate-300 shadow-sm  bg-white dark:bg-gray-800 dark:text-white rounded-lg duration-300 transition hover:-translate-y-4 origin-center 
+                                    className="w-full custom-font my-5 md:flex justify-around dark:shadow-slate-300 shadow-sm  bg-white dark:bg-gray-800 dark:text-white rounded-lg duration-300 transition hover:-translate-y-4 origin-center 
                                     hover:scale-95">
 
-                                    <div className="w-[33%] p-1 my-auto cursor-pointer"
+                                    <div className="md:w-[45%] lg:w-[38%] p-1 my-auto cursor-pointer"
                                         onClick={() => handlePost(post?.id)}>
                                         <img src={post?.image_url}
                                             className="object-cover w-full rounded-xl h-[27vh]" />
                                     </div>
 
-                                    <div className="w-[65%] p-2 flex flex-col justify-evenly">
-                                        <p className="tracking-wider">
+                                    <div className="md:w-[52%] lg:w-[62%] p-2 flex flex-col justify-evenly">
+                                        <p className="tracking-wider my-2 md:m-0">
                                             ✨ {persons?.name} {user.id == post.user_id && "(You)"}
                                         </p>
 
                                         <p onClick={() => handlePost(post?.id)}
-                                            className="text-3xl title cursor-pointer text-black dark:text-white text-pretty" dangerouslySetInnerHTML={{ __html: post?.preview._title }}>
+                                            className="md:text-2xl lg:text-3xl text-[1.2em] title cursor-pointer mb-1 md:m-0 text-black dark:text-white text-pretty" dangerouslySetInnerHTML={{ __html: post?.preview._title }}>
                                         </p>
 
-                                        <p className="text-xl description mb-3 text-slate-500 dark:text-slate-100 text-balance tracking-widest font-light"
+                                        <p className="text-xl description mb-2 md:mb-3 text-slate-500 dark:text-slate-100 text-balance tracking-widest font-light"
                                             dangerouslySetInnerHTML={{ __html: post?.summary }}>
                                         </p>
 
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center">
-                                                <p className="mx-2 font-normal text-black text-[10px] dark:text-slate-50">
+                                                <p className="mr-2 font-normal text-black text-[0.8em] dark:text-slate-50">
                                                     {post?.formated_time}
                                                 </p>
-                                                <p className="text-gray-400 text-xs">
+                                                <p className="text-[0.7em] text-gray-400 md:text-[.71em]">
                                                     {readingtime} min read
                                                 </p>
                                             </div>
@@ -236,11 +236,11 @@ const Home = () => {
                                                 <div className="flex items-center">
                                                     <div className="mx-2 dark:text-white flex items-center cursor-pointer">
                                                         <IoBookmarksOutline
-                                                            className="text-2xl"
+                                                            className="md:text-2xl text-xl"
                                                             onClick={() => handleSave(post)} />
                                                     </div>
                                                     <div className="mx-2 flex items-center">
-                                                        <FaHeart className="text-xl text-pink-500" />
+                                                        <FaHeart className="md:text-2xl text-xl text-pink-500" />
                                                         <p className="mx-1 flex items-center font-medium">
                                                             {post?.likes?.map((like) => like.like)}
                                                         </p>

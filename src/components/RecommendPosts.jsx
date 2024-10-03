@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
-import usePost from "../hooks/Blogs";
 import { useNavigate } from "react-router-dom";
+import usePost from "../hooks/Blogs";
 
 const RecommendPosts = ({ post }) => {
 
@@ -23,20 +23,21 @@ const RecommendPosts = ({ post }) => {
         });
         console.log(recommendedPosts);
         setCommanPosts(recommendedPosts);
-    }, [recommendedPosts])
+    }, [])
 
     return (
         commanPosts?.length !== 0 &&
-        <div className="container mx-auto p-2 border-t-2 w-full" >
-            <p className="text-2xl font-semibold">
+        <section className="p-2 border-t-2 border-gray-300 container mx-auto" >
+            <p className="text-2xl font-bold">
                 Recommended Posts
             </p>
-            <div className="p-3 grid grid-cols-3">
+            <div className="p-3 md:grid md:grid-cols-2 gap-4 md:w-[70%]">
                 {
                     commanPosts?.map((posts, _) => (
+                        posts.id !== post.id &&
                         <div className="border-r p-2 bg-white mr-1 drop-shadow-lg rounded-lg cursor-auto"
                             key={_}>
-                            <div className="-w-xs overflow-hidden transition-shadow duration-300 ease-in-out">
+                            <div className="overflow-hidden transition-shadow duration-300 ease-in-out">
                                 <div className="cursor-pointer" onClick={() => navigate(`/post/${posts.id}`)}>
                                     <img src={posts?.image_url}
                                         className="object-cover w-full rounded-xl h-[25vh]"
@@ -53,7 +54,7 @@ const RecommendPosts = ({ post }) => {
                     ))
                 }
             </div>
-        </div >
+        </section>
     )
 };
 
