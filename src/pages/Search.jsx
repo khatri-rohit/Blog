@@ -67,11 +67,11 @@ const Search = () => {
     };
 
     useEffect(() => {
-        if (searchResult.trim().length !== 0) {
+        if (searchResult.trim().length !== 0 || q.length !== 0) {
             fetchBlogs();
             fetchUsers();
         }
-    }, []);
+    }, [q]);
 
     const handlePost = (id) => {
         navigate(`/post/${id}`);
@@ -143,7 +143,7 @@ const Search = () => {
                         )
                     }) :
                     loading ? <p className="text-center my-9">
-                        <BeatLoader color="#16325B" />
+                        <BeatLoader color="#F5F5F7" />
                     </p> :
                         <p className="text-3xl dark:text-white text-center font-medium my-6">
                             Didn't find the results {searchResult.trim().length <= 0 ? "" : `'${searchResult}'`}

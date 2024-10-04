@@ -579,7 +579,7 @@ const Post = () => {
             }
 
             <section className="md:p-2 lg:p-5">
-                <div className="my-3 flex items-center justify-between container mx-auto p-4 border-b-2">
+                <div className="my-3 flex items-center justify-between w-[80%] mx-auto p-4 border-b-2">
                     <div className="flex items-center">
                         <img src={thatUser ? thatUser?.avatar_url : '/blank-avatar.webp'}
                             alt="profile-pic"
@@ -682,7 +682,7 @@ const Post = () => {
                     )
                 }
             </section>
-            <RecommendPosts post={post} />
+            {post && <RecommendPosts post={post} />}
         </div>
     )
 };

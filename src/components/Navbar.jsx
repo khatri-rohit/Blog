@@ -334,7 +334,7 @@ const Navbar = () => {
         }
         changeSearchResult(search);
         navigate(`/search?q=${encodeURIComponent(search)}`)
-    }, [changeSearchResult, search]);
+    }, [search]);
 
     useEffect(() => {
         return () => clearTimeout(timeoutId);
@@ -342,9 +342,13 @@ const Navbar = () => {
 
     return (
         <>
+            <Toaster
+                position="top-center"
+            />
+
             {reg &&
                 <LoignModel model={reg}>
-                    <div className="absolute top-5 left-1/2 transform -translate-x-1/2 z-10 shadow-sm mx-auto lg:w-[30%] md:w-[40%] w-[80%] bg-[#E9EFEC]">
+                    <div className="absolute top-5 left-1/2 transform -translate-x-1/2 z-10 shadow-sm mx-auto lg:w-[28%] md:w-[40%] w-[80%] bg-[#E9EFEC]">
                         {/* <!-- Modal content --> */}
                         <div className="relative bg-white rounded-lg shadow dark:bg-gray-700 p-2">
                             {/* <!-- Modal header --> */}
@@ -363,16 +367,16 @@ const Navbar = () => {
                             {/* <!-- Modal body --> */}
                             <div className="p-4 md:p-5">
                                 <button
-                                    className="my-3 w-full border bg-white hover:bg-slate-300 font-medium rounded-lg text-sm px-5 py-3 text-center dark:bg-gray-500 dark:hover:bg-gray-500 flex items-center justify-center outline-none" onClick={googleSighUp}>
+                                    className="my-3 w-full border bg-white hover:bg-slate-300 font-medium rounded-lg md:text-sm text-[0.7em] px-5 py-3 text-center dark:bg-gray-500 dark:hover:bg-gray-500 flex items-center justify-center outline-none" onClick={googleSighUp}>
                                     <BiLogoGoogle
-                                        className="mx-1 text-2xl text-slate-500" />
-                                    Create Account with Google
+                                        className="mx-1 md:text-2xl text-[1em] text-slate-500" />
+                                    Continue with Google
                                 </button>
                                 <button
-                                    className="my-3 w-full text-white bg-gray-700 hover:bg-gray-900 font-medium rounded-lg text-sm px-5 py-3 text-center dark:bg-gray-700 dark:hover:bg-gray-900 flex items-center justify-center outline-none" onClick={githubSignIn}>
+                                    className="my-3 w-full text-white bg-gray-700 hover:bg-gray-900 font-medium rounded-lg md:text-sm text-[0.7em] px-5 py-3 text-center dark:bg-gray-700 dark:hover:bg-gray-900 flex items-center justify-center outline-none" onClick={githubSignIn}>
                                     <BiLogoGithub
-                                        className="mx-1 text-2xl" />
-                                    Create Account with Github
+                                        className="mx-1 md:text-2xl text-[1em]" />
+                                    Continue with Github
                                 </button>
                                 <p className="font-medium text-center my-2">Or</p>
                                 <form className="space-y-4"
@@ -497,7 +501,7 @@ const Navbar = () => {
 
             {login &&
                 <LoignModel model={login}>
-                    <div className="absolute top-5 left-1/2 transform -translate-x-1/2 z-10 shadow-sm mx-auto lg:w-[30%] md:w-[40%] w-[80%] bg-[#E9EFEC]">
+                    <div className="absolute top-5 left-1/2 transform -translate-x-1/2 z-10 shadow-sm mx-auto lg:w-[25%] md:w-[40%] w-[80%] bg-[#E9EFEC]">
                         {/* <!-- Modal content --> */}
                         <div className="relative bg-white rounded-lg shadow dark:bg-gray-700 p-2">
                             {/* <!-- Modal header --> */}
@@ -517,16 +521,16 @@ const Navbar = () => {
                             {/* <!-- Modal body --> */}
                             <div className="p-4 md:p-5">
                                 <button
-                                    className="my-3 w-full border bg-white hover:bg-slate-300 font-medium rounded-lg text-sm px-5 py-3 text-center dark:bg-gray-500 dark:hover:bg-gray-500 flex items-center justify-center outline-none" onClick={googleSighUp}>
+                                    className="my-3 w-full border bg-white hover:bg-slate-300 font-medium rounded-lg md:text-sm text-[0.7em] px-5 py-3 text-center dark:bg-gray-500 dark:hover:bg-gray-500 flex items-center justify-center outline-none" onClick={googleSighUp}>
                                     <BiLogoGoogle
-                                        className="mx-1 text-2xl text-slate-500" />
-                                    Login to your account
+                                        className="mx-1 md:text-2xl text-[1em] text-slate-500" />
+                                    Continue with Google
                                 </button>
                                 <button
-                                    className="my-3 w-full text-white bg-gray-700 hover:bg-gray-900 font-medium rounded-lg text-sm px-5 py-3 text-center dark:bg-gray-700 dark:hover:bg-gray-900 flex items-center justify-center outline-none" onClick={githubSignIn}>
+                                    className="my-3 w-full text-white bg-gray-700 hover:bg-gray-900 font-medium rounded-lg md:text-sm text-[0.7em] px-5 py-3 text-center dark:bg-gray-700 dark:hover:bg-gray-900 flex items-center justify-center outline-none" onClick={githubSignIn}>
                                     <BiLogoGithub
-                                        className="mx-1 text-2xl" />
-                                    Create Account with Github
+                                        className="mx-1 md:text-2xl text-[1em]" />
+                                    Continue with Github
                                 </button>
                                 <p className="font-medium text-center my-2">Or</p>
                                 <form className="space-y-4"
@@ -597,7 +601,7 @@ const Navbar = () => {
                 <div className="absolute top-12 left-1/2 transform -translate-x-1/2 z-30 shadow-sm mx-auto w-[20%] bg-slate-100 p-4 rounded-lg">
                     <form className="space-y-4"
                         onSubmit={setUserName}>
-                        <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Set User_name </label>
+                        <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Set User_name</label>
                         <input
                             type="text"
                             name="username"
@@ -620,10 +624,6 @@ const Navbar = () => {
                     </form>
                 </div>
             </LoignModel>}
-
-            <Toaster
-                position="top-center"
-            />
 
             <nav className="flex items-center justify-between md:px-2 py-4 border-b-2">
                 <div className="flex items-center justify-between">
@@ -674,7 +674,7 @@ const Navbar = () => {
                                     <div className="flex items-center cursor-pointer"
                                         onClick={() => setModel(prev => !prev)}>
                                         <img src={cur_user?.avatar_url || "/blank-avatar.webp"}
-                                            className="w-[5.5em] h-[2.75em] md:w-[3.2em] md:h-[2.8em] object-cover rounded-full hover:scale-75 transition-all duration-75 relative"
+                                            className="w-[5.5em] h-[2.75em] md:w-[3.2em] md:h-[2.8em] lg:w-[3em] lg:h-[2.95em] object-cover rounded-full hover:scale-90 transition-all duration-200 relative"
                                         />
                                         <IoIosArrowDown className="mx-2 hidden md:block dark:text-white" />
                                     </div>

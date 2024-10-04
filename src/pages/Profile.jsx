@@ -8,15 +8,20 @@ import { v4 as uuidv4 } from 'uuid';
 import { FaRegUser } from "react-icons/fa";
 import { IoBookmarksOutline } from "react-icons/io5";
 import useUsers from "../context/User";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { BiDotsHorizontalRounded } from "react-icons/bi";
 import PostDropDown from "../utils/PostDropDown";
+import useFetch from "../hooks/User";
 
 
 const Profile = () => {
 
   const { user } = useUsers();
+  const { id } = useParams();
+  const [navi, setNavi] = useState(1);
   const navigate = useNavigate();
+  const [cur_user] = useFetch();
+
   const tabs = [
     {
       id: 1,
@@ -31,14 +36,13 @@ const Profile = () => {
       card: <Bookmarks />
     }
   ];
-  const [navi, setNavi] = useState(1);
 
   useEffect(() => {
     if (window.location.hash === "#bookmarks")
-      setNavi(2)
+      setNavi(2);
   }, [])
 
-  if (!user.id) navigate('/');
+  if (!user.id || cur_user?.username !== id) navigate('/');
 
   return (
     <>
@@ -318,8 +322,8 @@ const Account = () => {
         </div>
 
         {/* Your Blogs */}
-        <div className="my-5">
-          <p className="text-2xl font-light p-2">
+        <div className="mb-5">
+          <p className="text-2xl font-light p-2 mb-3">
             {'->'} All Blogs
           </p>
 
@@ -348,7 +352,8 @@ const Account = () => {
                             onClick={() => setCurDrop(post.id)}>
                             <BiDotsHorizontalRounded className="text-3xl" />
                             {
-                              curDrop === post.id && <PostDropDown curPost={curDrop}
+                              curDrop === post.id && <PostDropDown
+                                curPost={curDrop}
                                 postid={post.id}
                                 setCurPost={setCurDrop} size={"w-[10rem]"}>
                                 <button onClick={() => {
