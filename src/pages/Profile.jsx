@@ -11,16 +11,11 @@ import useUsers from "../context/User";
 import toast from "react-hot-toast";
 import { BiDotsHorizontalRounded } from "react-icons/bi";
 import PostDropDown from "../utils/PostDropDown";
-import useFetch from "../hooks/User";
 
 
 const Profile = () => {
 
-  const { user } = useUsers();
-  const { id } = useParams();
   const [navi, setNavi] = useState(1);
-  const navigate = useNavigate();
-  const [cur_user] = useFetch();
 
   const tabs = [
     {
@@ -42,25 +37,23 @@ const Profile = () => {
       setNavi(2);
   }, [])
 
-  if (!user.id || cur_user?.username !== id) navigate('/');
-
   return (
     <>
-      <div className="container mx-auto mt-6">
-        <div className="w-full h-[80vh] flex justify-center">
+      <div className="w-[90%] mx-auto mt-6">
+        <div className="w-full md:h-[80vh] md:flex justify-center">
 
           {/*  */}
-          <div className="w-[20%] bg-gray-500">
+          <div className="lg:w-[20%] bg-gray-500 md:block flex">
             {
               tabs.map((tab, _) => (
                 <div key={_}
-                  className={`flex items-center p-2 font-medium ${tab.id === navi ? "bg-gray-200" : "bg-white hover:bg-gray-100"} my-3 cursor-pointer`}
+                  className={`flex items-center p-2 border-b-2 w-full font-medium ${tab.id === navi ? "bg-gray-200" : "bg-white hover:bg-gray-100"} md:my-3 cursor-pointer`}
                   onClick={() => setNavi(tab.id)}>
                   <div
-                    className="mx-2 w-10 rounded-full" >
+                    className="m-2 md:w-10 rounded-full md:scale-105 scale-150" >
                     {tab.icon}
                   </div>
-                  <p className="text-xl">
+                  <p className="text-xl hidden md:block">
                     {tab.barName}
                   </p>
                 </div>
@@ -69,7 +62,7 @@ const Profile = () => {
           </div>
 
           {/*  */}
-          <div className="w-[65%] bg-gray-200 p-3" >
+          <div className="md:w-[65%] bg-gray-200 p-3" >
             {tabs.map((tab, _) => (
               <span key={_}>
                 {tab.id == navi && tab.card}
@@ -87,6 +80,8 @@ export default Profile;
 const Account = () => {
 
   const { id } = useParams();
+  const { user } = useUsers();
+  const navigate = useNavigate();
 
   const [changeName, setChangeName] = useState(false);
   const [changeBio, setChnageBio] = useState(false);
@@ -186,6 +181,7 @@ const Account = () => {
           .update({
             avatar_url: url
           }).eq("username", id);
+        profileData();
         toast(() => {
           return <span className="text-xl">
             Profile Pic Updated
@@ -231,17 +227,20 @@ const Account = () => {
       console.log(error);
     }
   }
+  if (!proLoading)
+    if (cur_user?.id !== user.id) navigate('/');
 
   return (
     <div className="transition-opacity duration-200">
 
       <div className="flex items-center m-3">
-        <div className="relative group hover:opacity-60" onClick={() => imgRef.current.click()}>
+        <div className="relative group hover:opacity-60"
+          onClick={() => imgRef.current.click()}>
           <div className="absolute inset-x-9 inset-y-7">
             <MdCamera className="group-hover:block hidden text-2xl text-white" />
           </div>
           <img src={cur_user?.avatar_url || "/blank-avatar.webp"}
-            className="rounded-full cursor-pointer mx-2 w-20 h-20 object-cover border-black border"
+            className="rounded-full cursor-pointer mx-2 md:w-20 md:h-20 object-cover border-black border w-14 h-14"
             alt="profile" />
         </div>
         <input type="file"
@@ -255,7 +254,7 @@ const Account = () => {
           {
             changeName ?
               <input type="text"
-                className="text-3xl font-semibold bg-transparent"
+                className="md:text-3xl text-[1.5em] font-semibold bg-transparent"
                 value={name}
                 autoFocus
                 onChange={e => setName(e.target.value)} />
@@ -264,50 +263,50 @@ const Account = () => {
                 <div className="flex items-center">
                   <ClipLoader />
                 </div>
-              ) : <p className="text-3xl font-semibold">
+              ) : <p className="md:text-3xl text-[1.5em] font-semibold">
                 {name}
               </p>)
           }
           {changeName ?
-            (<button className="text-xs my-1 text-blue-500 font-medium"
+            (<button className="text-[1em] my-1 text-blue-500 font-medium"
               onClick={(event) => handleNameChange(event, "save")}>Save</button>) :
-            (<button className="text-xs my-1 text-blue-500 font-medium"
-              onClick={(event) => handleNameChange(event, "change")}>Edit Name</button>)}
+            (<button className="text-[1em] my-1 text-blue-500 font-medium"
+              onClick={(event) => handleNameChange(event, "change")}>Edit</button>)}
         </form>
       </div>
 
       <div className="my-10 mx-5">
         <div className="flex items-center my-2">
-          <p className="text-2xl font-medium">Username: </p>
-          <p className="text-xl font-light mx-2">{cur_user?.username}</p>
+          <p className="md:text-2xl text-[1em]  font-medium">Username: </p>
+          <p className="text-[1.1em] font-light mx-2">{cur_user?.username}</p>
         </div>
 
         <div className="flex items-center my-2">
-          <p className="text-2xl font-medium">Email: </p>
-          <p className="text-xl font-light mx-2">{cur_user?.email}</p>
+          <p className="md:text-2xl text-[1em] font-medium">Email: </p>
+          <p className="text-[1.1em] font-light mx-2">{cur_user?.email}</p>
         </div>
 
         <div className="flex items-center my-2">
-          <p className="text-2xl font-medium">Account Created : </p>
-          <p className="text-xl font-light mx-2">
+          <p className="md:text-2xl text-[1em] font-medium">Account Created : </p>
+          <p className="text-[1.1em] font-light mx-2">
             {new Date(cur_user?.created_at)?.toLocaleString("en", {
               year: "numeric", month: "short", day: "2-digit"
             })}
           </p>
         </div>
 
-        <div className="my-2">
-          <p className="text-2xl font-medium">About Me</p>
+        <div className="md:my-2">
+          <p className="md:text-2xl text-[1.1em] font-medium">About Me</p>
           <div className="flex flex-col items-start my-0.5">
             {
               changeBio ?
                 <textarea type="text"
-                  className="text-2xl bg-transparent w-full outline-none border-b resize-none"
+                  className="md:text-2xl text-[1.1em] bg-transparent w-full outline-none border-b resize-none"
                   value={bio}
                   autoFocus
                   onChange={e => setBio(e.target.value)} />
                 : (bio ?
-                  <p className="text-2xl">
+                  <p className="md:text-2xl text-[1.1em]">
                     {bio}
                   </p> :
                   <p className="text-gray-400">
@@ -315,16 +314,16 @@ const Account = () => {
                   </p>)
             }
             {changeBio ?
-              (<button className="text-xs my-1 text-blue-500 font-medium"
+              (<button className="text-[1em] my-1 text-blue-500 font-medium"
                 onClick={() => handleChangeBio("save")}>Save</button>) :
-              (<button className="text-xs my-1 text-blue-500 font-medium"
+              (<button className="text-[1em] my-1 text-blue-500 font-medium"
                 onClick={() => handleChangeBio("change")}>Edit</button>)}
           </div>
         </div>
 
         {/* Your Blogs */}
-        <div className="mb-5">
-          <p className="text-2xl font-light p-2 mb-3">
+        <div className="md:mb-5">
+          <p className="md:text-2xl text-[1.1em] font-light py-2 mb-2">
             {'->'} All Blogs
           </p>
 
@@ -337,14 +336,14 @@ const Account = () => {
               {blog?.length !== 0 ?
                 (blog?.map((post, _) => (
                   <div className="border-r p-2 bg-white mr-1 drop-shadow-lg rounded-lg cursor-auto" key={_} >
-                    <div className="w-96 max-w-xs overflow-hidden transition-shadow duration-300 ease-in-out">
+                    <div className="lg:w-96 md:w-72 w-56 max-w-xs overflow-hidden transition-shadow duration-300 ease-in-out">
                       <NavLink to={`/post/${post?.id}`} className="">
                         <img src={post?.image_url}
                           className="object-cover w-full rounded-xl h-[25vh]"
                           alt={post?.blog_title} />
                       </NavLink>
                       <div className="p-2 flex justify-between">
-                        <p className="text-pretty">
+                        <p className="text-pretty font-medium">
                           {post?.blog_title}
                         </p>
                         <div className="relative ms-3">
@@ -464,7 +463,7 @@ const Bookmarks = () => {
                   (bookMarks?.map((post, _) => (
                     <div key={_}
                       className="border-r p-2 bg-white drop-shadow-lg rounded-lg cursor-pointer w-full gap-3">
-                      <div className="max-w-xs overflow-hidden transition-shadow duration-300 ease-in-out">
+                      <div className="lg:w-96 md:w-72 w-56 min-w-xs overflow-hidden transition-shadow duration-300 ease-in-out">
                         <NavLink to={`/post/${post?.post_id}`}>
                           <img src={post?.cover_img}
                             className="object-cover w-full rounded-xl h-[25vh]"

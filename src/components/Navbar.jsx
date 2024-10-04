@@ -7,7 +7,7 @@ import { GiBookmarklet } from "react-icons/gi";
 import { HiOutlineLogout } from "react-icons/hi";
 import { IoIosArrowDown } from "react-icons/io";
 import { SlNote } from "react-icons/sl";
-import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
 import useUsers from "../context/User";
 import useTheme from "../context/theme";
@@ -177,9 +177,9 @@ const Navbar = () => {
         try {
             await supabase.auth.signInWithOAuth({
                 provider: "github",
-                options: {
-                    redirectTo: 'http://localhost:5173'
-                }
+                // options: {
+                //     redirectTo: 'http://localhost:5173'
+                // }
             });
             setRegister(false);
             setLogin(false);
@@ -203,9 +203,9 @@ const Navbar = () => {
         try {
             await supabase.auth.signInWithOAuth({
                 provider: 'google',
-                options: {
-                    redirectTo: 'https://1n8gt30h-5173.inc1.devtunnels.ms/'
-                }
+                // options: {
+                //     redirectTo: 'http://localhost:5173'
+                // }
             });
             setRegister(false);
             setLogin(false)
@@ -595,43 +595,44 @@ const Navbar = () => {
                 </LoignModel>
             }
 
-            {username && <LoignModel model={username}>
-                <div className="absolute top-12 left-1/2 transform -translate-x-1/2 z-30 shadow-sm mx-auto w-[20%] bg-slate-100 p-4 rounded-lg">
-                    <form className="space-y-4"
-                        onSubmit={setUserName}>
-                        <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Set User_name</label>
-                        <input
-                            type="text"
-                            name="username"
-                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                            placeholder="username"
-                            autoFocus
-                            value={value}
-                            onChange={e => setValue(e.target.value)} />
-                        {
-                            error.length > 0 &&
-                            <p className="text-red-500 text-sm">
-                                {error}
-                            </p>
-                        }
-                        <button
-                            onClick={setUserName}
-                            className="w-full font-medium rounded-lg text-sm px-5 py-2.5 text-center outline-gray-400 bg-slate-800 text-white">
-                            Confirm
-                        </button>
-                    </form>
-                </div>
-            </LoignModel>}
+            {username &&
+                <LoignModel model={username}>
+                    <div className="absolute top-12 left-1/2 transform -translate-x-1/2 z-30 shadow-sm mx-auto lg:w-[25%] md:w-[40%] w-[80%] bg-slate-200 p-4 rounded-lg">
+                        <form className="space-y-4"
+                            onSubmit={setUserName}>
+                            <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Set User_name</label>
+                            <input
+                                type="text"
+                                name="username"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                placeholder="username"
+                                autoFocus
+                                value={value}
+                                onChange={e => setValue(e.target.value)} />
+                            {
+                                error.length > 0 &&
+                                <p className="text-red-500 text-sm">
+                                    {error}
+                                </p>
+                            }
+                            <button
+                                onClick={setUserName}
+                                className="w-full font-medium rounded-lg text-sm px-5 py-2.5 text-center outline-gray-400 bg-[#3369df] text-white">
+                                Confirm
+                            </button>
+                        </form>
+                    </div>
+                </LoignModel>}
 
             <nav className="flex items-center justify-between md:px-2 py-4 border-b-2">
                 <div className="flex items-center justify-between">
-                    <Link to={'/'} className="flex items-center mx-3 outline-none">
+                    <NavLink to={'/'} className="flex items-center mx-3 outline-none">
                         {themeMode ? <img src={themeMode == "dark" ? "/whiteblogicon.png" : "/blogicon.png"}
                             className="min-w-10 w-10" /> : <img src="/blogicon.png" className="min-w-10 w-10 m-0" />}
                         <p className="mx-2 hidden md:block font-semibold text-2xl dark:text-white">
                             DevDiscuss
                         </p>
-                    </Link>
+                    </NavLink>
                     <form
                         className="input-feild flex mx-1 items-center bg-slate-200 rounded-xl w-full"
                         onSubmit={handleSearchSubmit}
@@ -660,20 +661,20 @@ const Navbar = () => {
                                             Post
                                         </button>
                                     )
-                                        : <Link to={"/write"} className="flex items-center mx-1">
+                                        : <NavLink to={"/write"} className="flex items-center mx-1">
                                             <div className="mx-3 flex items-center hover:text-slate-500 cursor-pointer">
                                                 <SlNote className="dark:text-white text-xl" />
                                                 <p className="mx-1 font-normal dark:text-white">
                                                     Write
                                                 </p>
                                             </div>
-                                        </Link>
+                                        </NavLink>
                                 }
                                 <div className="mx-1" >
                                     <div className="flex items-center cursor-pointer"
                                         onClick={() => setModel(prev => !prev)}>
                                         <img src={cur_user?.avatar_url || "/blank-avatar.webp"}
-                                            className="w-[5.5em] h-[2.75em] md:w-[3.2em] md:h-[2.8em] lg:w-[3em] lg:h-[2.95em] object-cover rounded-full hover:scale-90 transition-all duration-200 relative"
+                                            className="w-[4.1em] h-[2.75em] md:w-[3.2em] md:h-[2.8em] lg:w-[3em] lg:h-[2.95em] object-cover rounded-full hover:scale-90 transition-all duration-200 relative"
                                         />
                                         <IoIosArrowDown className="mx-2 hidden md:block dark:text-white" />
                                     </div>

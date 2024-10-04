@@ -72,6 +72,8 @@ const Post = () => {
 
             } catch (error) {
                 console.log(error);
+                alert("Post doesn't Exists");
+                navigate('/');
             }
         })();
     }, [id])
@@ -579,8 +581,8 @@ const Post = () => {
             }
 
             <section className="md:p-2 lg:p-5">
-                <div className="my-3 flex items-center justify-between w-[80%] mx-auto p-4 border-b-2">
-                    <div className="flex items-center">
+                <div className="my-3 flex items-center justify-between mx-auto p-4 border-b-2">
+                    <div className="flex items-center w-full">
                         <img src={thatUser ? thatUser?.avatar_url : '/blank-avatar.webp'}
                             alt="profile-pic"
                             className="md:w-20 w-12 rounded-full" />
