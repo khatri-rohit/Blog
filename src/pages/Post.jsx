@@ -623,7 +623,7 @@ const Post = () => {
                                 </div>
                             </div>
 
-                            <div className="relative mb-7 mx-3">
+                            <div className="relative mb-7 ms-8">
                                 {
                                     cur_user.id === post.user_id &&
                                     <button

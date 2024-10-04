@@ -32,15 +32,14 @@ const RecommendPosts = ({ post, id }) => {
             <p className="text-2xl font-bold">
                 Recommended Posts
             </p>
-            <div className="p-3 md:grid md:grid-cols-2 gap-4 md:w-[70%]">
+            <div className="p-3 md:grid md:grid-cols-2 gap-4 lg:w-[70%]">
                 {
                     commanPosts?.map((posts, _) => (
                         posts.id !== post.id &&
-                        <div className="border-r p-2 bg-white mr-1 drop-shadow-lg rounded-lg cursor-auto"
+                        <div className="border-r p-2 bg-white mr-1 drop-shadow-lg rounded-lg cursor-auto" onClick={() => navigate(`/post/${posts.id}`)}
                             key={_}>
                             <div className="overflow-hidden transition-shadow duration-300 ease-in-out">
-                                <div className="cursor-pointer"
-                                    onClick={() => navigate(`/post/${posts.id}`)}>
+                                <div className="cursor-pointer">
                                     <img src={posts?.image_url}
                                         className="object-cover w-full rounded-xl h-[25vh]"
                                         alt={posts?.blog_title}

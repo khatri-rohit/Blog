@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import { BiLogoGithub, BiLogoGoogle, BiSearch } from "react-icons/bi";
+import { BiLogoGithub, BiSearch } from "react-icons/bi";
 import { CgDarkMode } from "react-icons/cg";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { GiBookmarklet } from "react-icons/gi";
@@ -22,6 +22,29 @@ const Navbar = () => {
     const [username, setUsername] = useState(false);
     const [value, setValue] = useState('');
     const [error, setError] = useState('')
+    const [isDark, setIsDark] = useState(false);
+
+    const [eye, setEye] = useState(false);
+    const [search, setSearch] = useState('');
+    const [timeoutId, setTimeoutId] = useState();
+    const [model, setModel] = useState(false);
+    const [login, setLogin] = useState(false);
+    const [reg, setRegister] = useState(false);
+    const [cur_user, setCur_user] = useState(false);
+
+    const [userCre, setUserCre] = useState({
+        username: "",
+        name: "",
+        nameError: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        usernameError: "",
+        emailError: "",
+        passwordError: "",
+        confirmPasswordError: ""
+    });
+
 
     const {
         user,
@@ -38,31 +61,8 @@ const Navbar = () => {
     }
 
     useEffect(() => {
-        themeMode === "light" ? setIsDark(false) : setIsDark(true);
+        themeMode === "dark" ? setIsDark(true) : setIsDark(false);
     }, []);
-
-
-    const [eye, setEye] = useState(false);
-    const [search, setSearch] = useState('');
-    const [timeoutId, setTimeoutId] = useState();
-    const [model, setModel] = useState(false);
-    const [login, setLogin] = useState(false);
-    const [reg, setRegister] = useState(false);
-    const [isDark, setIsDark] = useState(false);
-    const [cur_user, setCur_user] = useState(false);
-
-    const [userCre, setUserCre] = useState({
-        username: "",
-        name: "",
-        nameError: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-        usernameError: "",
-        emailError: "",
-        passwordError: "",
-        confirmPasswordError: ""
-    });
 
     const onSubmit = async (e) => {
         e.preventDefault();
@@ -203,9 +203,9 @@ const Navbar = () => {
         try {
             await supabase.auth.signInWithOAuth({
                 provider: 'google',
-                // options: {
-                //     redirectTo: 'http://localhost:5173'
-                // }
+                options: {
+                    redirectTo: 'https://1n8gt30h-5173.inc1.devtunnels.ms/'
+                }
             });
             setRegister(false);
             setLogin(false)
@@ -368,8 +368,7 @@ const Navbar = () => {
                             <div className="p-4 md:p-5">
                                 <button
                                     className="my-3 w-full border bg-white hover:bg-slate-300 font-medium rounded-lg md:text-sm text-[0.7em] px-5 py-3 text-center dark:bg-gray-500 dark:hover:bg-gray-500 flex items-center justify-center outline-none" onClick={googleSighUp}>
-                                    <BiLogoGoogle
-                                        className="mx-1 md:text-2xl text-[1em] text-slate-500" />
+                                    <img src="/google.png" className="w-6 mx-2" />
                                     Continue with Google
                                 </button>
                                 <button
@@ -522,8 +521,7 @@ const Navbar = () => {
                             <div className="p-4 md:p-5">
                                 <button
                                     className="my-3 w-full border bg-white hover:bg-slate-300 font-medium rounded-lg md:text-sm text-[0.7em] px-5 py-3 text-center dark:bg-gray-500 dark:hover:bg-gray-500 flex items-center justify-center outline-none" onClick={googleSighUp}>
-                                    <BiLogoGoogle
-                                        className="mx-1 md:text-2xl text-[1em] text-slate-500" />
+                                    <img src="/google.png" className="w-6 mx-2" />
                                     Continue with Google
                                 </button>
                                 <button
@@ -628,7 +626,7 @@ const Navbar = () => {
             <nav className="flex items-center justify-between md:px-2 py-4 border-b-2">
                 <div className="flex items-center justify-between">
                     <Link to={'/'} className="flex items-center mx-3 outline-none">
-                        {themeMode ? <img src="/whiteblogicon.png"
+                        {themeMode ? <img src={themeMode == "dark" ? "/whiteblogicon.png" : "/blogicon.png"}
                             className="min-w-10 w-10" /> : <img src="/blogicon.png" className="min-w-10 w-10 m-0" />}
                         <p className="mx-2 hidden md:block font-semibold text-2xl dark:text-white">
                             DevDiscuss
