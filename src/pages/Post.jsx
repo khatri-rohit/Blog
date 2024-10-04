@@ -581,7 +581,7 @@ const Post = () => {
             }
 
             <section className="md:p-2 lg:p-5">
-                <div className="my-3 flex items-center justify-between mx-auto p-4 border-b-2">
+                <div className="my-3 flex items-center justify-between mx-auto w-full md:w-[80%] p-4 border-b-2">
                     <div className="flex items-center w-full">
                         <img src={thatUser ? thatUser?.avatar_url : '/blank-avatar.webp'}
                             alt="profile-pic"
