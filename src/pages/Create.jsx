@@ -5,7 +5,8 @@ import useUsers from "../context/User";
 import Preview from '../components/Preview';
 import { supabase } from "../../supabaseClient";
 import { useNavigate } from "react-router-dom";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
+import useTheme from "../context/theme";
 
 
 const Create = () => {
@@ -15,7 +16,7 @@ const Create = () => {
   const { user } = useUsers();
   const [usrename, setUsername] = useState('');
   const { publish } = useUsers();
-
+  const { themeMode } = useTheme();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -80,7 +81,7 @@ const Create = () => {
         value={blog_content}
         onChange={setBlog_content}
         placeholder='Write About Pour Post...'
-        className='dark:text-white my-5 p-0 create' />
+        className={`my-5 p-0 create ${themeMode === "dark" && 'create-dark'}`} />
 
       <div className={`${publish ? 'visible opacity-100' : 'invisible opacity-0'} transition-all duration-200`}>
         <Preview title={title} usrename={usrename} blog_content={blog_content} />

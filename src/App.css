@@ -31,5 +31,14 @@ body {
 
 
 .create .ql-editor {
-    font-size: 1.5em;
+    font-size: 1.3em;
+}
+
+.create-dark .ql-editor {
+    font-size: 1.3em;
+    color: white;
+}
+
+.quill>.ql-container>.ql-editor.ql-blank::before {
+    color: gray;
 }
