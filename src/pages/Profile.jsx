@@ -250,7 +250,8 @@ const Account = () => {
           accept="image/png, image/jpeg"
           hidden />
 
-        <form className="flex flex-col items-start mx-3" onSubmit={(event) => handleNameChange(event, "save")}>
+        <form className="flex flex-col items-start mx-3"
+          onSubmit={(event) => handleNameChange(event, "save")}>
           {
             changeName ?
               <input type="text"

@@ -628,7 +628,7 @@ const Post = () => {
                                     cur_user.id === post.user_id &&
                                     <button
                                         className="absolute right-0"
-                                        onClick={() => setDrop(true)}>
+                                        onClick={() => setDrop(prev => !prev)}>
                                         <BiDotsHorizontalRounded className="text-3xl dark:text-white" />
                                         {
                                             drop && <DropDown setShowDrop={setDrop} showDrop={drop} size={"w-[8rem]"}>
@@ -661,10 +661,10 @@ const Post = () => {
                             <div className="md:p-3 p-1">
                                 <div className="md:mt-10">
                                     <div className="md:w-10/12 mx-auto">
-                                        <p className="md:text-3xl lg:text-5xl text-[1.5em] text-center font-extrabold md:mb-7 dark:text-white md:text-pretty">
+                                        <p className="md:text-3xl lg:text-5xl text-[1.5em] text-center font-bold md:mb-7 dark:text-white md:text-pretty">
                                             {post?.blog_title}
                                         </p>
-                                        <p className="md:text-xl text-[1.2em] text-center text-gray-400 md:mt-3 md:mb-5 my-3 text-pretty dark:text-stone-200"
+                                        <p className="md:text-xl text-[1.2em] text-center text-gray-500 md:mt-3 md:mb-5 my-3 text-pretty dark:text-stone-200"
                                             dangerouslySetInnerHTML={{ __html: post?.summary }}>
                                         </p>
                                     </div>
@@ -684,7 +684,7 @@ const Post = () => {
                     )
                 }
             </section>
-            {post && <RecommendPosts post={post} />}
+            {post && <RecommendPosts post={post} id={id} />}
         </div>
     )
 };

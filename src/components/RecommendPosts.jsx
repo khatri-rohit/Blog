@@ -3,14 +3,14 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import usePost from "../hooks/Blogs";
 
-const RecommendPosts = ({ post }) => {
+const RecommendPosts = ({ post, id }) => {
 
     const [data] = usePost();
     const [commanPosts, setCommanPosts] = useState([]);
     const navigate = useNavigate(null);
+    const recommendedPosts = [];
 
     useEffect(() => {
-        const recommendedPosts = [];
         data.map((blog) => {
             const PostTags = blog.tags.map(tag => tag.toLowerCase());
             const commantags = PostTags.filter((tags) => post?.tags?.includes(tags));
@@ -23,8 +23,8 @@ const RecommendPosts = ({ post }) => {
         });
         console.log(recommendedPosts);
         setCommanPosts(recommendedPosts);
-        
-    }, [post]);
+
+    }, [id, data]);
 
     return (
         commanPosts?.length !== 0 &&
@@ -51,8 +51,8 @@ const RecommendPosts = ({ post }) => {
                                         style={{ lineHeight: "1em" }}>
                                         {posts?.blog_title}
                                     </p>
-                                    <p className="text-pretty mt-2"
-                                        dangerouslySetInnerHTML={{ __html: posts?.summary }} />
+                                    <p className="text-pretty mt-2 text-gray-900"
+                                        dangerouslySetInnerHTML={{ __html: (posts?.summary)?.substring(0, 150) + ". . ." }} />
                                 </div>
 
                             </div>
