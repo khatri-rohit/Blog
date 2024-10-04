@@ -43,6 +43,7 @@ const Preview = ({ title, blog_content, usrename }) => {
 
     const handleCreatePost = async () => {
         console.log("Creating Post....");
+        setShowConfetti(true);
 
         try {
             const now = new Date();
@@ -83,7 +84,6 @@ const Preview = ({ title, blog_content, usrename }) => {
                         user: []
                     }]);
 
-                setShowConfetti(true);
                 setTimeout(() => {
                     console.log("Fire Confetti");
                     setShowConfetti(false);
@@ -111,8 +111,11 @@ const Preview = ({ title, blog_content, usrename }) => {
                             'aria-live': 'polite',
                         },
                     });
-                }, 3500);
+                }, 2500);
             } else {
+                setShowConfetti(false);
+                console.log("Post Pending....");
+
                 if (title.trim().length === 0) {
                     toast('Enter Title', {
                         duration: 1500,
@@ -321,7 +324,7 @@ const Preview = ({ title, blog_content, usrename }) => {
                         <button
                             onClick={handleCreatePost}
                             disabled={showConfetti}
-                            className={`px-5 w-fit py-1 bg-[#1E3E62] hover:bg-[#1E3E62]/80 duration-500 transition-all rounded-full text-white mx-3 text-xl ${showConfetti && 'bg-slate-200 text-gray-500'}`}>
+                            className="px-5 w-fit py-1 bg-[#1E3E62] hover:bg-[#1E3E62]/80 duration-200 transition-all rounded-full text-white mx-3 text-xl disabled:bg-[#1E3E62]/50">
                             Post Blog
                         </button>
                     </div>

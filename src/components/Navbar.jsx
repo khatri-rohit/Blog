@@ -657,7 +657,8 @@ const Navbar = () => {
                                 {
                                     pathname === '/write' ? (
                                         <button
-                                            className="px-5 py-1 bg-[#1E3E62] hover:bg-[#1E3E62]/50 rounded-full text-white mx-3 text-xl" onClick={() => changePublish(true)}>
+                                            className="px-5 py-1 bg-[#1E3E62] hover:bg-[#1E3E62]/50 rounded-full text-white md:mx-3 md:text-xl text-[0.8em]"
+                                            onClick={() => changePublish(true)}>
                                             Post
                                         </button>
                                     )

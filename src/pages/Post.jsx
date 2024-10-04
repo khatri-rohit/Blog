@@ -595,32 +595,34 @@ const Post = () => {
                     </div>
                     {
                         user.id &&
-                        <div className="flex items-center">
-                            <div className="flex items-center md:me-4">
+                        <div className="flex items-start">
 
-                                <div className="mx-2 cursor-pointer ">
+                            <div className="flex items-start">
+
+                                <div className="mx-2 cursor-pointer">
                                     <SharePost />
                                 </div>
-                                <div className="mx-2  dark:text-white flex items-center cursor-pointer">
+                                <div className="mx-2 dark:text-white flex items-center cursor-pointer">
                                     <IoBookmarksOutline
                                         className="md:text-2xl text-[1.2em]"
                                         onClick={handleSave} />
                                 </div>
-                                <div className="md:mx-2 dark:text-white flex items-center cursor-pointer">
+                                <div className="md:mx-2 dark:text-white flex items-start cursor-pointer">
                                     <BiMessageSquareEdit className="md:text-2xl text-[1.2em]"
                                         onClick={() => setSildebar(true)} />
-                                    <p className="mx-1 flex items-center font-medium md:text-lg md:mb-1 text-[1em]">
+                                    <p className="mx-1 font-medium md:text-xl text-[1.2em]">
                                         {comments?.content.length}
                                     </p>
                                 </div>
-                                <div className="dark:text-white mx-2 flex items-center cursor-pointer"
+                                <div className="dark:text-white flex items-start cursor-pointer"
                                     onClick={updateLike}>
-                                    <FaHeart className="md:text-[1.2em] text-[1em] text-pink-500 cursor-pointer" />
-                                    <p className="mx-1 flex items-center font-medium md:text-lg md:mb-1 text-[1em]">
+                                    <FaHeart className="md:text-2xl text-[1.2em] text-pink-500 cursor-pointer" />
+                                    <p className="mx-1 font-medium md:text-xl md:mb-1 text-[1em]">
                                         {likeCount}
                                     </p>
                                 </div>
                             </div>
+
                             <div className="relative mb-7 mx-3">
                                 {
                                     cur_user.id === post.user_id &&
