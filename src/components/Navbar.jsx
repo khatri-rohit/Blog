@@ -677,7 +677,7 @@ const Navbar = () => {
                                     <div className="flex items-center cursor-pointer"
                                         onClick={() => setModel(prev => !prev)}>
                                         <img src={cur_user?.avatar_url || "/blank-avatar.webp"}
-                                            className="w-[4.1em] h-[2.75em] md:w-[3.2em] md:h-[2.8em] lg:w-[3em] lg:h-[2.95em] object-cover rounded-full hover:scale-90 transition-all duration-200 relative"
+                                            className="w-[6em] h-[2.75em] md:w-[3.2em] md:h-[2.8em] lg:w-[3em] lg:h-[2.95em] object-cover rounded-full hover:scale-90 transition-all duration-200 relative"
                                         />
                                         <IoIosArrowDown className="mx-2 hidden md:block dark:text-white" />
                                     </div>
