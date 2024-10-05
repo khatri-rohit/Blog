@@ -30,7 +30,7 @@ const Post = () => {
     const [likedUsers, setLikedUsers] = useState([])
     const [registered, setRegister] = useState([]);
     const [alter, setAlter] = useState(false);
-    const [slidebar, setSildebar] = useState(false);
+    const [slidebar, setSildebar] = useState(true);
     const [commentText, setCommentText] = useState('');
     const [commentsCount, setCommentsCount] = useState([]);
     const [drop, setDrop] = useState(false);
@@ -459,7 +459,7 @@ const Post = () => {
             {slidebar &&
                 <Model model={slidebar} setModel={setSildebar}>
                     <div
-                        className={`bg-gray-100 border-r-2 dark:bg-slate-700 fixed top-0 h-full z-30 ${slidebar ? `left-0 transition-colors duration-500 ${slidebar && 'w-[23%]'}` : '-left-full transition-colors duration-500'}`}>
+                        className={`bg-gray-100 border-r-2 dark:bg-slate-700 fixed top-0 h-full z-30 ${slidebar ? `left-0 transition-colors duration-500 ${slidebar && 'lg:w-[23%] md:w-[30%] w-[35%]'}` : '-left-full transition-colors duration-500'}`}>
                         <div className="flex items-center justify-between p-4">
                             <p className="text-xl font-medium dark:text-white">
                                 Comments
