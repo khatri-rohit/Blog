@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { BiLogoGithub, BiSearch } from "react-icons/bi";
-import { CgDarkMode } from "react-icons/cg";
+import { BsMoonStars } from "react-icons/bs";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { GiBookmarklet } from "react-icons/gi";
 import { HiOutlineLogout } from "react-icons/hi";
@@ -13,6 +13,9 @@ import useUsers from "../context/User";
 import useTheme from "../context/theme";
 import { LoignModel } from "../utils/LoignModel";
 import Model from "../utils/Model";
+import { IoMoonOutline } from "react-icons/io5";
+import { MdOutlineWbSunny } from "react-icons/md";
+import { LuSun, LuSunDim } from "react-icons/lu";
 
 const Navbar = () => {
 
@@ -177,9 +180,6 @@ const Navbar = () => {
         try {
             await supabase.auth.signInWithOAuth({
                 provider: "github",
-                // options: {
-                //     redirectTo: 'http://localhost:5173'
-                // }
             });
             setRegister(false);
             setLogin(false);
@@ -203,9 +203,6 @@ const Navbar = () => {
         try {
             await supabase.auth.signInWithOAuth({
                 provider: 'google',
-                // options: {
-                //     redirectTo: 'http://localhost:5173'
-                // }
             });
             setRegister(false);
             setLogin(false)
@@ -336,6 +333,10 @@ const Navbar = () => {
         navigate(`/search?q=${encodeURIComponent(search)}`)
     }, [search]);
 
+    const emptyData = () => {
+        setUserCre({ ...userCre, confirmPassword: "", email: "", confirmPasswordError: "", emailError: "", name: "", nameError: "", password: "", passwordError: "", username: "", usernameError: "" });
+    }
+
     useEffect(() => {
         return () => clearTimeout(timeoutId);
     }, [timeoutId]);
@@ -350,11 +351,11 @@ const Navbar = () => {
                 <LoignModel model={reg}>
                     <div className="absolute top-5 left-1/2 transform -translate-x-1/2 z-10 shadow-sm mx-auto lg:w-[28%] md:w-[40%] w-[80%] bg-[#E9EFEC]">
                         {/* <!-- Modal content --> */}
-                        <div className="relative bg-white rounded-lg shadow dark:bg-gray-700 p-2">
+                        <div className="relative bg-white rounded-lg shadow p-2 dark:bg-transparent dark:bg-[#787A91]">
                             {/* <!-- Modal header --> */}
                             <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-                                <p className="md:text-xl text-[1em] font-semibold text-gray-900 dark:text-white">
-                                    Welcome to <span className="text-gray-600 font-bold">DevDiscuss</span>
+                                <p className="md:text-xl lg:text-lg text-[1em] font-semibold text-gray-900 dark:text-white">
+                                    Welcome to <span className="dark:text-slate-200">DevDiscuss</span>
                                 </p>
                                 <button type="button" className="end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white outline-none" data-modal-hide="authentication-modal"
                                     onClick={() => setRegister(false)}>
@@ -367,12 +368,12 @@ const Navbar = () => {
                             {/* <!-- Modal body --> */}
                             <div className="p-4 md:p-5">
                                 <button
-                                    className="my-3 w-full border bg-white hover:bg-slate-300 font-medium rounded-lg md:text-sm text-[0.7em] px-5 py-3 text-center dark:bg-gray-500 dark:hover:bg-gray-500 flex items-center justify-center outline-none" onClick={googleSighUp}>
+                                    className="my-3 w-full border bg-slate-200 text-slate-500 hover:bg-slate-300 font-medium rounded-lg md:text-sm text-[0.7em] px-5 py-3 text-center dark:text-black dark:hover:bg-opacity-85 flex items-center justify-center outline-none" onClick={googleSighUp}>
                                     <img src="/google.png" className="w-6 mx-2" />
                                     Continue with Google
                                 </button>
                                 <button
-                                    className="my-3 w-full text-white bg-gray-700 hover:bg-gray-900 font-medium rounded-lg md:text-sm text-[0.7em] px-5 py-3 text-center dark:bg-gray-700 dark:hover:bg-gray-900 flex items-center justify-center outline-none" onClick={githubSignIn}>
+                                    className="my-3 w-full border text-white bg-gray-700 hover:bg-gray-900 font-medium rounded-lg md:text-sm text-[0.7em] px-5 py-3 text-center dark:bg-gray-700 dark:hover:bg-gray-900 flex items-center justify-center outline-none" onClick={githubSignIn}>
                                     <BiLogoGithub
                                         className="mx-1 md:text-2xl text-[1em]" />
                                     Continue with Github
@@ -388,8 +389,8 @@ const Navbar = () => {
                                             type="text"
                                             name="name"
                                             value={userCre.username}
-                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                                            placeholder="Enter Name" autoFocus
+                                            className="bg-gray-50 dark:text-slate-200  text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-400 dark:placeholder-slate-200 outline-none"
+                                            placeholder="Username" autoFocus
                                             onChange={e => setUserCre({ ...userCre, username: e.target.value })} />
                                         {
                                             userCre.usernameError.length > 0 &&
@@ -406,7 +407,7 @@ const Navbar = () => {
                                             type="text"
                                             name="name"
                                             value={userCre.name}
-                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                            className="bg-gray-50 dark:text-slate-200  text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-400 dark:placeholder-slate-200 outline-none"
                                             placeholder="Enter Name" autoFocus
                                             onChange={e => setUserCre({ ...userCre, name: e.target.value })} />
                                         {
@@ -423,7 +424,7 @@ const Navbar = () => {
                                         <input
                                             type="email"
                                             name="email"
-                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                            className="bg-gray-50 dark:text-slate-200  text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-400 dark:placeholder-slate-200 outline-none"
                                             placeholder="Email"
                                             value={userCre.email}
                                             onChange={e => setUserCre({ ...userCre, email: e.target.value })}
@@ -439,17 +440,18 @@ const Navbar = () => {
                                         <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                             Your password
                                         </label>
-                                        <div className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white flex items-center justify-between focus:outline-black outline-2">
+                                        <div className="bg-gray-50 text-sm rounded-lg w-full p-2.5 dark:bg-gray-400 dark:text-white active:bg-slate-200  flex items-center justify-between">
                                             <input
                                                 type={eye ? `text` : `password`}
                                                 name="password"
                                                 placeholder="••••••••"
-                                                className="outline-none bg-transparent"
+                                                className="outline-none bg-transparent dark:placeholder-slate-200 dark:text-slate-200 text-gray-900"
                                                 value={userCre.password}
                                                 onChange={e => setUserCre({ ...userCre, password: e.target.value })}
                                             />
-                                            <div className="text-[1rem]" onClick={() => setEye(!eye)}>
-                                                {eye ? <FaRegEyeSlash /> : <FaRegEye />}
+                                            <div className="text-[1rem]"
+                                                onClick={() => setEye(!eye)}>
+                                                {eye ? <FaRegEyeSlash className="text-gray-600" /> : <FaRegEye className="text-gray-600" />}
                                             </div>
                                         </div>
                                         {
@@ -467,19 +469,19 @@ const Navbar = () => {
                                             type="password"
                                             name="confirmPassword"
                                             placeholder="••••••••"
-                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                            className="bg-gray-50 dark:text-slate-200  text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-400 dark:placeholder-slate-200 outline-none"
                                             value={userCre.confirmPassword}
                                             onChange={e => setUserCre({ ...userCre, confirmPassword: e.target.value })} />
                                         {
                                             userCre.confirmPasswordError.length > 0 &&
-                                            <p className="text-red-500 text-sm">
+                                            <p className="text-red-700 text-sm">
                                                 {userCre.confirmPasswordError}
                                             </p>
                                         }
                                     </div>
                                     <button
                                         type="submit"
-                                        className="w-full focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center outline-none bg-slate-500 text-white">
+                                        className="w-full font-medium rounded-lg text-sm px-5 py-2.5 text-center outline-gray-400 bg-gray-400 hover:bg-opacity-50 text-white">
                                         Create Account
                                     </button>
                                 </form>
@@ -488,6 +490,7 @@ const Navbar = () => {
                                         onClick={() => {
                                             setLogin(true);
                                             setRegister(false);
+                                            emptyData();
                                         }}>
                                         Login
                                     </button>
@@ -500,13 +503,13 @@ const Navbar = () => {
 
             {login &&
                 <LoignModel model={login}>
-                    <div className="absolute top-5 left-1/2 transform -translate-x-1/2 z-10 shadow-sm mx-auto lg:w-[25%] md:w-[40%] w-[80%] bg-[#E9EFEC]">
+                    <div className="absolute top-5 left-1/2 transform -translate-x-1/2 z-10 shadow-sm mx-auto lg:w-[30%] md:w-[40%] w-[80%] bg-[#E9EFEC]">
                         {/* <!-- Modal content --> */}
-                        <div className="relative bg-white rounded-lg shadow dark:bg-gray-700 p-2">
+                        <div className="relative bg-white rounded-lg shadow p-2 dark:bg-transparent dark:bg-[#787A91]">
                             {/* <!-- Modal header --> */}
-                            <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-                                <p className="md:text-xl text-[1em] font-semibold text-gray-900 dark:text-white">
-                                    Welcome Back <span className="text-gray-600">DevDiscuss</span>
+                            <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-slate-400">
+                                <p className="md:text-xl lg:text-lg text-[1em] font-semibold text-gray-900 dark:text-white">
+                                    Welcome Back <span className="dark:text-slate-200">DevDiscuss</span>
                                 </p>
                                 <button type="button"
                                     className="end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white outline-none" data-modal-hide="authentication-modal"
@@ -520,25 +523,25 @@ const Navbar = () => {
                             {/* <!-- Modal body --> */}
                             <div className="p-4 md:p-5">
                                 <button
-                                    className="my-3 w-full border bg-white hover:bg-slate-300 font-medium rounded-lg md:text-sm text-[0.7em] px-5 py-3 text-center dark:bg-gray-500 dark:hover:bg-gray-500 flex items-center justify-center outline-none" onClick={googleSighUp}>
+                                    className="my-3 w-full border bg-slate-200 text-slate-500 hover:bg-slate-300 font-medium rounded-lg md:text-sm text-[0.7em] px-5 py-3 text-center dark:text-black dark:hover:bg-opacity-85 flex items-center justify-center outline-none" onClick={googleSighUp}>
                                     <img src="/google.png" className="w-6 mx-2" />
                                     Continue with Google
                                 </button>
                                 <button
-                                    className="my-3 w-full text-white bg-gray-700 hover:bg-gray-900 font-medium rounded-lg md:text-sm text-[0.7em] px-5 py-3 text-center dark:bg-gray-700 dark:hover:bg-gray-900 flex items-center justify-center outline-none" onClick={githubSignIn}>
+                                    className="my-3 w-full border text-white bg-gray-700 hover:bg-gray-900 font-medium rounded-lg md:text-sm text-[0.7em] px-5 py-3 text-center dark:bg-gray-700 dark:hover:bg-gray-900 flex items-center justify-center outline-none" onClick={githubSignIn}>
                                     <BiLogoGithub
                                         className="mx-1 md:text-2xl text-[1em]" />
                                     Continue with Github
                                 </button>
-                                <p className="font-medium text-center my-2">Or</p>
+                                <p className="font-medium text-center w-full dark:text-white">Or</p>
                                 <form className="space-y-4"
                                     onSubmit={onSubmit}>
                                     <div>
-                                        <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
+                                        <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
                                         <input
                                             type="email"
                                             name="email"
-                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                            className="bg-gray-50 dark:text-slate-200  text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-400 dark:placeholder-slate-200 outline-none"
                                             placeholder="Email" autoFocus
                                             value={userCre.email}
                                             onChange={e => setUserCre({ ...userCre, email: e.target.value })} />
@@ -550,20 +553,22 @@ const Navbar = () => {
                                         }
                                     </div>
                                     <div>
-                                        <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                            Your password
+                                        <label htmlFor="password"
+                                            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                            Password
                                         </label>
-                                        <div className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white flex items-center justify-between focus:outline-black outline-2">
+                                        <div className="bg-gray-50 text-sm rounded-lg w-full p-2.5 dark:bg-gray-400 dark:text-white active:bg-slate-200  flex items-center justify-between">
                                             <input
                                                 type={eye ? `text` : `password`}
                                                 name="password"
                                                 placeholder="••••••••"
-                                                className="outline-none bg-transparent"
+                                                className="outline-none bg-transparent dark:placeholder-slate-200 dark:text-slate-200 text-gray-900"
                                                 value={userCre.password}
                                                 onChange={e => setUserCre({ ...userCre, password: e.target.value })}
                                             />
-                                            <div className="text-[1rem]" onClick={() => setEye(!eye)}>
-                                                {eye ? <FaRegEyeSlash /> : <FaRegEye />}
+                                            <div className="text-[1rem]"
+                                                onClick={() => setEye(!eye)}>
+                                                {eye ? <FaRegEyeSlash className="text-gray-600" /> : <FaRegEye className="text-gray-600" />}
                                             </div>
                                         </div>
                                         {
@@ -575,27 +580,29 @@ const Navbar = () => {
                                     </div>
                                     <button
                                         onClick={onSubmit}
-                                        className="w-full font-medium rounded-lg text-sm px-5 py-2.5 text-center outline-gray-400 bg-green-500 text-white">
+                                        className="w-full font-medium rounded-lg text-sm px-5 py-2.5 text-center outline-gray-400 bg-gray-400 hover:bg-opacity-50 text-white">
                                         Login to your account
                                     </button>
                                 </form>
                                 <div className="text-sm font-medium text-gray-500 dark:text-gray-300 mt-2">
                                     Not registered?
-                                    <button className="text-blue-700 hover:underline dark:text-blue-500 mx-1"
+                                    <button className="text-blue-500 hover:underline dark:text-slate-300 mx-1"
                                         onClick={() => {
                                             setRegister(true);
                                             setLogin(false);
+                                            emptyData();
                                         }}>
                                         Create account
                                     </button>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </LoignModel>
+                    </div >
+                </LoignModel >
             }
 
-            {username &&
+            {
+                username &&
                 <LoignModel model={username}>
                     <div className="absolute top-12 left-1/2 transform -translate-x-1/2 z-30 shadow-sm mx-auto lg:w-[25%] md:w-[40%] w-[80%] bg-slate-200 p-4 rounded-lg">
                         <form className="space-y-4"
@@ -617,12 +624,13 @@ const Navbar = () => {
                             }
                             <button
                                 onClick={setUserName}
-                                className="w-full font-medium rounded-lg text-sm px-5 py-2.5 text-center outline-gray-400 bg-[#3369df] text-white">
+                                className="w-full font-medium rounded-lg text-sm px-5 py-2.5 text-center outline-gray-400 bg-[#2b6eff] text-white">
                                 Confirm
                             </button>
                         </form>
                     </div>
-                </LoignModel>}
+                </LoignModel>
+            }
 
             <nav className="flex items-center justify-between md:px-2 py-4 border-b-2">
                 <div className="flex items-center justify-between">
@@ -680,7 +688,7 @@ const Navbar = () => {
                                     </div>
 
                                     <Model model={model} setModel={setModel}>
-                                        <div className={`absolute z-30 right-7 my-2 bg-slate-100 border-2 border-gray-300 px-2 py-2 w-60 items-start justify-start ${model || `hidden`}`} >
+                                        <div className={`absolute z-30 right-7 my-2 bg-slate-100 border border-gray-300 px-2 py-2 w-60 items-start justify-start ${model || `hidden`}`} >
                                             <div className="flex gap-2 items-center px-3 py-1 justify-start cursor-pointer">
                                                 <img src={cur_user?.avatar_url || "/blank-avatar.webp"} className="rounded-full w-[2rem] h-[2rem] object-cover" />
                                                 <NavLink to={`/user/${cur_user?.username}`}
@@ -695,19 +703,17 @@ const Navbar = () => {
                                                     Saved Posts
                                                 </p>
                                             </NavLink>
-                                            <div className="flex gap-2 items-center px-3 py-1 justify-start cursor-pointer"
-                                                onClick={() => {
-                                                    darkMode();
-                                                    setModel(false);
-                                                }}>
-                                                <CgDarkMode className="text-2xl" />
-                                                <p className="text-xl font-medium hover:text-slate-500 text-slate-900 mx-3">
-                                                    Dark / Light
-                                                </p>
+                                            <div className="flex items-center justify-start px-3 py-1 my-1 cursor-pointer">
+                                                <div className="w-[50%] bg-gray-500 py-2 px-2  rounded-s-lg" onClick={darkMode}>
+                                                    <BsMoonStars className="text-white text-[1.2em] mx-2" />
+                                                </div>
+                                                <div className="w-[50%] bg-slate-300 py-2 px-2  rounded-e-lg" onClick={darkMode}>
+                                                    <LuSun className="text-[1.2em] mx-2" />
+                                                </div>
                                             </div>
                                             <div className="flex gap-2 items-center px-3 py-1 justify-start cursor-pointer"
                                                 onClick={signOut}>
-                                                <HiOutlineLogout className="text-2xl" />
+                                                <HiOutlineLogout className="text-2xl hover:opacity-85" />
                                                 <p className="text-xl font-medium hover:text-slate-500 text-slate-900 mx-3">
                                                     Logout
                                                 </p>
@@ -719,13 +725,19 @@ const Navbar = () => {
                             </div>
                         ) : (
                             <>
-                                <div className="flex">
-                                    <div className="flex md:mx-3 items-center px-3 py-1 justify-start cursor-pointer"
-                                        onClick={darkMode}>
-                                        <CgDarkMode className="text-2xl dark:text-white" />
-                                    </div>
+                                <div className="flex items-center">
+                                    <button onClick={darkMode}>
+                                        {themeMode !== "dark" ? (
+                                            <IoMoonOutline className="w-8 h-8 mx-5" />
+                                        ) : (
+                                            <MdOutlineWbSunny className="w-8 h-8 mx-5 dark:text-white" />
+                                        )}
+                                    </button>
                                     <button className="bg-slate-300 md:px-4 p-2 rounded-md text-[1em] outline-none"
-                                        onClick={() => setLogin(true)}>
+                                        onClick={() => {
+                                            setLogin(true);
+                                            emptyData();
+                                        }}>
                                         SignIn
                                     </button>
                                 </div>
