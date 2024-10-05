@@ -30,7 +30,7 @@ const Post = () => {
     const [likedUsers, setLikedUsers] = useState([])
     const [registered, setRegister] = useState([]);
     const [alter, setAlter] = useState(false);
-    const [slidebar, setSildebar] = useState(true);
+    const [slidebar, setSildebar] = useState(false);
     const [commentText, setCommentText] = useState('');
     const [commentsCount, setCommentsCount] = useState([]);
     const [drop, setDrop] = useState(false);
@@ -599,25 +599,29 @@ const Post = () => {
                         user.id &&
                         <div className="flex items-start">
 
-                            <div className="flex items-start">
-
+                            <div className="flex items-center justify-center">
                                 <div className="mx-2 cursor-pointer">
                                     <SharePost />
                                 </div>
                                 <div className="mx-2 dark:text-white flex items-center cursor-pointer">
                                     <IoBookmarksOutline
                                         className="md:text-2xl text-[1.2em]"
-                                        onClick={handleSave} />
+                                        onClick={handleSave}
+                                    />
                                 </div>
-                                <div className="md:mx-2 dark:text-white flex items-start cursor-pointer">
-                                    <BiMessageSquareEdit className="md:text-2xl text-[1.2em]"
-                                        onClick={() => setSildebar(true)} />
-                                    <p className="mx-1 font-medium md:text-xl text-[1.2em]">
+                                <div className="md:mx-2 dark:text-white flex items-center cursor-pointer">
+                                    <BiMessageSquareEdit
+                                        className="md:text-2xl text-[1.2em]"
+                                        onClick={() => setSildebar(true)}
+                                    />
+                                        <p className="mx-1 font-medium md:text-xl md:mb-1 text-[1em]">
                                         {comments?.content.length}
                                     </p>
                                 </div>
-                                <div className="dark:text-white flex items-start cursor-pointer"
-                                    onClick={updateLike}>
+                                <div
+                                    className="dark:text-white flex items-center cursor-pointer"
+                                    onClick={updateLike}
+                                >
                                     <FaHeart className="md:text-2xl text-[1.2em] text-pink-500 cursor-pointer" />
                                     <p className="mx-1 font-medium md:text-xl md:mb-1 text-[1em]">
                                         {likeCount}

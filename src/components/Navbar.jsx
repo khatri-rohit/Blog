@@ -179,7 +179,7 @@ const Navbar = () => {
     const githubSignIn = async () => {
         try {
             await supabase.auth.signInWithOAuth({
-                provider: "github",
+                provider: "github"
             });
             setRegister(false);
             setLogin(false);
@@ -202,7 +202,7 @@ const Navbar = () => {
     const googleSighUp = async () => {
         try {
             await supabase.auth.signInWithOAuth({
-                provider: 'google',
+                provider: 'google'
             });
             setRegister(false);
             setLogin(false)
