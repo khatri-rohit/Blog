@@ -91,6 +91,7 @@ const App = () => {
                   <Route path="/write" Component={lazy(() => import("./pages/Create"))} />
                   <Route path="/user/:id" Component={lazy(() => import("./pages/Profile"))} />
                   <Route path="/../*" Component={lazy(() => import("./pages/Redirect"))} />
+                  <Route path="/*" Component={lazy(() => import("./pages/Redirect"))} />
                 </Route>
               </Routes>
             </div>
