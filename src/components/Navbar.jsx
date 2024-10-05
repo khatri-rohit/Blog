@@ -351,7 +351,7 @@ const Navbar = () => {
                 <LoignModel model={reg}>
                     <div className="absolute top-5 left-1/2 transform -translate-x-1/2 z-10 shadow-sm mx-auto lg:w-[28%] md:w-[40%] w-[80%] bg-[#E9EFEC]">
                         {/* <!-- Modal content --> */}
-                        <div className="relative bg-white rounded-lg shadow p-2 dark:bg-transparent dark:bg-[#787A91]">
+                        <div className="relative bg-white rounded-lg shadow p-2 dark:bg-[#787A91]">
                             {/* <!-- Modal header --> */}
                             <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                                 <p className="md:text-xl lg:text-lg text-[1em] font-semibold text-gray-900 dark:text-white">
@@ -505,7 +505,7 @@ const Navbar = () => {
                 <LoignModel model={login}>
                     <div className="absolute top-5 left-1/2 transform -translate-x-1/2 z-10 shadow-sm mx-auto lg:w-[30%] md:w-[40%] w-[80%] bg-[#E9EFEC]">
                         {/* <!-- Modal content --> */}
-                        <div className="relative bg-white rounded-lg shadow p-2 dark:bg-transparent dark:bg-[#787A91]">
+                        <div className="relative bg-white rounded-lg shadow p-2 dark:bg-[#787A91]">
                             {/* <!-- Modal header --> */}
                             <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-slate-400">
                                 <p className="md:text-xl lg:text-lg text-[1em] font-semibold text-gray-900 dark:text-white">
