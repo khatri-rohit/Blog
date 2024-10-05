@@ -462,7 +462,7 @@ const Bookmarks = () => {
                 : <div className={`flex flex-nowrap ms-0.5`}>                  {
                   (bookMarks?.map((post, _) => (
                     <div key={_}
-                      className="border-r p-2 bg-white drop-shadow-lg rounded-lg cursor-pointer w-full gap-3">
+                      className="border-r p-2 bg-white drop-shadow-lg rounded-lg cursor-pointer w-full gap-3 mx-1">
                       <div className="lg:w-96 md:w-72 w-56 min-w-xs overflow-hidden transition-shadow duration-300 ease-in-out">
                         <NavLink to={`/post/${post?.post_id}`}>
                           <img src={post?.cover_img}
