@@ -64,7 +64,7 @@ const Preview = ({ title, blog_content, usrename }) => {
                         formated_time,
                         image_url,
                         preview,
-                        tag
+                        tags:tag
                     }]);
 
                 await supabase
