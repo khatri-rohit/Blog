@@ -15,7 +15,7 @@ import { LoignModel } from "../utils/LoignModel";
 import Model from "../utils/Model";
 import { IoMoonOutline } from "react-icons/io5";
 import { MdOutlineWbSunny } from "react-icons/md";
-import { LuSun, LuSunDim } from "react-icons/lu";
+import { LuSun } from "react-icons/lu";
 
 const Navbar = () => {
 
