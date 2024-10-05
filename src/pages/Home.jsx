@@ -94,14 +94,11 @@ const Home = () => {
     };
 
     const handleSave = async (post) => {
-        console.log(post);
-
         try {
             const { data } = await supabase
                 .from('bookmarks')
                 .select()
                 .eq('post_id', post.id);
-            console.log(data);
             if (data.length === 0) {
                 await supabase.
                     from('bookmarks')

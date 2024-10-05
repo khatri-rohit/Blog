@@ -7,7 +7,6 @@ const useFetch = (id) => {
     useEffect(() => {
         ; (async () => {
             if (id) {
-                console.log("Use Custom Hook",id);
                 const { data } = await supabase
                     .from('users')
                     .select()

@@ -59,8 +59,6 @@ const Post = () => {
                 if (data) {
                     setPost(data[0]);
                     setLoading(false);
-                    console.log(data[0].tags);
-
                 }
 
                 // Author Details
@@ -459,7 +457,7 @@ const Post = () => {
             {slidebar &&
                 <Model model={slidebar} setModel={setSildebar}>
                     <div
-                        className={`bg-gray-100 border-r-2 dark:bg-slate-700 fixed top-0 h-full z-30 ${slidebar ? `left-0 transition-colors duration-500 ${slidebar && 'lg:w-[23%] md:w-[30%] w-[35%]'}` : '-left-full transition-colors duration-500'}`}>
+                        className={`bg-gray-100 border-r-2 dark:bg-slate-700 fixed top-0 h-full z-30 ${slidebar ? `left-0 transition-colors duration-500 ${slidebar && 'lg:w-[23%] md:w-[30%] w-[80%]'}` : '-left-full transition-colors duration-500'}`}>
                         <div className="flex items-center justify-between p-4">
                             <p className="text-xl font-medium dark:text-white">
                                 Comments
@@ -479,7 +477,7 @@ const Post = () => {
                                 </div>
                                 <form className="mx-3 my-2">
                                     <textarea name="comment"
-                                        className="w-full h-40 outline-none text-slate-800 text-lg font-medium resize-none bg-slate-100 p-2 rounded-md placeholder:dark:text-gray-500 text-pretty placeholder:opacity-85 border"
+                                        className="w-full md:h-40 h-28 outline-none text-slate-800 text-lg font-medium resize-none bg-slate-100 p-2 rounded-md placeholder:dark:text-gray-500 text-pretty placeholder:opacity-85 border"
                                         value={commentText}
                                         onChange={e => setCommentText(e.target.value)}
                                         placeholder="Your Thoughts on This ..."
@@ -614,7 +612,7 @@ const Post = () => {
                                         className="md:text-2xl text-[1.2em]"
                                         onClick={() => setSildebar(true)}
                                     />
-                                        <p className="mx-1 font-medium md:text-xl md:mb-1 text-[1em]">
+                                    <p className="mx-1 font-medium md:text-xl md:mb-1 text-[1em]">
                                         {comments?.content.length}
                                     </p>
                                 </div>

@@ -25,7 +25,6 @@ const Create = () => {
         .from('users')
         .select()
         .eq("id", user.id);
-      console.log(data[0].username);
       setUsername(data[0].username);
     })()
   }, [])

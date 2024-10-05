@@ -19,7 +19,6 @@ const App = () => {
 
   const oAuthStateChange = (data) => {
     setUser(data);
-    console.log(data);
   };
 
 

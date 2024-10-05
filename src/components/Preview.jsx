@@ -42,9 +42,7 @@ const Preview = ({ title, blog_content, usrename }) => {
     const navigate = useNavigate();
 
     const handleCreatePost = async () => {
-        console.log("Creating Post....");
         setShowConfetti(true);
-
         try {
             const now = new Date();
             const formated_time = date.format(now, 'ddd, MMM DD');
@@ -85,7 +83,6 @@ const Preview = ({ title, blog_content, usrename }) => {
                     }]);
 
                 setTimeout(() => {
-                    console.log("Fire Confetti");
                     setShowConfetti(false);
                     navigate('/');
                     toast('Blog Created', {
@@ -114,7 +111,6 @@ const Preview = ({ title, blog_content, usrename }) => {
                 }, 2500);
             } else {
                 setShowConfetti(false);
-                console.log("Post Pending....");
 
                 if (title.trim().length === 0) {
                     toast('Enter Title', {
@@ -243,8 +239,6 @@ const Preview = ({ title, blog_content, usrename }) => {
                 .upload(uuidv4() + "/" + uuidv4(), file);
 
             if (data) {
-                console.log(data);
-                console.log("Image Uploaded");
                 setImageURL(`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/${data.fullPath}`);
                 setPreview({ ...preview, imageURL: URL.createObjectURL(e.target.files[0]) });
                 setImgLoading(false);

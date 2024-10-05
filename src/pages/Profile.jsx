@@ -131,7 +131,6 @@ const Account = () => {
         setCur_user(data[0]);
         setName(data[0].name);
         setBio(data[0].bio);
-        console.log(data[0]);
       }
       setProtLoading(false);
     } catch (error) {
@@ -149,7 +148,6 @@ const Account = () => {
         .eq('username', id);
       if (data) {
         setBlog(data);
-        console.log(data);
       }
       setLoading(false);
     } catch (error) {
@@ -397,7 +395,6 @@ const Bookmarks = () => {
         .select()
         .eq('username', id);
       setLoading(false);
-      console.log(data);
       if (data)
         setBookMarks(data);
     } catch (error) {
@@ -410,7 +407,6 @@ const Bookmarks = () => {
   }, [])
 
   const deleteBookmark = async (postId) => {
-    console.log(postId);
     await supabase
       .from('bookmarks')
       .delete()

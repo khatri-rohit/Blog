@@ -165,7 +165,6 @@ const Navbar = () => {
             setUsername(false);
             handleTost("🎉 Registered successfully")
             loggedInUser(cur_user);
-            console.log(cur_user);
         } else {
             if (value.trim().length > 0)
                 setError("only use underscore, charaters, number")
@@ -229,7 +228,6 @@ const Navbar = () => {
                         avatar_url: user.user_metadata.avatar_url,
                         bio: ""
                     }]);
-                console.log("Successfully Registered");
             }
             const resp = await supabase
                 .from('users')
@@ -253,11 +251,8 @@ const Navbar = () => {
         ; (async () => {
             const { data } = await supabase.auth.getSession()
             if (data.session !== null) {
-                console.log("Session Created");
                 oAuthStateChange(data.session.user);
                 loggedInUser(data.session.user);
-            } else {
-                console.log("No Session");
             }
         })();
     }, [])

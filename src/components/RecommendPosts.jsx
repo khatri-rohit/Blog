@@ -21,7 +21,6 @@ const RecommendPosts = ({ post, id }) => {
                 })
             }
         });
-        console.log(recommendedPosts);
         setCommanPosts(recommendedPosts);
 
     }, [id, data]);
