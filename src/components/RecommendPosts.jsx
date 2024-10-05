@@ -26,7 +26,7 @@ const RecommendPosts = ({ post, id }) => {
     }, [id, data]);
 
     return (
-        commanPosts?.length !== 0 &&
+        commanPosts?.length > 1 &&
         <section className="p-2 border-t-2 border-gray-300 w-[80%] mx-auto" >
             <p className="text-2xl font-bold dark:text-white">
                 Recommended Posts

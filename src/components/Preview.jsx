@@ -257,7 +257,7 @@ const Preview = ({ title, blog_content, usrename }) => {
             {showConfetti && <Confetti width={width} height={height} />}
             {showConfetti && (
                 <div className="absolute left-[50%] top-[20%] z-20 dark:text-white">
-                    <ClipLoader className='!dark:text-white' />
+                    <ClipLoader className='dark:text-white' />
                 </div>
             )}
             <div className="my-8 size">
@@ -266,7 +266,7 @@ const Preview = ({ title, blog_content, usrename }) => {
                     <LiaTimesSolid className='dark:text-white' />
                 </span>
 
-                <div className="mt-32 flex flex-col md:flex-row">
+                <div className="lg:mt-32 md:mt-52 flex flex-col md:flex-row">
                     <div className="flex-[1] p-7">
                         <p className="text-xl my-2 dark:text-white">Story Preview</p>
                         <div
@@ -276,7 +276,7 @@ const Preview = ({ title, blog_content, usrename }) => {
                             dark:bg-slate-500 object-cover cursor-pointer bg-cover bg-no-repeat my-7 relative">
                             {!preview.imageURL && !imgLoading && 'Add Image'}
                             {imgLoading && <FadeLoader
-                                color="gray"
+                                color="white"
                                 height={15}
                                 width={1}
                             />}
@@ -301,13 +301,13 @@ const Preview = ({ title, blog_content, usrename }) => {
                             placeholder='Preview Text...'
                             className='my-2 border-b pb-2  dark:text-white' />
 
-                        <div className="my-5 flex items-center text-gray-500 text-sm">
+                        <div className="my-5 flex items-st text-gray-500 text-sm">
                             <span className="font-bold">Note: </span>
                             <p className="mx-1">The Changes here will affect how your blog appears in public.</p>
                         </div>
 
                     </div>
-                    <div className="flex-[1] p-7 flex flex-col gap-4 mb-5">
+                    <div className="flex-[1] md:p-7 p-5  flex flex-col gap-4 mb-5">
                         <p className="text-3xl dark:text-white">
                             Publishing to: <span className="font-medium">{cur_user?.name}</span>
                         </p>
@@ -318,7 +318,7 @@ const Preview = ({ title, blog_content, usrename }) => {
                         <button
                             onClick={handleCreatePost}
                             disabled={showConfetti}
-                            className="px-5 w-fit py-1 bg-[#1E3E62] hover:bg-[#1E3E62]/80 duration-200 transition-all rounded-full text-white mx-3 text-xl disabled:bg-[#1E3E62]/50">
+                            className="px-5 w-fit py-1 bg-[#1E3E62] hover:bg-[#1E3E62]/80 duration-200 transition-all rounded-full text-white md:mx-3 text-xl disabled:bg-[#1E3E62]/50">
                             Post Blog
                         </button>
                     </div>
