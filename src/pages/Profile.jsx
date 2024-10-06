@@ -323,7 +323,7 @@ const Account = () => {
         {/* Your Blogs */}
         <div className="md:mb-5">
           <p className="md:text-2xl text-[1.1em] font-light py-2 mb-2">
-            {'->'} All Blogs
+            {'->'} Your Posts
           </p>
 
           <div className="flex overflow-x-scroll scroll-smooth"
