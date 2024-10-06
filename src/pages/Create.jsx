@@ -38,7 +38,7 @@ const Create = () => {
     } else {
       setTitle(input.substring(0, 101));
       toast('Title Should Be Less than 100 Words', {
-        duration: 800,
+        duration: 900,
         position: 'top-right',
 
         // Styling

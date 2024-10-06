@@ -414,7 +414,7 @@ const Bookmarks = () => {
       .delete()
       .eq('post_id', postId);
     toast('Bookmark Deleted', {
-      duration: 100,
+      duration: 1000,
       position: 'top-right',
 
       // Styling
