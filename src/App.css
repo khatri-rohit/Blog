@@ -42,3 +42,21 @@ body {
 .quill>.ql-container>.ql-editor.ql-blank::before {
     color: gray;
 }
+
+/* Reactr Quill Editor Style */
+h1 {
+    font-size: 2em !important;
+    margin-bottom: .51em !important;
+    line-height: 1em;
+}
+
+pre {
+    margin: 1.5em 1em !important;
+    border-left: gray solid;
+    padding: 0 1em;
+}
+
+ul>li {
+    list-style: circle;
+    margin: 0 1em;
+}

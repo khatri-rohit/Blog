@@ -668,7 +668,7 @@ const Post = () => {
                                         <p className="md:text-3xl lg:text-5xl text-[1.5em] text-center font-bold md:mb-7 dark:text-white md:text-pretty">
                                             {post?.blog_title}
                                         </p>
-                                        <p className="md:text-xl text-[1.2em] text-center text-gray-500 md:mt-3 md:mb-5 my-3 text-pretty dark:text-stone-200"
+                                        <p className="md:text-[1em] lg:text-xl text-[1.2em] text-center text-gray-500 md:mt-3 md:mb-5 my-3 text-pretty dark:text-stone-200"
                                             dangerouslySetInnerHTML={{ __html: post?.summary }}>
                                         </p>
                                     </div>
@@ -677,7 +677,7 @@ const Post = () => {
                                             alt={post?.blog_title}
                                             className="md:h-[35em] mx-auto pb-2 border-gray-400 border-b-2" />
                                     </div>
-                                    <div className="md:w-[85%] lg:w-[75%] mx-auto">
+                                    <div className="md:w-[85%] lg:w-[65%] mx-auto">
                                         <div className="dark:text-white p-3 text-xl w-full"
                                             dangerouslySetInnerHTML={{ __html: post?.blog_content }}
                                         />

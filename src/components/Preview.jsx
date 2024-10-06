@@ -51,7 +51,7 @@ const Preview = ({ title, blog_content, usrename }) => {
             if (title.trim().length !== 0 && image_url.length !== 0
                 && summary.length !== 0 && tags.length !== 0) {
                 const tag = tags.map((hashtags) => hashtags.toLowerCase());
-                
+
                 await supabase
                     .from('posts')
                     .insert([{
@@ -64,7 +64,7 @@ const Preview = ({ title, blog_content, usrename }) => {
                         formated_time,
                         image_url,
                         preview,
-                        tags:tag
+                        tags: tag
                     }]);
 
                 await supabase
