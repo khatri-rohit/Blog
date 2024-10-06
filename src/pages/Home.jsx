@@ -212,11 +212,11 @@ const Home = () => {
                                     </p>
 
                                     <p onClick={() => handlePost(post?.id)}
-                                        className="md:text-2xl lg:text-3xl text-[1.2em] title cursor-pointer mb-1 md:m-0 text-black dark:text-white text-pretty" dangerouslySetInnerHTML={{ __html: post?.preview._title }}>
+                                        className="md:text-2xl lg:text-[1.8em] text-[1.2em] title cursor-pointer mb-1 md:m-0 text-black dark:text-white text-pretty" dangerouslySetInnerHTML={{ __html: post?.preview._title }} style={{ lineHeight: "1.3em" }}>
                                     </p>
 
-                                    <p className="text-xl description mb-2 md:mb-3 text-slate-500 dark:text-slate-100 text-balance tracking-widest font-light"
-                                        dangerouslySetInnerHTML={{ __html: post?.summary }}>
+                                    <p className="text-xl description my-2 md:mb-3 text-slate-500 dark:text-slate-100 text-pretty tracking-widest font-light"
+                                        dangerouslySetInnerHTML={{ __html: (post?.summary)?.substring(0, 222) + "..." }}>
                                     </p>
 
                                     <div className="flex items-center justify-between">
