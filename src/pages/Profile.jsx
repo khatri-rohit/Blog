@@ -145,7 +145,8 @@ const Account = () => {
       const { data } = await supabase
         .from('posts')
         .select()
-        .eq('username', id);
+        .eq('username', id)
+        .order('created_at', { ascending: false });
       if (data) {
         setBlog(data);
       }
@@ -393,7 +394,8 @@ const Bookmarks = () => {
       const { data } = await supabase
         .from('bookmarks')
         .select()
-        .eq('username', id);
+        .eq('username', id)
+        .order('created_at', { ascending: false });
       setLoading(false);
       if (data)
         setBookMarks(data);
