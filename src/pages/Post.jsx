@@ -343,7 +343,7 @@ const Post = () => {
                 .eq('post_id', id);
 
             toast('Comment Deleted', {
-                duration: 100,
+                duration: 1000,
                 position: 'top-right',
 
                 // Styling

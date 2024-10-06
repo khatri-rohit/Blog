@@ -11,19 +11,20 @@ import useUsers from "../context/User";
 import useFetch from "../hooks/User";
 
 const Home = () => {
+    
     const [blogPost, setBlogPost] = useState([]);
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
-
     const navigate = useNavigate();
+    
     const {
         user,
         searchResult,
         getPosts,
         changePublish
     } = useUsers();
-
     const [cur_user] = useFetch(user.id);
+
 
     // Fetching All Blogs
     const fetchBlogs = async () => {
@@ -66,28 +67,17 @@ const Home = () => {
                         name, 
                         email
                     `);
-
             setUsers(data);
         } catch (error) {
             console.log("Something Wrong happned While fetching Users\n", error);
         }
     }
 
-    useEffect(() => {
-        searchResult.trim().length >= 2 ? searchPost(searchResult) : fetchBlogs();
-    }, [searchResult])
-
     const searchPost = (searchResult) => {
         const results = blogPost?.filter((post) => post?.blog_title?.toLowerCase().includes(searchResult) && post);
         setBlogPost(results);
         getPosts(results);
     };
-
-    useEffect(() => {
-        fetchBlogs();
-        fetchUsers();
-        changePublish(false);
-    }, []);
 
     const handlePost = (id) => {
         navigate(`/post/${id}`);
@@ -177,6 +167,18 @@ const Home = () => {
         const readingTime = Math.ceil(wordCount / wordsPerMinute);
         return readingTime;
     }
+
+    useEffect(() => {
+        searchResult.trim().length >= 2 ? searchPost(searchResult) : fetchBlogs();
+    }, [searchResult])
+
+    useEffect(() => {
+        fetchBlogs();
+        fetchUsers();
+        changePublish(false);
+    }, []);
+
+
 
     return (
         <main className="md:px-8 md:pb-4">

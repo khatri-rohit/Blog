@@ -6,6 +6,9 @@ import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { GiBookmarklet } from "react-icons/gi";
 import { HiOutlineLogout } from "react-icons/hi";
 import { IoIosArrowDown } from "react-icons/io";
+import { IoMoonOutline } from "react-icons/io5";
+import { LuSun } from "react-icons/lu";
+import { MdOutlineWbSunny } from "react-icons/md";
 import { SlNote } from "react-icons/sl";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
@@ -13,20 +16,16 @@ import useUsers from "../context/User";
 import useTheme from "../context/theme";
 import { LoignModel } from "../utils/LoignModel";
 import Model from "../utils/Model";
-import { IoMoonOutline } from "react-icons/io5";
-import { MdOutlineWbSunny } from "react-icons/md";
-import { LuSun } from "react-icons/lu";
 
 const Navbar = () => {
 
     const { pathname } = useLocation();
     const navigate = useNavigate();
-    const { darkTheme, lightTheme, themeMode } = useTheme(); // Theme Context API
+
     const [username, setUsername] = useState(false);
     const [value, setValue] = useState('');
     const [error, setError] = useState('')
     const [isDark, setIsDark] = useState(false);
-
     const [eye, setEye] = useState(false);
     const [search, setSearch] = useState('');
     const [timeoutId, setTimeoutId] = useState();
@@ -35,6 +34,7 @@ const Navbar = () => {
     const [reg, setRegister] = useState(false);
     const [cur_user, setCur_user] = useState(false);
 
+    // Form Variables
     const [userCre, setUserCre] = useState({
         username: "",
         name: "",
@@ -48,25 +48,23 @@ const Navbar = () => {
         confirmPasswordError: ""
     });
 
-
     const {
         user,
         oAuthStateChange,
         changeSearchResult,
         searchResult,
         changePublish,
-    } = useUsers();
+    } = useUsers();  //Context API
+    const { darkTheme, lightTheme, themeMode } = useTheme(); // Theme Context API
 
+    // Chnage Theme
     const darkMode = () => {
         if (isDark) lightTheme();
         else darkTheme();
         setIsDark(prev => !prev);
     }
 
-    useEffect(() => {
-        themeMode === "dark" ? setIsDark(true) : setIsDark(false);
-    }, []);
-
+    // Submit Form For Loign/SignUp
     const onSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -145,7 +143,6 @@ const Navbar = () => {
                         setUserCre({ ...userCre, passwordError: "Password is short" })
                     if (userCre.confirmPassword !== userCre.password)
                         setUserCre({ ...userCre, confirmPasswordError: "Password Doesn't Match" })
-
                 }
             }
         } catch (error) {
@@ -153,6 +150,7 @@ const Navbar = () => {
         }
     };
 
+    // Set Username
     const setUserName = async (e) => {
         e.preventDefault();
         const usernameRegex = /^[a-zA-Z0-9_]{3,16}$/;
@@ -175,6 +173,7 @@ const Navbar = () => {
         }
     }
 
+    // Github SignIn
     const githubSignIn = async () => {
         try {
             await supabase.auth.signInWithOAuth({
@@ -187,6 +186,7 @@ const Navbar = () => {
         }
     }
 
+    // SignOut
     const signOut = async () => {
         try {
             await supabase.auth.signOut()
@@ -198,6 +198,7 @@ const Navbar = () => {
         }
     };
 
+    // Google SignIn
     const googleSighUp = async () => {
         try {
             await supabase.auth.signInWithOAuth({
@@ -210,6 +211,7 @@ const Navbar = () => {
         }
     };
 
+    // User Login
     const loggedInUser = async (user) => {
         try {
             const { data } = await supabase
@@ -247,22 +249,7 @@ const Navbar = () => {
         }
     }
 
-    useEffect(() => {
-        ; (async () => {
-            const { data } = await supabase.auth.getSession()
-            if (data.session !== null) {
-                oAuthStateChange(data.session.user);
-                loggedInUser(data.session.user);
-            }
-        })();
-    }, [])
-
-    // Remove Scroll while Login Model is Open
-    useEffect(() => {
-        if (model || login || reg)
-            document.body.style.overflow = model || login || reg ? "hidden" : "unset";
-    }, [login, model, reg]);
-
+    // Toast Utility Fn()
     const handleTost = (text) => {
         toast(text, {
             duration: 1500,
@@ -289,6 +276,7 @@ const Navbar = () => {
         });
     };
 
+    // Search Posts
     const handleSearch = useCallback((e) => {
         const input = e.target.value;
         setSearch(input);
@@ -299,6 +287,7 @@ const Navbar = () => {
         );
     }, [searchResult])
 
+    // Search Posts
     const handleSearchSubmit = useCallback((e) => {
         e.preventDefault();
         if (search.trim().length === 0) {
@@ -328,13 +317,35 @@ const Navbar = () => {
         navigate(`/search?q=${encodeURIComponent(search)}`)
     }, [search]);
 
+    // Empty Data Feilds
     const emptyData = () => {
         setUserCre({ ...userCre, confirmPassword: "", email: "", confirmPasswordError: "", emailError: "", name: "", nameError: "", password: "", passwordError: "", username: "", usernameError: "" });
     }
 
+    // Check user on load 
+    useEffect(() => {
+        ; (async () => {
+            const { data } = await supabase.auth.getSession()
+            if (data.session !== null) {
+                oAuthStateChange(data.session.user);
+                loggedInUser(data.session.user);
+            }
+        })();
+    }, [])
+
+    // Remove Scroll while Login Model is Open
+    useEffect(() => {
+        if (model || login || reg)
+            document.body.style.overflow = model || login || reg ? "hidden" : "unset";
+    }, [login, model, reg]);
+
     useEffect(() => {
         return () => clearTimeout(timeoutId);
     }, [timeoutId]);
+
+    useEffect(() => {
+        themeMode === "dark" ? setIsDark(true) : setIsDark(false);
+    }, []);
 
     return (
         <>
@@ -342,6 +353,7 @@ const Navbar = () => {
                 position="top-center"
             />
 
+            {/* Registration Form */}
             {reg &&
                 <LoignModel model={reg}>
                     <div className="absolute top-5 left-1/2 transform -translate-x-1/2 z-10 shadow-sm mx-auto lg:w-[28%] md:w-[40%] w-[80%] bg-[#E9EFEC]">
@@ -496,6 +508,7 @@ const Navbar = () => {
                 </LoignModel>
             }
 
+            {/* Login Form */}
             {login &&
                 <LoignModel model={login}>
                     <div className="absolute top-5 left-1/2 transform -translate-x-1/2 z-10 shadow-sm mx-auto lg:w-[30%] md:w-[40%] w-[80%] bg-[#E9EFEC]">
@@ -596,6 +609,7 @@ const Navbar = () => {
                 </LoignModel >
             }
 
+            {/* Set UserName Form */}
             {
                 username &&
                 <LoignModel model={username}>

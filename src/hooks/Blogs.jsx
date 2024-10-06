@@ -10,7 +10,6 @@ const usePost = () => {
                 const response = await supabase
                     .from('posts')
                     .select();
-
                 setData(response.data);
             } catch (error) {
                 console.log(error);

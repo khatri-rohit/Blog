@@ -5,9 +5,9 @@ import {
   Routes
 } from "react-router-dom";
 import { ScaleLoader } from 'react-spinners';
+import './App.css';
 import { ThemeProvider } from "./context/theme.js";
 import { ContextProvider } from './context/User.jsx';
-import './App.css';
 
 const App = () => {
 
@@ -20,7 +20,6 @@ const App = () => {
   const oAuthStateChange = (data) => {
     setUser(data);
   };
-
 
   const changeSearchResult = (result) => {
     setSearchResult(result);

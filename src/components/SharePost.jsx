@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useState } from "react";
 import { CiShare1 } from "react-icons/ci";
 import {

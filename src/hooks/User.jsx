@@ -3,7 +3,6 @@ import { supabase } from "../../supabaseClient";
 
 const useFetch = (id) => {
     const [cur_user, setCur_user] = useState([]);
-
     useEffect(() => {
         ; (async () => {
             if (id) {
@@ -15,7 +14,6 @@ const useFetch = (id) => {
             }
         })();
     }, [id])
-
     return [cur_user];
 };
 

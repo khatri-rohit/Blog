@@ -6,7 +6,6 @@ import { BeatLoader } from 'react-spinners';
 import { supabase } from "../../supabaseClient";
 import useUsers from "../context/User";
 
-
 const Search = () => {
 
     const queryParams = new URLSearchParams(location.search);

@@ -1,35 +1,24 @@
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import ReactQuill from "react-quill";
 import 'react-quill/dist/quill.bubble.css';
-import useUsers from "../context/User";
-import Preview from '../components/Preview';
-import { supabase } from "../../supabaseClient";
 import { useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
+import { supabase } from "../../supabaseClient";
+import Preview from '../components/Preview';
 import useTheme from "../context/theme";
+import useUsers from "../context/User";
 
 
 const Create = () => {
 
   const [title, setTitle] = useState('');
   const [blog_content, setBlog_content] = useState('');
-  const { user } = useUsers();
   const [usrename, setUsername] = useState('');
-  const { publish } = useUsers();
-  const { themeMode } = useTheme();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    ; (async () => {
-      const { data } = await supabase
-        .from('users')
-        .select()
-        .eq("id", user.id);
-      setUsername(data[0].username);
-    })()
-  }, [])
-
-  if (!user.id) navigate('/');
+  const { publish } = useUsers(); // Context API
+  const { themeMode } = useTheme(); // Context APT
+  const { user } = useUsers(); // Context API
 
   const handleChange = e => {
     var input = e.target.value;
@@ -64,9 +53,19 @@ const Create = () => {
     }
   }
 
+  useEffect(() => {
+    ; (async () => {
+      const { data } = await supabase
+        .from('users')
+        .select()
+        .eq("id", user.id);
+      setUsername(data[0].username);
+    })()
+  }, [])
+
+  if (!user.id) navigate('/');
 
   return (
-
     <section className='w-[90%] md:w-[80%] lg:w-[60%] mx-auto py-14'>
       <input type="text"
         placeholder='Title'

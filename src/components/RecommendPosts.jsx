@@ -14,7 +14,6 @@ const RecommendPosts = ({ post, id }) => {
         data.map((blog) => {
             const PostTags = blog.tags.map(tag => tag.toLowerCase());
             const commantags = PostTags.filter((tags) => post?.tags?.includes(tags));
-
             if (commantags.length > 0) {
                 recommendedPosts.push({
                     ...blog
@@ -22,7 +21,6 @@ const RecommendPosts = ({ post, id }) => {
             }
         });
         setCommanPosts(recommendedPosts);
-
     }, [id, data]);
 
     return (

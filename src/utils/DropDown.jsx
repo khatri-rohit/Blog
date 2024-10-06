@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useEffect, useRef } from "react";
 
 const DropDown = ({ children, size, showDrop, setShowDrop }) => {
