@@ -20,11 +20,11 @@ import RecommendPosts from "../components/RecommendPosts";
 const Post = () => {
 
     const { id } = useParams();
+    const navigate = useNavigate();
 
     const [post, setPost] = useState([]);
     const [thatUser, setThatUser] = useState([]);
     const [loading, setLoading] = useState(false);
-    // const [like, setLikes] = useState();
     const [comments, setComments] = useState();
     const [likeCount, setLikeCount] = useState(0);
     const [likedUsers, setLikedUsers] = useState([])
@@ -38,9 +38,8 @@ const Post = () => {
     const [changeComment, setChangeComment] = useState(false);
     const [curDrop, setCurDrop] = useState('');
 
-    const { user } = useUsers();
-    const [cur_user] = useFetch(user.id);
-    const navigate = useNavigate();
+    const { user } = useUsers(); // Context API
+    const [cur_user] = useFetch(user.id); // Current User Hook
 
     useEffect(() => {
         ; (async () => {
@@ -269,30 +268,7 @@ const Post = () => {
                     .delete()
                     .eq('post_id', post.id);
                 toast('Bookmark Removed', {
-                    duration: 2000,
-                    position: 'top-right',
-
-                    // Styling
-                    style: { padding: '1rem 1.5rem' },
-                    className: 'font-bold',
-
-                    // Custom Icon
-                    icon: '⚠️',
-
-                    // Change colors of success/error/loading icon
-                    iconTheme: {
-                        primary: '#000',
-                        secondary: '#fff',
-                    },
-
-                    // Aria
-                    ariaProps: {
-                        role: 'alert',
-                        'aria-live': 'polite',
-                    },
-                });
-                toast('Bookmark Removed', {
-                    duration: 2000,
+                    duration: 1200,
                     position: 'top-right',
 
                     // Styling
