@@ -50,13 +50,28 @@ h1 {
     line-height: 1em;
 }
 
+h2 {
+    margin-bottom: .5em !important;
+    font-size: 1.5em !important;
+    margin-top: .5em !important;
+}
+
 pre {
-    margin: 1.5em 1em !important;
+    /* margin: 1.5em 1em !important; */
+    margin-bottom: 1.5em !important;
+    width: 100%;
     border-left: gray solid;
     padding: 0 1em;
 }
 
 ul>li {
     list-style: circle;
-    margin: 0 1em;
+    margin-bottom: 5px;
+    margin-left: 1.5em;
+}
+
+ol>li {
+    list-style: decimal;
+    margin-bottom: 5px;
+    margin-left: 1.5em;
 }
