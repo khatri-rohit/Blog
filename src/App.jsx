@@ -85,12 +85,18 @@ const App = () => {
               <Routes>
                 <Route path="/" Component={lazy(() => import("./layout/Layout"))}>
                   <Route index Component={lazy(() => import("./pages/Home"))} />
-                  <Route path="/post/:id" Component={lazy(() => import("./pages/Post"))} />
-                  <Route path="/search" Component={lazy(() => import("./pages/Search"))} />
-                  <Route path="/write" Component={lazy(() => import("./pages/Create"))} />
-                  <Route path="/user/:id" Component={lazy(() => import("./pages/Profile"))} />
-                  <Route path="/../*" Component={lazy(() => import("./pages/Redirect"))} />
-                  <Route path="/*" Component={lazy(() => import("./pages/Redirect"))} />
+                  <Route path="/post/:id"
+                    Component={lazy(() => import("./pages/Post"))} />
+                  <Route path="/search"
+                    Component={lazy(() => import("./pages/Search"))} />
+                  <Route path="/write"
+                    Component={lazy(() => import("./pages/Create"))} />
+                  <Route path="/user/:id"
+                    Component={lazy(() => import("./pages/Profile"))} />
+                  <Route path="/../*"
+                    Component={lazy(() => import("./pages/Redirect"))} />
+                  <Route path="/*"
+                    Component={lazy(() => import("./pages/Redirect"))} />
                 </Route>
               </Routes>
             </div>

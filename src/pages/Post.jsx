@@ -644,7 +644,7 @@ const Post = () => {
                                         <p className="md:text-3xl lg:text-5xl text-[1.5em] text-center font-bold md:mb-7 dark:text-white md:text-pretty">
                                             {post?.blog_title}
                                         </p>
-                                        <p className="md:text-[1em] lg:text-xl text-[1.2em] text-center text-gray-500 md:mt-3 md:mb-5 my-3 text-balance dark:text-stone-200"
+                                        <p className="md:text-[1.2em] lg:text-xl xl:text-2xl text-[1em] text-center text-gray-500 md:mt-3 md:mb-5 my-3 text-balance dark:text-stone-200"
                                             dangerouslySetInnerHTML={{ __html: post?.summary }}>
                                         </p>
                                     </div>
