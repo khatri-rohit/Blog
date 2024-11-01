@@ -8,6 +8,7 @@ import { ScaleLoader } from 'react-spinners';
 import './App.css';
 import { ThemeProvider } from "./context/theme.js";
 import { ContextProvider } from './context/User.jsx';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const App = () => {
 
@@ -16,6 +17,8 @@ const App = () => {
   const [getPost, setGetPost] = useState([]);
   const [themeMode, setThemeMode] = useState('dark');
   const [publish, setPublish] = useState(false);
+
+  const queryClient = new QueryClient();
 
   const oAuthStateChange = (data) => {
     setUser(data);
@@ -82,23 +85,27 @@ const App = () => {
         <BrowserRouter>
           <Suspense fallback={<Loader />}>
             <div className="p-2">
-              <Routes>
-                <Route path="/" Component={lazy(() => import("./layout/Layout"))}>
-                  <Route index Component={lazy(() => import("./pages/Home"))} />
-                  <Route path="/post/:id"
-                    Component={lazy(() => import("./pages/Post"))} />
-                  <Route path="/search"
-                    Component={lazy(() => import("./pages/Search"))} />
-                  <Route path="/write"
-                    Component={lazy(() => import("./pages/Create"))} />
-                  <Route path="/user/:id"
-                    Component={lazy(() => import("./pages/Profile"))} />
-                  <Route path="/../*"
-                    Component={lazy(() => import("./pages/Redirect"))} />
-                  <Route path="/*"
-                    Component={lazy(() => import("./pages/Redirect"))} />
-                </Route>
-              </Routes>
+              <QueryClientProvider client={queryClient}>
+                {/* Your application components */}
+                <Routes>
+                  <Route path="/" Component={lazy(() => import("./layout/Layout"))}>
+                    <Route index Component={lazy(() => import("./pages/Home"))} />
+                    <Route path="/post/:id"
+                      Component={lazy(() => import("./pages/Post"))} />
+                    <Route path="/search"
+                      Component={lazy(() => import("./pages/Search"))} />
+                    <Route path="/write"
+                      Component={lazy(() => import("./pages/Create"))} />
+                    <Route path="/user/:id"
+                      Component={lazy(() => import("./pages/Profile"))} />
+                    <Route path="/../*"
+                      Component={lazy(() => import("./pages/Redirect"))} />
+                    <Route path="/*"
+                      Component={lazy(() => import("./pages/Redirect"))} />
+                  </Route>
+                </Routes>
+
+              </QueryClientProvider>
             </div>
           </Suspense>
         </BrowserRouter>

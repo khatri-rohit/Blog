@@ -11,20 +11,20 @@ import useUsers from "../context/User";
 import useFetch from "../hooks/User";
 
 const Home = () => {
-    
+
     const [blogPost, setBlogPost] = useState([]);
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
-    
+
     const {
         user,
         searchResult,
         getPosts,
         changePublish
     } = useUsers();
-    const [cur_user] = useFetch(user.id);
 
+    const { cur_user } = useFetch(user.id);
 
     // Fetching All Blogs
     const fetchBlogs = async () => {
@@ -62,11 +62,7 @@ const Home = () => {
         try {
             const { data } = await supabase
                 .from('users')
-                .select(`
-                        id,
-                        name, 
-                        email
-                    `);
+                .select();
             setUsers(data);
         } catch (error) {
             console.log("Something Wrong happned While fetching Users\n", error);
@@ -205,7 +201,8 @@ const Home = () => {
                                 <div className="md:w-[45%] lg:w-[38%] p-1 my-auto cursor-pointer"
                                     onClick={() => handlePost(post?.id)}>
                                     <img src={post?.image_url}
-                                        className="object-cover w-full rounded-xl h-[27vh]" />
+                                        className="object-cover w-full rounded-xl h-[27vh]"
+                                        title={post.blog_title} />
                                 </div>
 
                                 <div className="md:w-[52%] lg:w-[62%] p-2 flex flex-col justify-evenly">
@@ -214,7 +211,8 @@ const Home = () => {
                                     </p>
 
                                     <p onClick={() => handlePost(post?.id)}
-                                        className="md:text-2xl lg:text-[1.8em] text-[1.2em] title cursor-pointer mb-1 md:m-0 text-black dark:text-white text-pretty" dangerouslySetInnerHTML={{ __html: post?.preview._title }} style={{ lineHeight: "1.3em" }}>
+                                        className="md:text-2xl lg:text-[1.8em] text-[1.2em] title cursor-pointer mb-1 md:m-0 text-black dark:text-white text-pretty" dangerouslySetInnerHTML={{ __html: post?.preview._title }}
+                                        style={{ lineHeight: "1.3em" }}>
                                     </p>
 
                                     <p className="text-xl description my-2 md:mb-3 text-slate-500 dark:text-slate-100 text-pretty tracking-widest font-light"

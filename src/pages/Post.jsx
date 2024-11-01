@@ -15,6 +15,7 @@ import DropDown from "../utils/DropDown";
 import SharePost from "../components/SharePost";
 import PostDropDown from "../utils/PostDropDown";
 import RecommendPosts from "../components/RecommendPosts";
+import usePost from "../hooks/Blogs";
 
 
 const Post = () => {
@@ -22,9 +23,9 @@ const Post = () => {
     const { id } = useParams();
     const navigate = useNavigate();
 
-    const [post, setPost] = useState([]);
+    // const [post, setPost] = useState([]);
     const [thatUser, setThatUser] = useState([]);
-    const [loading, setLoading] = useState(false);
+    // const [loading, setLoading] = useState(false);
     const [comments, setComments] = useState();
     const [likeCount, setLikeCount] = useState(0);
     const [likedUsers, setLikedUsers] = useState([])
@@ -39,41 +40,27 @@ const Post = () => {
     const [curDrop, setCurDrop] = useState('');
 
     const { user } = useUsers(); // Context API
-    const [cur_user] = useFetch(user.id); // Current User Hook
+    // c34107e8-3aae-4b39-8df2-efd0926189e5 // Current User Hook
+    // const { cur_user } = useFetch(user.id); // Current User Hook
+    const cur_user = useFetch(user.id); // Current User Hook
+
+    const { post, isLoading, isError } = usePost(id);
+
+    const fetchAuthor = async (userId) => {
+        const { data } = await supabase
+            .from('users')
+            .select()
+            .eq("id", userId);
+        console.log("Post Author");
+        console.log(data);
+        setThatUser(data[0]);
+    }
 
     useEffect(() => {
-        ; (async () => {
-            try {
-                setLoading(true);
-
-                document.body.scrollTop = 0; // For Safari
-                document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
-
-                // Selected Blog
-                const { data } = await supabase
-                    .from('posts')
-                    .select()
-                    .eq("id", id);
-
-                if (data) {
-                    setPost(data[0]);
-                    setLoading(false);
-                }
-
-                // Author Details
-                await supabase.
-                    from('users').select().eq("id", data[0].user_id)
-                    .then((res) => {
-                        setThatUser(res.data[0]);
-                    });
-
-            } catch (error) {
-                console.log(error);
-                alert("Post doesn't Exists");
-                navigate('/');
-            }
-        })();
-    }, [id])
+        console.log(post, isLoading, isError);
+        if (!isLoading)
+            fetchAuthor(post.user_id);
+    }, [isError, isLoading, post])
 
     const comment = async () => {
         try {
@@ -562,7 +549,7 @@ const Post = () => {
                             className="md:w-20 w-12 rounded-full" />
                         <div className="mx-4">
                             <p className="text-slate-500 dark:text-white md:text-2xl font-bold text-[0.6em]">
-                                {thatUser?.name} {cur_user.id === post.user_id && (<p className="md:text-lg text-[0.6em] m-0 inline-flex">(You)</p>)}
+                                {thatUser?.name} {cur_user?.id === post?.user_id && (<p className="md:text-lg text-[0.6em] m-0 inline-flex">(You)</p>)}
                             </p>
                             <p className="text-black md:text-[0.9rem] text-[0.6em] font-medium dark:text-white">
                                 {post?.formated_time}
@@ -605,7 +592,7 @@ const Post = () => {
 
                             <div className="relative mb-7 ms-8">
                                 {
-                                    cur_user.id === post.user_id &&
+                                    cur_user?.id === post?.user_id &&
                                     <button
                                         className="absolute right-0"
                                         onClick={() => setDrop(prev => !prev)}>
@@ -629,7 +616,7 @@ const Post = () => {
 
                 </div>
                 {
-                    loading &&
+                    isLoading &&
                     <p className="text-center">
                         <BeatLoader color="#73777B" />
                     </p>
@@ -664,7 +651,7 @@ const Post = () => {
                     )
                 }
             </section>
-            {post && <RecommendPosts post={post} id={id} />}
+            {post && <RecommendPosts _post={post} id={id} />}
         </div>
     )
 };
