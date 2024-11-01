@@ -40,8 +40,6 @@ const Post = () => {
     const [curDrop, setCurDrop] = useState('');
 
     const { user } = useUsers(); // Context API
-    // c34107e8-3aae-4b39-8df2-efd0926189e5 // Current User Hook
-    // const { cur_user } = useFetch(user.id); // Current User Hook
     const cur_user = useFetch(user.id); // Current User Hook
 
     const { post, isLoading, isError } = usePost(id);
@@ -51,13 +49,10 @@ const Post = () => {
             .from('users')
             .select()
             .eq("id", userId);
-        console.log("Post Author");
-        console.log(data);
         setThatUser(data[0]);
     }
 
     useEffect(() => {
-        console.log(post, isLoading, isError);
         if (!isLoading)
             fetchAuthor(post.user_id);
     }, [isError, isLoading, post])

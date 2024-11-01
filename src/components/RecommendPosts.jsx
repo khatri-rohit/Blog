@@ -1,21 +1,19 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import usePost from "../hooks/Blogs";
 import { ClipLoader } from "react-spinners";
+import usePost from "../hooks/Blogs";
 
 const RecommendPosts = ({ _post, id }) => {
 
     const { post } = usePost();
     const [commanPosts, setCommanPosts] = useState([]);
+    const [show, setShow] = useState(4);
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate(null);
     const recommendedPosts = useMemo(() => {
         return []
     }, []);
-    const [show, setShow] = useState(4);
-    const [loading, setLoading] = useState(false);
-
-    console.log(_post.tags);
 
     useEffect(() => {
         post?.map((blog) => {
@@ -28,7 +26,6 @@ const RecommendPosts = ({ _post, id }) => {
             }
         });
         setCommanPosts(recommendedPosts);
-        console.log(recommendedPosts);
     }, [id, post, recommendedPosts, _post?.tags]);
 
     const handleShowMore = () => {
@@ -81,7 +78,7 @@ const RecommendPosts = ({ _post, id }) => {
                 </div>
             }
             {
-                commanPosts.length < show &&
+                commanPosts.length > show &&
                 show !== commanPosts.length &&
                 <button className="my-4 text-[1em] font-medium dark:text-white"
                     onClick={handleShowMore}>

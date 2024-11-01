@@ -198,6 +198,7 @@ const Account = () => {
         .from('posts')
         .delete()
         .eq('id', postId);
+        
       toast('Post Deleted', {
         duration: 1000,
         position: 'top-right',
