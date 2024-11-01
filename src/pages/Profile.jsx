@@ -230,10 +230,10 @@ const Account = () => {
     if (cur_user?.id !== user.id) navigate('/');
 
   return (
-    <div className="transition-opacity duration-200">
+    <div className="duration-500">
 
       <div className="flex items-center m-3">
-        <div className="relative group hover:opacity-60"
+        <div className="relative group hover:opacity-60 duration-200"
           onClick={() => imgRef.current.click()}>
           <div className="absolute inset-x-9 inset-y-7">
             <MdCamera className="group-hover:block hidden text-2xl text-white" />
@@ -274,18 +274,18 @@ const Account = () => {
         </form>
       </div>
 
-      <div className="my-10 mx-5">
-        <div className="flex items-center my-2">
-          <p className="md:text-2xl text-[1em]  font-medium">Username: </p>
+      <div className="mb-8 mx-5">
+        <div className="flex items-center">
+          <p className="md:text-2xl text-[1em] font-medium">Username: </p>
           <p className="text-[1.1em] font-light mx-2">{cur_user?.username}</p>
         </div>
 
-        <div className="flex items-center my-2">
+        <div className="flex items-center">
           <p className="md:text-2xl text-[1em] font-medium">Email: </p>
           <p className="text-[1.1em] font-light mx-2">{cur_user?.email}</p>
         </div>
 
-        <div className="flex items-center my-2">
+        <div className="flex items-center">
           <p className="md:text-2xl text-[1em] font-medium">Account Created : </p>
           <p className="text-[1.1em] font-light mx-2">
             {new Date(cur_user?.created_at)?.toLocaleString("en", {
@@ -294,35 +294,33 @@ const Account = () => {
           </p>
         </div>
 
-        <div className="md:my-2">
-          <p className="md:text-2xl text-[1.1em] font-medium">About Me</p>
-          <div className="flex flex-col items-start my-0.5">
-            {
-              changeBio ?
-                <textarea type="text"
-                  className="md:text-2xl text-[1.1em] bg-transparent w-full outline-none border-b resize-none"
-                  value={bio}
-                  autoFocus
-                  onChange={e => setBio(e.target.value)} />
-                : (bio ?
-                  <p className="md:text-2xl text-[1.1em]">
-                    {bio}
-                  </p> :
-                  <p className="text-gray-400">
-                    Introduce Your self
-                  </p>)
-            }
-            {changeBio ?
-              (<button className="text-[1em] my-1 text-blue-500 font-medium"
-                onClick={() => handleChangeBio("save")}>Save</button>) :
-              (<button className="text-[1em] my-1 text-blue-500 font-medium"
-                onClick={() => handleChangeBio("change")}>Edit</button>)}
-          </div>
+        <p className="md:text-2xl text-[1.1em] font-medium">About Me</p>
+        <div className="flex flex-col items-start mb-0.5">
+          {
+            changeBio ?
+              <textarea type="text"
+                className="md:text-2xl text-[1.1em] bg-transparent w-full outline-none border-b resize-none"
+                value={bio}
+                autoFocus
+                onChange={e => setBio(e.target.value)} />
+              : (bio ?
+                <p className="md:text-2xl text-[1.1em] font-mono tracking-[-0.51px]">
+                  {bio}
+                </p> :
+                <p className="text-gray-400">
+                  Introduce Your self
+                </p>)
+          }
+          {changeBio ?
+            (<button className="text-[1em] my-1 text-blue-500 font-medium"
+              onClick={() => handleChangeBio("save")}>Save</button>) :
+            (<button className="text-[1em] my-1 text-blue-500 font-medium"
+              onClick={() => handleChangeBio("change")}>Edit</button>)}
         </div>
 
         {/* Your Blogs */}
         <div className="md:mb-5">
-          <p className="md:text-2xl text-[1.1em] font-light py-2 mb-2">
+          <p className="md:text-2xl text-[1.1em] font-light py-2">
             {'->'} Your Posts
           </p>
 
@@ -334,12 +332,12 @@ const Account = () => {
               </p>)}
               {blog?.length !== 0 ?
                 (blog?.map((post, _) => (
-                  <div className="border-r p-2 bg-white mr-1 drop-shadow-lg rounded-lg cursor-auto" key={_} >
+                  <div className="border-r p-2 bg-white mr-1 rounded-lg cursor-auto" key={_} >
                     <div className="lg:w-96 md:w-72 w-56 max-w-xs overflow-hidden transition-shadow duration-300 ease-in-out">
                       <NavLink to={`/post/${post?.id}`} className="">
                         <img src={post?.image_url}
                           className="object-cover w-full rounded-xl h-[25vh]"
-                          alt={post?.blog_title} />
+                          alt={post?.blog_title} title={post?.blog_title} />
                       </NavLink>
                       <div className="p-2 flex justify-between">
                         <p className="text-pretty font-medium">
@@ -456,7 +454,6 @@ const Bookmarks = () => {
             {
               bookMarks?.length === 0 ?
                 (loading || <p className="text-xl">You haven't Saved any posts</p>)
-                // : <div className={`grid grid-cols-2 grid-rows-7 gap-4 ms-0.5 w-full`}>
                 : <div className={`flex flex-nowrap ms-0.5`}>                  {
                   (bookMarks?.map((post, _) => (
                     <div key={_}
