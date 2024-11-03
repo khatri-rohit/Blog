@@ -544,7 +544,7 @@ const Post = () => {
                             className="md:w-20 w-12 rounded-full" />
                         <div className="mx-4">
                             <p className="text-slate-500 dark:text-white md:text-2xl font-bold text-[0.6em]">
-                                {thatUser?.name} {cur_user?.id === post?.user_id && (<p className="md:text-[0.9em] text-[0.6em] m-0 inline-flex">(You)</p>)}
+                                {thatUser?.name} {cur_user?.id === post?.user_id && (<p className="md:text-[0.9em] text-[0.6em] m-0 inline-flex font-normal">(You)</p>)}
                             </p>
                             <p className="text-black md:text-[0.9rem] text-[0.6em] font-medium dark:text-white">
                                 {post?.formated_time}
