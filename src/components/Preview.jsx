@@ -32,7 +32,8 @@ const Preview = ({ title, blog_content, usrename }) => {
     const [imgLoading, setImgLoading] = useState(false);
 
     const { user, changePublish } = useUsers();
-    const [cur_user] = useFetch(user.id);
+    const { cur_user } = useFetch(user.id);
+
 
 
     const handleClick = () => {
