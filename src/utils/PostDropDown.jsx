@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useRef } from "react";
 
-const PostDropDown = ({ children, size, curPost, setCurPost, postid }) => {
+const PostDropDown = ({ curPost, postid, setCurPost, size, children }) => {
     const dropRef = useRef(null);
 
     useEffect(() => {
@@ -17,12 +17,12 @@ const PostDropDown = ({ children, size, curPost, setCurPost, postid }) => {
     return (
         <>
             {curPost === postid && (
-            <div
-                ref={dropRef}
-                className={`shadows flex flex-col items-start absolute -right-2 top-[1.5rem] px-3 py-1 bg-gray-200 ${size}`}>
-                {children}
-            </div>
-         )} 
+                <div
+                    ref={dropRef}
+                    className={`shadows flex flex-col items-start absolute -right-2 top-[1.5rem] px-3 py-1 bg-gray-200 ${size}`}>
+                    {children}
+                </div>
+            )}
         </>
     );
 };

@@ -40,7 +40,7 @@ const Post = () => {
     const [curDrop, setCurDrop] = useState('');
 
     const { user } = useUsers(); // Context API
-    const cur_user = useFetch(user.id); // Current User Hook
+    const { cur_user } = useFetch(user.id); // Current User Hook
 
     const { post, isLoading, isError } = usePost(id);
 
@@ -468,7 +468,7 @@ const Post = () => {
                                                     <div className="mx-3 leading-none">
                                                         <div className="mb-1.5">
                                                             <p className="font-medium text-[0.8rem] m-0">
-                                                                {response?.name} {cur_user.id === response.key && "(You)"}
+                                                                {response?.name} {cur_user?.id === response.key && "(You)"}
                                                             </p>
                                                             <p className="text-[10px] mt-.5 font-sans m-0">
                                                                 {created_time === "this minute" ? "just now" : created_time}
@@ -476,7 +476,7 @@ const Post = () => {
                                                         </div>
                                                         {/* You Can't Multiple Comments */}
                                                         {
-                                                            changeComment && cur_user.id === response.key ?
+                                                            changeComment && cur_user?.id === response.key ?
                                                                 (
                                                                     <div className="flex flex-col items-start">
                                                                         <textarea rows="4"
@@ -499,7 +499,7 @@ const Post = () => {
                                                 </div>
                                                 <div className="relative">
                                                     {
-                                                        (cur_user.id === response.key && !changeComment) &&
+                                                        (cur_user?.id === response.key && !changeComment) &&
                                                         <button
                                                             className="absolute right-0"
                                                             onClick={() => setCurDrop((response.key))}>
@@ -544,7 +544,7 @@ const Post = () => {
                             className="md:w-20 w-12 rounded-full" />
                         <div className="mx-4">
                             <p className="text-slate-500 dark:text-white md:text-2xl font-bold text-[0.6em]">
-                                {thatUser?.name} {cur_user?.id === post?.user_id && (<p className="md:text-lg text-[0.6em] m-0 inline-flex">(You)</p>)}
+                                {thatUser?.name} {cur_user?.id === post?.user_id && (<p className="md:text-[0.9em] text-[0.6em] m-0 inline-flex">(You)</p>)}
                             </p>
                             <p className="text-black md:text-[0.9rem] text-[0.6em] font-medium dark:text-white">
                                 {post?.formated_time}
