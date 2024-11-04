@@ -9,6 +9,7 @@ import './App.css';
 import { ThemeProvider } from "./context/theme.js";
 import { ContextProvider } from './context/User.jsx';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import Bot from "./components/BotAssistant.jsx";
 
 const App = () => {
 
@@ -17,9 +18,17 @@ const App = () => {
   const [getPost, setGetPost] = useState([]);
   const [themeMode, setThemeMode] = useState('dark');
   const [publish, setPublish] = useState(false);
+  const [login, setLogin] = useState(false);
+  const [model, setModel] = useState(false);
 
   const queryClient = new QueryClient();
 
+  const changeModel = (data) => {
+    setModel(data);
+  }
+  const changeLogin = (data) => {
+    setLogin(data);
+  };
   const oAuthStateChange = (data) => {
     setUser(data);
   };
@@ -80,12 +89,16 @@ const App = () => {
           getPosts,
           changePublish,
           publish,
+          changeLogin,
+          login,
+          changeModel,
+          model
         }
       }>
-        <BrowserRouter>
+        <QueryClientProvider client={queryClient}>
           <Suspense fallback={<Loader />}>
             <div className="p-2">
-              <QueryClientProvider client={queryClient}>
+              <BrowserRouter>
                 {/* Your application components */}
                 <Routes>
                   <Route path="/" Component={lazy(() => import("./layout/Layout"))}>
@@ -104,11 +117,11 @@ const App = () => {
                       Component={lazy(() => import("./pages/Redirect"))} />
                   </Route>
                 </Routes>
-
-              </QueryClientProvider>
+                <Bot />
+              </BrowserRouter>
             </div>
           </Suspense>
-        </BrowserRouter>
+        </QueryClientProvider>
       </ContextProvider>
     </ThemeProvider>
   )

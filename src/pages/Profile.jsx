@@ -80,7 +80,7 @@ export default Profile;
 const Account = () => {
 
   const { id } = useParams();
-  const { user } = useUsers();
+  const { user, changeModel } = useUsers();
   const navigate = useNavigate();
 
   const [changeName, setChangeName] = useState(false);
@@ -162,6 +162,7 @@ const Account = () => {
   useEffect(() => {
     profileData();
     fetchposts();
+    changeModel(false);
   }, [])
 
   const uploadImg = async (e) => {
@@ -198,7 +199,7 @@ const Account = () => {
         .from('posts')
         .delete()
         .eq('id', postId);
-        
+
       toast('Post Deleted', {
         duration: 1000,
         position: 'top-right',
@@ -240,6 +241,7 @@ const Account = () => {
             <MdCamera className="group-hover:block hidden text-2xl text-white" />
           </div>
           <img src={cur_user?.avatar_url || "/blank-avatar.webp"}
+            id="profile-pic"
             className="rounded-full cursor-pointer mx-2 md:w-20 md:h-20 object-cover border-black border w-14 h-14"
             alt="profile" />
         </div>
@@ -271,6 +273,7 @@ const Account = () => {
             (<button className="text-[1em] my-1 text-blue-500 font-medium"
               onClick={(event) => handleNameChange(event, "save")}>Save</button>) :
             (<button className="text-[1em] my-1 text-blue-500 font-medium"
+              id="profile-name"
               onClick={(event) => handleNameChange(event, "change")}>Edit</button>)}
         </form>
       </div>

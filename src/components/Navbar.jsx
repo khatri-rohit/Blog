@@ -29,8 +29,8 @@ const Navbar = () => {
     const [eye, setEye] = useState(false);
     const [search, setSearch] = useState('');
     const [timeoutId, setTimeoutId] = useState();
-    const [model, setModel] = useState(false);
-    const [login, setLogin] = useState(false);
+    // const [model, changeModel] = useState(false);
+    // const [login, setLogin] = useState(false);
     const [reg, setRegister] = useState(false);
     const [cur_user, setCur_user] = useState(false);
 
@@ -54,6 +54,10 @@ const Navbar = () => {
         changeSearchResult,
         searchResult,
         changePublish,
+        changeLogin,
+        login,
+        changeModel,
+        model
     } = useUsers();  //Context API
     const { darkTheme, lightTheme, themeMode } = useTheme(); // Theme Context API
 
@@ -80,7 +84,7 @@ const Navbar = () => {
                         loggedInUser(data.user);
                         oAuthStateChange(data.user);
                         handleTost("Successfully LoggedIn ✨");
-                        setLogin(false);
+                        changeLogin(false);
                         setUserCre({ ...userCre, confirmPassword: "", email: "", confirmPasswordError: "", emailError: "", name: "", nameError: "", password: "", passwordError: "", username: "", usernameError: "" });
                     }
 
@@ -180,7 +184,7 @@ const Navbar = () => {
                 provider: "github"
             });
             setRegister(false);
-            setLogin(false);
+            changeLogin(false);
         } catch (error) {
             console.log(error);
         }
@@ -191,7 +195,7 @@ const Navbar = () => {
         try {
             await supabase.auth.signOut()
             oAuthStateChange([]);
-            setModel(false);
+            changeModel(false);
             navigate('/');
         } catch (error) {
             console.log("Error While Logout -> ", error);
@@ -205,7 +209,7 @@ const Navbar = () => {
                 provider: 'google'
             });
             setRegister(false);
-            setLogin(false)
+            changeLogin(false)
         } catch (error) {
             console.log(error);
         }
@@ -495,7 +499,7 @@ const Navbar = () => {
                                 <div className="text-sm font-medium text-gray-500 dark:text-gray-300 mt-3">
                                     Already have a Account? <button className="text-blue-700 hover:underline dark:text-blue-500"
                                         onClick={() => {
-                                            setLogin(true);
+                                            changeLogin(true);
                                             setRegister(false);
                                             emptyData();
                                         }}>
@@ -511,7 +515,7 @@ const Navbar = () => {
             {/* Login Form */}
             {login &&
                 <LoignModel model={login}>
-                    <div className="absolute top-5 left-1/2 transform -translate-x-1/2 z-10 shadow-sm mx-auto lg:w-[30%] md:w-[40%] w-[80%] bg-[#E9EFEC]">
+                    <div id="login-form" className="absolute top-5 left-1/2 transform -translate-x-1/2 z-10 shadow-sm mx-auto lg:w-[30%] md:w-[40%] w-[80%] bg-[#E9EFEC]">
                         {/* <!-- Modal content --> */}
                         <div className="relative bg-white rounded-lg shadow p-2 dark:bg-[#263946]">
                             {/* <!-- Modal header --> */}
@@ -521,7 +525,7 @@ const Navbar = () => {
                                 </p>
                                 <button type="button"
                                     className="end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white outline-none" data-modal-hide="authentication-modal"
-                                    onClick={() => setLogin(false)}>
+                                    onClick={() => changeLogin(false)}>
                                     <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                                         <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
                                     </svg>
@@ -595,9 +599,10 @@ const Navbar = () => {
                                 <div className="text-sm font-medium text-gray-500 dark:text-gray-300 mt-2">
                                     Not registered?
                                     <button className="text-blue-500 hover:underline dark:text-slate-300 mx-1"
+                                        id="register"
                                         onClick={() => {
                                             setRegister(true);
-                                            setLogin(false);
+                                            changeLogin(false);
                                             emptyData();
                                         }}>
                                         Create account
@@ -673,13 +678,13 @@ const Navbar = () => {
                                 {
                                     pathname === '/write' ? (
                                         <button
-                                            className="px-5 py-1 bg-[#1E3E62] hover:bg-[#1E3E62]/50 rounded-full text-white md:mx-3 md:text-xl text-[0.8em]"
+                                            className="px-5 py-1 bg-[#1E3E62] hover:bg-[#1E3E62]/50 rounded-full text-white md:mx-3 md:text-xl text-[0.8em]" id="post-button"
                                             onClick={() => changePublish(true)}>
                                             Post
                                         </button>
                                     )
                                         : <NavLink to={"/write"} className="flex items-center mx-1">
-                                            <div className="mx-3 flex items-center hover:text-slate-500 cursor-pointer">
+                                            <div className="mx-3 flex items-center hover:text-slate-500 cursor-pointer" id="write-button">
                                                 <SlNote className="dark:text-white text-xl" />
                                                 <p className="mx-1 font-normal dark:text-white">
                                                     Write
@@ -689,24 +694,28 @@ const Navbar = () => {
                                 }
                                 <div className="mx-1" >
                                     <div className="flex items-center cursor-pointer"
-                                        onClick={() => setModel(prev => !prev)}>
+                                        id="profile"
+                                        onClick={() => changeModel(prev => !prev)}>
                                         <img src={cur_user?.avatar_url || "/blank-avatar.webp"}
                                             className="w-[6em] h-[2.75em] md:w-[3.2em] md:h-[2.8em] lg:w-[3em] lg:h-[2.95em] object-cover rounded-full hover:scale-90 transition-all duration-200 relative"
                                         />
                                         <IoIosArrowDown className="mx-2 hidden md:block dark:text-white" />
                                     </div>
 
-                                    <Model model={model} setModel={setModel}>
+                                    <Model model={model} setModel={changeModel}>
                                         <div className={`absolute z-30 right-7 my-2 bg-slate-100 border border-gray-300 px-2 py-2 w-60 items-start justify-start ${model || `hidden`}`} >
                                             <div className="flex gap-2 items-center px-3 py-1 justify-start cursor-pointer">
                                                 <img src={cur_user?.avatar_url || "/blank-avatar.webp"} className="rounded-full w-[2rem] h-[2rem] object-cover" />
                                                 <NavLink to={`/user/${cur_user?.username}`}
-                                                    onClick={() => setModel(false)}
+                                                    onClick={() => changeModel(false)}
+                                                    id="profile-tab"
                                                     className="text-xl font-medium hover:text-slate-500 text-slate-900 mx-1">
                                                     Profile
                                                 </NavLink>
                                             </div>
-                                            <NavLink to={`/user/${cur_user?.username}#bookmarks`} className="flex gap-2 items-center px-3 py-1 justify-start cursor-pointer" onClick={() => setModel(false)}>
+                                            <NavLink to={`/user/${cur_user?.username}#bookmarks`}
+                                                id="bookmark"
+                                                className="flex gap-2 items-center px-3 py-1 justify-start cursor-pointer" onClick={() => changeModel(false)}>
                                                 <GiBookmarklet className="text-2xl" />
                                                 <p className="text-xl font-medium hover:text-slate-500 text-slate-900 mx-3">
                                                     Saved Posts
@@ -743,8 +752,9 @@ const Navbar = () => {
                                         )}
                                     </button>
                                     <button className="bg-slate-300 md:px-4 p-2 rounded-md text-[1em] outline-none"
+                                        id="login-button"
                                         onClick={() => {
-                                            setLogin(true);
+                                            changeLogin(true);
                                             emptyData();
                                         }}>
                                         SignIn

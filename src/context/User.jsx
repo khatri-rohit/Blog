@@ -8,7 +8,11 @@ export const UserContext = createContext({
     getPost: [],
     getPosts: () => { },
     publish: false,
-    changePublish: () => { }
+    changePublish: () => { },
+    login: false,
+    changeLogin: () => { },
+    model: false,
+    changeModel: () => { }
 });
 
 export const ContextProvider = UserContext.Provider;

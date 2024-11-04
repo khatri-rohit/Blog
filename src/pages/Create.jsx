@@ -66,7 +66,7 @@ const Create = () => {
   if (!user.id) navigate('/');
 
   return (
-    <section className='w-[90%] md:w-[80%] lg:w-[60%] mx-auto py-14'>
+    <section className='w-[90%] md:w-[80%] lg:w-[60%] mx-auto py-14' id="post-form">
       <input type="text"
         placeholder='Title'
         value={title}
