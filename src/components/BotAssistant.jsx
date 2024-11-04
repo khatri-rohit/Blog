@@ -220,6 +220,7 @@ const Bot = () => {
         let response = '';
 
         const isLoggedIn = !!user.id;
+        const greetingKeywords = ['hello', 'hi', 'hey', 'greetings', 'what\'s up', 'good morning', 'good evening', 'good afternoon'];
         const loginKeywords = ['login', 'sign in', 'signin'];
         const profileKeywords = ['profile', 'avatar', 'name', 'bio', 'account'];
         const postKeywords = ['post', 'blog', 'article'];
@@ -229,8 +230,12 @@ const Bot = () => {
         const readKeywords = ['read', 'view', 'browse', 'explore', 'posts', 'blogs'];
         const aboutKeywords = ['about', 'what is', 'site', 'devdiscuss', 'features', 'info'];
 
+        // Check for Greeting
+        if (greetingKeywords.some(keyword => lowerMessage.includes(keyword))) {
+            response = "Hello there! 😊 How can I assist you on DevDiscuss today? Feel free to ask about posting, logging in, profile settings, or anything else you need!";
+        }
         // Check for Login Tour
-        if (loginKeywords.some(keyword => lowerMessage.includes(keyword))) {
+        else if (loginKeywords.some(keyword => lowerMessage.includes(keyword))) {
             if (isLoggedIn) {
                 response = "You're already logged in! To switch accounts, simply log out and log in with another account.";
             } else {
@@ -288,7 +293,7 @@ const Bot = () => {
 
         // Default Response
         else {
-            response = "I'm here to help! Could you tell me more about what you're trying to do? I can guide you with creating posts, logging in, editing your profile, bookmarking, and reading posts.";
+            response = "I'm here to assist you specifically with DevDiscuss features. Could you tell me more about what you're trying to do on the site? I can help with creating posts, logging in, editing your profile, bookmarking, and reading posts.";
         }
 
         return response;
