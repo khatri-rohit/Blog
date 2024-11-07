@@ -335,7 +335,7 @@ const Bot = () => {
     }, [messages])
 
     return (
-        <div className="fixed bottom-4 left-4 z-50 md:bottom-4 md:right-4">
+        <div className="fixed bottom-4 right-4">
             {!isOpen ? (
                 <button
                     onClick={() => setIsOpen(true)}
