@@ -362,7 +362,7 @@ const Navbar = () => {
                 <LoignModel model={reg}>
                     <div className="absolute top-5 left-1/2 transform -translate-x-1/2 z-10 shadow-sm mx-auto lg:w-[28%] md:w-[40%] w-[80%] bg-[#E9EFEC]">
                         {/* <!-- Modal content --> */}
-                        <div className="relative bg-white rounded-lg shadow p-2 dark:bg-[#263946]">
+                        <div className="relative bg-white rounded-lg shadow p-2 dark:bg-slate-700">
                             {/* <!-- Modal header --> */}
                             <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                                 <p className="md:text-xl lg:text-lg text-[1em] font-semibold text-gray-900 dark:text-white">
@@ -389,7 +389,7 @@ const Navbar = () => {
                                         className="mx-1 md:text-2xl text-[1em]" />
                                     Continue with Github
                                 </button>
-                                <p className="font-medium text-center my-2">Or</p>
+                                <p className="font-medium text-center my-2 dark:text-white">Or</p>
                                 <form className="space-y-4"
                                     onSubmit={onSubmit}>
                                     <div>
@@ -400,7 +400,7 @@ const Navbar = () => {
                                             type="text"
                                             name="name"
                                             value={userCre.username}
-                                            className="bg-gray-50 dark:text-slate-200  text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-400 dark:placeholder-slate-200 outline-none"
+                                            className="bg-gray-50 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-200 dark:placeholder-slate-200 outline-none"
                                             placeholder="Username" autoFocus
                                             onChange={e => setUserCre({ ...userCre, username: e.target.value })} />
                                         {
@@ -418,7 +418,7 @@ const Navbar = () => {
                                             type="text"
                                             name="name"
                                             value={userCre.name}
-                                            className="bg-gray-50 dark:text-slate-200  text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-400 dark:placeholder-slate-200 outline-none"
+                                            className="bg-gray-50 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-200 dark:placeholder-slate-200 outline-none"
                                             placeholder="Enter Name" autoFocus
                                             onChange={e => setUserCre({ ...userCre, name: e.target.value })} />
                                         {
@@ -435,7 +435,7 @@ const Navbar = () => {
                                         <input
                                             type="email"
                                             name="email"
-                                            className="bg-gray-50 dark:text-slate-200  text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-400 dark:placeholder-slate-200 outline-none"
+                                            className="bg-gray-50   text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-200 dark:placeholder-slate-200 outline-none"
                                             placeholder="Email"
                                             value={userCre.email}
                                             onChange={e => setUserCre({ ...userCre, email: e.target.value })}
@@ -451,12 +451,12 @@ const Navbar = () => {
                                         <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                             Your password
                                         </label>
-                                        <div className="bg-gray-50 text-sm rounded-lg w-full p-2.5 dark:bg-gray-400 dark:text-white active:bg-slate-200  flex items-center justify-between">
+                                        <div className="bg-gray-50 text-sm rounded-lg w-full p-2.5 dark:bg-gray-200 dark:text-white active:bg-slate-200  flex items-center justify-between">
                                             <input
                                                 type={eye ? `text` : `password`}
                                                 name="password"
                                                 placeholder="••••••••"
-                                                className="outline-none bg-transparent dark:placeholder-slate-200 dark:text-slate-200 text-gray-900"
+                                                className="outline-none bg-transparent dark:placeholder-slate-200 text-gray-900 w-full"
                                                 value={userCre.password}
                                                 onChange={e => setUserCre({ ...userCre, password: e.target.value })}
                                             />
@@ -480,7 +480,7 @@ const Navbar = () => {
                                             type="password"
                                             name="confirmPassword"
                                             placeholder="••••••••"
-                                            className="bg-gray-50 dark:text-slate-200  text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-400 dark:placeholder-slate-200 outline-none"
+                                            className="bg-gray-50   text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-200 dark:placeholder-slate-200 outline-none"
                                             value={userCre.confirmPassword}
                                             onChange={e => setUserCre({ ...userCre, confirmPassword: e.target.value })} />
                                         {
@@ -517,7 +517,7 @@ const Navbar = () => {
                 <LoignModel model={login}>
                     <div id="login-form" className="absolute top-5 left-1/2 transform -translate-x-1/2 z-10 shadow-sm mx-auto lg:w-[30%] md:w-[40%] w-[80%] bg-[#E9EFEC]">
                         {/* <!-- Modal content --> */}
-                        <div className="relative bg-white rounded-lg shadow p-2 dark:bg-[#263946]">
+                        <div className="relative bg-white rounded-lg shadow p-2 dark:bg-slate-700">
                             {/* <!-- Modal header --> */}
                             <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-slate-400">
                                 <p className="md:text-xl lg:text-lg text-[1em] font-semibold text-gray-900 dark:text-white">
@@ -553,7 +553,7 @@ const Navbar = () => {
                                         <input
                                             type="email"
                                             name="email"
-                                            className="bg-gray-50 dark:text-slate-200  text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-400 dark:placeholder-slate-200 outline-none"
+                                            className="bg-gray-50 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-200 dark:placeholder-slate-200 outline-none"
                                             placeholder="Email" autoFocus
                                             value={userCre.email}
                                             onChange={e => setUserCre({ ...userCre, email: e.target.value })} />
@@ -569,12 +569,12 @@ const Navbar = () => {
                                             className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                             Password
                                         </label>
-                                        <div className="bg-gray-50 text-sm rounded-lg w-full p-2.5 dark:bg-gray-400 dark:text-white active:bg-slate-200  flex items-center justify-between">
+                                        <div className="bg-gray-50 text-sm rounded-lg w-full p-2.5 dark:bg-gray-200 dark:text-white active:bg-slate-200  flex items-center justify-between">
                                             <input
                                                 type={eye ? `text` : `password`}
                                                 name="password"
                                                 placeholder="••••••••"
-                                                className="outline-none bg-transparent dark:placeholder-slate-200 dark:text-slate-200 text-gray-900"
+                                                className="outline-none bg-transparent dark:placeholder-slate-200 text-gray-900 w-full"
                                                 value={userCre.password}
                                                 onChange={e => setUserCre({ ...userCre, password: e.target.value })}
                                             />
@@ -598,7 +598,7 @@ const Navbar = () => {
                                 </form>
                                 <div className="text-sm font-medium text-gray-500 dark:text-gray-300 mt-2">
                                     Not registered?
-                                    <button className="text-blue-500 hover:underline dark:text-slate-300 mx-1"
+                                    <button className="!text-blue-500 hover:underline dark:text-slate-300 mx-1"
                                         id="register"
                                         onClick={() => {
                                             setRegister(true);
