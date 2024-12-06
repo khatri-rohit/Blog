@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
-import { FaHeart } from "react-icons/fa6";
+import { FaArrowUp, FaHeart } from "react-icons/fa6";
 import { IoBookmarksOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import { PuffLoader } from 'react-spinners';
@@ -16,6 +16,17 @@ const Home = () => {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const [scrollTop, setScrollTop] = useState(false);
+
+    useEffect(() => {
+        const scrolling = () => {
+            if (document.documentElement.scrollTop > 420)
+                setScrollTop(true);
+            else setScrollTop(false);
+        }
+        window.addEventListener("scroll", scrolling);
+        return document.removeEventListener("scroll", scrolling);
+    }, [])
 
     const {
         user,
@@ -169,15 +180,26 @@ const Home = () => {
     }, [searchResult])
 
     useEffect(() => {
-        fetchBlogs();
-        fetchUsers();
-        changePublish(false);
+        if (blogPost.length === 0) {
+            fetchBlogs();
+            fetchUsers();
+            changePublish(false);
+        }
     }, []);
 
-
+    const scroolUp = () => {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and OperaF
+    }
 
     return (
         <main className="md:px-8 md:pb-4">
+            {
+                scrollTop &&
+                <button className="fixed bottom-3 left-3 w-10 h-10 bg-blue-500 rounded-lg duration-500" onClick={scroolUp}>
+                    <FaArrowUp className="text-white h-full w-full p-2" />
+                </button>
+            }
             <div className="container mx-auto md:w-3/4 p-3 flex flex-col items-center justify-center transition-all">
                 {
                     loading ?
