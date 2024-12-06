@@ -57,11 +57,14 @@ h2 {
 }
 
 pre {
-    /* margin: 1.5em 1em !important; */
     margin-bottom: 1.5em !important;
     width: 100%;
     border-left: gray solid;
     padding: 0 1em;
+}
+
+pre.ql-syntax {
+    overflow: auto;
 }
 
 ul>li {

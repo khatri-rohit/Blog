@@ -16,6 +16,7 @@ import SharePost from "../components/SharePost";
 import PostDropDown from "../utils/PostDropDown";
 import RecommendPosts from "../components/RecommendPosts";
 import usePost from "../hooks/Blogs";
+import { FaArrowUp } from "react-icons/fa6";
 
 
 const Post = () => {
@@ -38,11 +39,24 @@ const Post = () => {
     const [editComment, setEditComment] = useState('');
     const [changeComment, setChangeComment] = useState(false);
     const [curDrop, setCurDrop] = useState('');
+    const [scrollTop, setScrollTop] = useState(false);
 
     const { user } = useUsers(); // Context API
     const { cur_user } = useFetch(user.id); // Current User Hook
 
     const { post, isLoading, isError } = usePost(id);
+
+    useEffect(() => {
+        const scrolling = () => {
+            if (document.documentElement.scrollTop > 971) {
+                setScrollTop(true);
+            } else {
+                setScrollTop(false);
+            }
+        }
+        window.addEventListener("scroll", scrolling);
+        return document.removeEventListener("scroll", scrolling);
+    }, [])
 
     const fetchAuthor = async (userId) => {
         const { data } = await supabase
@@ -408,8 +422,21 @@ const Post = () => {
         comment();
     }
 
+    const scroolUp = () => {
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
+    }
+
     return (
         <div className="relative">
+
+            {
+                scrollTop &&
+                <button className="fixed bottom-3 left-3 w-10 h-10 bg-blue-500 rounded-lg duration-500" onClick={scroolUp}>
+                    <FaArrowUp className="text-white h-full w-full p-2" />
+                </button>
+            }
+
             {/* Comment Sidebar */}
 
             {slidebar &&

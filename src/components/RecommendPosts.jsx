@@ -3,6 +3,8 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
 import usePost from "../hooks/Blogs";
+import { FaArrowDown } from "react-icons/fa6";
+import { IoIosArrowDown } from "react-icons/io";
 
 const RecommendPosts = ({ _post, id }) => {
 
@@ -80,9 +82,9 @@ const RecommendPosts = ({ _post, id }) => {
             {
                 commanPosts.length > show &&
                 show !== commanPosts.length &&
-                <button className="my-4 text-[1em] font-medium dark:text-white"
+                <button className="my-4 text-[1em] font-medium dark:text-white flex items-center drop-shadow-lg w-fit mx-auto"
                     onClick={handleShowMore}>
-                    Show More
+                    Show More <IoIosArrowDown className="mt-1 ms-1" />
                 </button>
             }
         </section>
