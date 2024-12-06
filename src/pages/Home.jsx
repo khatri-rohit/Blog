@@ -1,5 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { FaArrowUp, FaHeart } from "react-icons/fa6";
 import { IoBookmarksOutline } from "react-icons/io5";
@@ -196,7 +196,7 @@ const Home = () => {
         <main className="md:px-8 md:pb-4">
             {
                 scrollTop &&
-                <button className="fixed bottom-3 left-3 w-10 h-10 bg-blue-500 rounded-lg duration-500" onClick={scroolUp}>
+                <button className="fixed bottom-3 left-3 z-50 w-10 h-10 bg-blue-500 rounded-lg duration-500" onClick={scroolUp}>
                     <FaArrowUp className="text-white h-full w-full p-2" />
                 </button>
             }

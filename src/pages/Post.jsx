@@ -432,7 +432,7 @@ const Post = () => {
 
             {
                 scrollTop &&
-                <button className="fixed bottom-3 left-3 w-10 h-10 bg-blue-500 rounded-lg duration-500" onClick={scroolUp}>
+                <button className="fixed bottom-3 left-3 z-50 w-10 h-10 bg-blue-500 rounded-lg duration-500" onClick={scroolUp}>
                     <FaArrowUp className="text-white h-full w-full p-2" />
                 </button>
             }

@@ -3,7 +3,6 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
 import usePost from "../hooks/Blogs";
-import { FaArrowDown } from "react-icons/fa6";
 import { IoIosArrowDown } from "react-icons/io";
 
 const RecommendPosts = ({ _post, id }) => {
